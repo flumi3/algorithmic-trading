@@ -1,11 +1,10 @@
 import re
-import logger  # our self defined logger
 import requests
 import json
+import logging
 import pandas as pd
 
 from util import BinanceAPIException
-from util import datestr_to_timestamp
 from typing import List
 from typing import Dict
 from pandas import DataFrame
@@ -13,11 +12,10 @@ from logging import Logger
 from requests.models import Response
 from datetime import datetime
 
-logger: Logger = logger.get_main_logger()
+logger: Logger = logging.getLogger(__name__)
 
 
 class Binance:
-
     TRADING_FEE: float = 0.1
 
     def __init__(self):
@@ -26,7 +24,8 @@ class Binance:
             "klines": "/api/v3/klines"
         }
 
-    def get_candlestick_data(self, symbol: str, interval: str = "1h", start_time: int = None, end_time: int = None, limit: int = 1000) -> DataFrame:
+    def get_candlestick_data(self, symbol: str, interval: str = "1h", end_time: int = None,
+                             limit: int = 1000) -> DataFrame:
         """Accesses candlestick data for a given symbol"""
         logger.info("Accessing candlestick data...")
 
@@ -41,14 +40,13 @@ class Binance:
         url = self.__base + self.__endpoints["klines"] + params
 
         # Get data
+        response: Response = requests.get(url)
+        data: dict = json.loads(response.text)
         try:
-            response: Response = requests.get(url)
-            data: str = json.loads(response.text)
             self.__check_http_response(response)
         except BinanceAPIException as e:
-            logger.error(f"BinanceAPIException occured while trying to access {url}")
+            logger.error(f"BinanceAPIException occurred while trying to access {url}")
             logger.error(e.message)
-            return False
 
         # Put data into a data frame and drop unnecessary columns, then rename them
         # [
@@ -76,13 +74,12 @@ class Binance:
         for col in col_names:
             df[col] = df[col].astype(float)
         # Convert timestamps to datetime format and add them to the data frame
-        df["date"] = pd.to_datetime(df["time"] * 100000000, infer_datetime_format=True)
-
-        print(len(df))  # TODO: Remove
+        df["date"] = pd.to_datetime(df["time"] / 1000, infer_datetime_format=True)
 
         return df
 
-    def __get_coherent_candlestick_data(self, symbol: str, interval: str, limit: int = 1000, end_time: int = None) -> DataFrame:
+    def __get_coherent_candlestick_data(self, symbol: str, interval: str, limit: int = 1000, end_time: int = None
+                                        ) -> DataFrame:
         """
         This function extends the "get_candlestick_data" function and it's purpose is for the accessing of long term
         market data. Binance only allows to get 1000 candles to be sent for one call. So if we want to collect market
@@ -114,14 +111,15 @@ class Binance:
         return df
 
     @staticmethod
-    def __check_http_response(response) -> None:
-        response_code: str = str(response.status_code)
-        if "4" in response_code:  # Status Code 4XX
+    def __check_http_response(response: Response) -> None:
+        if response.status_code >= 400:  # Status code signalizes error
             raise BinanceAPIException(response)
-        elif "5" in response_code:  # Status Code 5XX, no return of error data because operation might succeeded
+        elif response.status_code >= 500:  # Status code warns, failure is on site of Binance. Request might succeeded
             logger.warning("Internal Binance Error: Execution status unknown")
 
-    def __calculate_limit(self, start_time: int, end_time: int, interval: str) -> int:
+    # TODO: evaluate
+    @staticmethod
+    def __calculate_limit(start_time: int, end_time: int, interval: str) -> int:
         x = datetime.fromtimestamp(end_time / 1000)
         y = datetime.fromtimestamp(start_time / 1000)
         timedelta = x - y
