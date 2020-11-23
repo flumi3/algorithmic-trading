@@ -1,24 +1,23 @@
-from datetime import datetime
+import logging
 import plotly.graph_objs as go
-import logger
 
+from datetime import datetime
 from logging import Logger
 from plotly.graph_objs import Candlestick, Layout, Figure, Scatter
 from plotly.offline import plot
 from typing import List
 from market_data import MarketData
 from indicators import SmoothedMovingAverage
-
 from transaction import Transaction
 
-logger: Logger = logger.get_main_logger()
+logger: Logger = logging.getLogger(__name__)
 
 
 class Backtest:
 
     @staticmethod
-    def plot_candlestick_chart(market_data: MarketData, plot_title: str, buy_transactions: List[Transaction] = None, 
-                                sell_transactions: List[Transaction] = None) -> None:
+    def plot_candlestick_chart(market_data: MarketData, plot_title: str, buy_transactions: List[Transaction] = None,
+                               sell_transactions: List[Transaction] = None) -> None:
         """Plots a candlestick chart"""
         logger.info("Plotting candlestick chart...")
 

@@ -1,4 +1,4 @@
-import logger
+import logging
 
 from datetime import datetime
 from pandas import DataFrame
@@ -7,14 +7,15 @@ from api.binance import Binance
 from transaction import Transaction
 from logging import Logger
 
-logger: Logger = logger.get_main_logger()
+logger: Logger = logging.getLogger(__name__)
 
 
-class MovingAvergageStrategy:
+class MovingAverageStrategy:
 
     # TODO: maybe assert the candlestick data for sma indicator because it is necessary for this strategy (maybe validate function)
 
-    def calc_buy_signals(self, candlestick_df: DataFrame) -> List[Transaction]:
+    @staticmethod
+    def calc_buy_signals(candlestick_df: DataFrame) -> List[Transaction]:
         logger.info("Calculating buy signals...")
 
         df: DataFrame = candlestick_df
@@ -31,7 +32,8 @@ class MovingAvergageStrategy:
 
         return buy_signals
 
-    def calc_sell_signals(self, candlestick_df: DataFrame, desired_sell: float, buy_signals: List[Transaction]) -> List[Transaction]:
+    @staticmethod
+    def calc_sell_signals(candlestick_df: DataFrame, desired_sell: float, buy_signals: List[Transaction]) -> List[Transaction]:
         logger.info("Calculating sell signals...")
 
         df: DataFrame = candlestick_df
@@ -42,15 +44,13 @@ class MovingAvergageStrategy:
             selling_price: float = buying_price * desired_sell
             time: datetime = signal.time
 
-            # Query the entry (candle) of which the point in time is the same as the buy signal in order to only loop
-            # from this point in time through the dataframe
-            index: int = df.index[df["time"] == time].tolist()[0]
-            for i in range(index, len(df["close"])):
-                if df["high"][i] >= selling_price:
-                    time: datetime = df["time"][i]  # Time of sell
-                    sell: Transaction = Transaction("sell", Binance.TRADING_FEE, selling_price, time, True)
-                    sell_signals.append(sell)
-                    break
+            # Query all candles that are older than the buying time and also meet our desired selling price
+            sell_entries: DataFrame = df.loc[(df["time"] >= time) & (df["high"] >= selling_price)]
+            if not sell_entries.empty:
+                sell_entry: DataFrame = sell_entries.iloc[0]  # Get the first of those entries
+                time = sell_entry["time"]  # Time of sell
+                sell: Transaction = Transaction("sell", Binance.TRADING_FEE, selling_price, time, True)
+                sell_signals.append(sell)
         
         return sell_signals
 

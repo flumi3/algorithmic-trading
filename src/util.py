@@ -1,4 +1,4 @@
-from datetime import timezone, datetime
+from datetime import datetime
 from typing import List
 
 
@@ -20,6 +20,7 @@ class BinanceAPIException(Exception):
         return 'APIError(code=%s): %s' % (self.code, self.message)
 
 
+# TODO: evaluate
 def datestr_to_timestamp(datestr: str) -> int:
     """
     Converts a given string of date to a binance timestamp
