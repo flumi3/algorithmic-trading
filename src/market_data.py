@@ -10,7 +10,7 @@ logger: Logger = logging.getLogger(__name__)
 
 class MarketData:
 
-    def __init__(self, data: DataFrame, ) -> None:
+    def __init__(self, data: DataFrame) -> None:
         logger.info("Creating new market data...")
         self.candlestick_data: DataFrame = data
         self.indicators: List[Indicator] = list()  # List of indicators to keep track of the contained indicators

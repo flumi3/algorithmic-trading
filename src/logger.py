@@ -12,6 +12,6 @@ logger.setLevel(logging.DEBUG)
 
 # Info log console handler
 console_handler: StreamHandler = StreamHandler(sys.stdout)  # Create handler
-console_handler.setLevel(logging.INFO)  # Set level to INFO so every INFO log gets displayed in the stdout
+console_handler.setLevel(logging.DEBUG)  # Set level to INFO so every INFO log gets displayed in the stdout
 console_handler.setFormatter(FORMATTER)  # Set formatting of the log output
 logger.addHandler(console_handler)  # Add handler to the logger

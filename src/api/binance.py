@@ -14,11 +14,15 @@ from datetime import datetime
 
 logger: Logger = logging.getLogger(__name__)
 
+# Symbols
+BITCOIN_EURO: str = "BTCEUR"
+
 
 class Binance:
-    TRADING_FEE: float = 0.1
+    TRADING_FEE: float = 0.001  # 0.1% on every trade
 
     def __init__(self):
+        self.name: str = "Binance"
         self.__base: str = "https://api.binance.com"
         self.__endpoints: Dict[str, str] = {
             "klines": "/api/v3/klines"
