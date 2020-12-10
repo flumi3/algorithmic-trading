@@ -12,7 +12,7 @@ from logging import Logger
 from requests.models import Response
 from datetime import datetime
 
-logger: Logger = logging.getLogger(__name__)
+logger: Logger = logging.getLogger("__main__")
 
 # Symbols
 BITCOIN_EURO: str = "BTCEUR"
@@ -23,8 +23,9 @@ class Binance:
 
     def __init__(self):
         self.name: str = "Binance"
-        self.__base: str = "https://api.binance.com"
-        self.__endpoints: Dict[str, str] = {
+        self.base: str = "https://api.binance.com"
+        self.trading_fee = Binance.TRADING_FEE
+        self.endpoints: Dict[str, str] = {
             "klines": "/api/v3/klines"
         }
 
@@ -41,7 +42,7 @@ class Binance:
         params = "?symbol=" + symbol + "&interval=" + interval + "&limit=" + str(limit)
         if end_time:
             params = params + "&endTime=" + str(int(end_time))
-        url = self.__base + self.__endpoints["klines"] + params
+        url = self.base + self.endpoints["klines"] + params
 
         # Get data
         response: Response = requests.get(url)
