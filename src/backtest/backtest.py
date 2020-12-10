@@ -3,8 +3,7 @@ import logging
 from datetime import datetime
 from logging import Logger
 from plotly.graph_objs import Candlestick, Layout, Figure, Scatter
-from plotly.offline import plot
-from typing import List, Tuple, Dict
+from typing import List, Tuple, IO, Union
 from collections import OrderedDict
 from market_data import MarketData
 from indicators import SmoothedMovingAverage
@@ -12,25 +11,23 @@ from backtest.signals import BuySignal, SellSignal
 from uuid import UUID
 from pandas import DataFrame
 from transactions import BuyTransaction, SellTransaction
+from util import TerminalColors as Color
 
-logger: Logger = logging.getLogger(__name__)
+logger: Logger = logging.getLogger("__main__")
 
 
 class Backtest:
 
-    def __init__(self, symbol: str, api: str, strategy: str, capital: float, buy_quantity: float,
-                 transaction_fee: float,  start_date: datetime, end_date: datetime, market_data: MarketData,
-                 sell_signals: OrderedDict = None,
-                 buy_signals: OrderedDict = None) -> None:
+    def __init__(self, symbol: str, api_name: str, strategy_name: str, capital: float, buy_quantity: float,
+                 trading_fee: float, market_data: MarketData, buy_signals: OrderedDict,
+                 sell_signals: OrderedDict) -> None:
         # Backtest configuration
         self.symbol = symbol
-        self.api: str = api
-        self.strategy: str = strategy
+        self.api: str = api_name
+        self.strategy: str = strategy_name
         self.starting_capital: float = capital
         self.buy_quantity: float = buy_quantity
-        self.trading_fee: float = transaction_fee
-        self.start_date: datetime = start_date
-        self.end_date: datetime = end_date
+        self.trading_fee: float = trading_fee
         # Statistic properties
         self.money_spent: float = 0
         self.money_earned: float = 0
@@ -50,8 +47,8 @@ class Backtest:
         capitals: List[float] = [self.capital for i in range(len(times))]
         self.capitals_df: DataFrame = DataFrame(list(zip(times, capitals)), columns=["time", "capital"])
 
-    def plot_candlestick_chart(self, plot_title: str) -> None:
-        """Plots a candlestick chart"""
+    def create_candlestick_figure(self) -> Figure:
+        """Creates a candlestick figure that visualizes the market data of the backtest including the signals"""
         logger.info("Plotting candlestick chart...")
 
         # Access candlestick data frame which gets hold by the market data object
@@ -85,11 +82,7 @@ class Backtest:
         # Plot buy signals if we have some
         if self.buy_signals:
             # Lists for values of the accepted buy signals and also the ignored buy signals
-            values: tuple = self.get_signal_values(self.buy_signals)
-            accepted_times: datetime = values[0]
-            accepted_prices: float = values[1]
-            ignored_times: datetime = values[2]
-            ignored_prices: float = values[3]
+            accepted_times, accepted_prices, ignored_times, ignored_prices = self.get_signal_values(self.buy_signals)
 
             # Create plot for the accepted signals
             accepted_buy_signals: Scatter = Scatter(
@@ -113,11 +106,7 @@ class Backtest:
         # Plot sell signals if we have some
         if self.sell_signals:
             # Lists for values of the accepted sell signals and also the ignored sell signals
-            values: tuple = self.get_signal_values(self.sell_signals)
-            accepted_times: datetime = values[0]
-            accepted_prices: float = values[1]
-            ignored_times: datetime = values[2]
-            ignored_prices: float = values[3]
+            accepted_times, accepted_prices, ignored_times, ignored_prices = self.get_signal_values(self.sell_signals)
 
             # Create plot for the accepted sell signals
             accepted_sell_signals: Scatter = Scatter(
@@ -147,24 +136,25 @@ class Backtest:
             },
             yaxis={
                 "fixedrange": False,
-                "title": "Price"
+                "title": "Price per coin"
             }
         )
         # Create figure and plot it
         figure: Figure = Figure(data=data, layout=layout)
-        plot(figure, filename=plot_title + ".html")
+        return figure
 
-    def plot_capital_chart(self) -> None:
+    def create_capital_figure(self) -> Figure:
+        """Creates a plotly figure that represents our capital over the time of the backtest"""
         capital_line: Scatter = Scatter(
             x=self.capitals_df["time"],
             y=self.capitals_df["capital"],
-            name="Capital",
+            name="Capital [€]",
             line=dict(color="rgba(0, 0, 255, 1)")
         )
         layout: Layout = Layout(
             xaxis={
                 "title": "Capital over time",
-                "rangeslider": {"visible": True},
+                "rangeslider": {"visible": False},
                 "type": "date"
             },
             yaxis={
@@ -173,14 +163,14 @@ class Backtest:
             }
         )
         figure: Figure = Figure(capital_line, layout=layout)
-        plot(figure, filename="capital.html")
+        return figure
 
     def run_backtest(self) -> None:
         logger.info("Running backtest...")
 
         for buy_signal_id, buy_signal in self.buy_signals.items():
             # Loop through all coins that we have not sold yet and check if we can sell them
-            for signal_id in self.kept_coins:
+            for signal_id in self.kept_coins.copy():  # Copy necessary because we modify the real list whilst iterating
                 sell_signal: SellSignal = self.sell_signals.get(signal_id)  # Get corresponding sell signal
                 if sell_signal:
                     # Check whether the sell signal occurred before the current buy signal
@@ -196,33 +186,26 @@ class Backtest:
             else:
                 logger.debug("Buy signal ignored! Not enough capital.")
 
-        # # Check sell options for all coins we have not sold yet
-        # for signal_id in self.kept_coins:
-        #     sell_signal: SellSignal = self.sell_signals.get(signal_id)
-        #     if sell_signal:
-        #         self.sell(signal_id, sell_signal)
-
-        self.print_stats()
+        # Check sell options for all coins we have not sold yet
+        for signal_id in self.kept_coins:
+            sell_signal: SellSignal = self.sell_signals.get(signal_id)
+            if sell_signal:
+                self.sell(signal_id, sell_signal)
 
     def buy(self, signal_id: UUID, signal: BuySignal) -> None:
+        logger.debug(f"Buy signal accepted! Price: {signal.price}")
         signal.accepted = True  # Change signal status as accepted
         price: float = signal.price * self.buy_quantity
         buy_quantity: float = self.buy_quantity - (self.buy_quantity * self.trading_fee)  # 0.1% transaction fee
         transaction: BuyTransaction = BuyTransaction(signal_id, self.symbol, price, buy_quantity, signal.time,
                                                      test=True)
-        # Update stats
-        self.capital -= transaction.price
-        self.coins_bought += transaction.quantity
-        self.transaction_costs += transaction.price * self.trading_fee
-        self.money_spent += transaction.price
-        self.kept_coins.append(transaction.transaction_id)  # Add signal id to list of coins in our possession
-        self.buy_transactions[transaction.transaction_id] = transaction  # Add to dict of buy transactions
-        logger.debug(f"Buy signal accepted! Price: {signal.price}")
+        self.update_stats(True, transaction)
 
         # Change all capital values starting from this exact buying time to the current capital (for the capital chart)
         self.capitals_df.loc[self.capitals_df["time"] >= signal.time, "capital"] = self.capital
 
     def sell(self, signal_id: UUID, signal: SellSignal) -> None:
+        logger.debug(f"Sell signal accepted! Price: {signal.price}")
         signal.accepted = True  # Change signal status to accepted
         buy_transaction: BuyTransaction = self.buy_transactions.get(signal_id)  # Get the corresponding buy transaction
 
@@ -234,30 +217,25 @@ class Backtest:
         quantity: float = buy_quantity * signal.price - transaction_cost
         sell_transaction: SellTransaction = SellTransaction(signal_id, self.symbol, buy_quantity, quantity, signal.time,
                                                             test=True)
-        # Update stats
-        self.capital += sell_transaction.quantity  # We got xxx euros for selling xxx coins
-        self.coins_sold += sell_transaction.price  # We sold xxx coins
-        self.transaction_costs += transaction_cost
-        self.money_earned += sell_transaction.quantity
-        self.kept_coins.remove(signal_id)  # Remove signal id from list of coins in our possession
-        self.sell_transactions[sell_transaction.transaction_id] = sell_transaction  # Add to dict of sell transactions
-        logger.debug(f"Sell signal accepted! Price: {signal.price}")
+        self.update_stats(False, sell_transaction, transaction_cost)
 
         # Change all capital values starting form this exact selling time to the current capital (for the capital chart)
         self.capitals_df.loc[self.capitals_df["time"] >= signal.time, "capital"] = self.capital
 
     def print_stats(self) -> None:
-        print("========== BACKTEST ==========")
+        print("")
+        print(Color.OKCYAN + "========== BACKTEST ==========" + Color.ENDC)
+        print("")
 
         # Backtest config
         print("---Configuration---")
         print(f"Symbol: {self.symbol}")
         print(f"API: {self.api}")
         print(f"Strategy: {self.strategy}")
-        print(f"Time period: {self.start_date} - {self.end_date}")
+        print(f"Time period: xxx - xxx")  # TODO
 
-        print(f"Transaction fee: {self.trading_fee}")
-        print(f"Buy Quantity: {self.buy_quantity}")
+        print(f"Trading fee: {self.trading_fee * 100}%")
+        print(f"Buy quantity: {self.buy_quantity} coins")
         print(f"Starting capital: {self.starting_capital}€")
         print(f"")
 
@@ -288,10 +266,42 @@ class Backtest:
         # Coins still in our possession
         print("Coins not sold:")
         for signal_id in self.kept_coins:
-            buy_signal: BuySignal = self.buy_signals.get(signal_id)
-            print(f"ID: {signal_id} \t Price: {buy_signal.price}€")
+            transaction: BuyTransaction = self.buy_transactions.get(signal_id)
+            print(f"ID: {signal_id} \t Price: {round(transaction.price, 2)}€")
 
-        print("==============================")
+        print("")
+        print(Color.OKCYAN + "==============================" + Color.ENDC)
+        print("")
+
+    def update_stats(self, is_buy: bool, transaction: Union[BuyTransaction, SellTransaction],
+                     transaction_cost: float = None):
+        """Updates all properties that are necessary for generating backtest stats"""
+        if is_buy:
+            assert type(transaction) == BuyTransaction
+            self.capital -= transaction.price
+            self.coins_bought += transaction.quantity
+            self.transaction_costs += transaction.price * self.trading_fee
+            self.money_spent += transaction.price
+            self.kept_coins.append(transaction.transaction_id)  # Add signal id to list of coins in our possession
+            self.buy_transactions[transaction.transaction_id] = transaction  # Add to dict of buy transactions
+        else:
+            assert type(transaction) == SellTransaction
+            self.capital += transaction.quantity  # We got xxx euros for selling xxx coins
+            self.coins_sold += transaction.price  # We sold xxx coins
+            self.transaction_costs += transaction_cost
+            self.money_earned += transaction.quantity
+            self.kept_coins.remove(transaction.transaction_id)  # Remove signal id from list of coins in our possession
+            self.sell_transactions[transaction.transaction_id] = transaction  # Add to dict of sell transactions
+
+    @staticmethod
+    def figures_to_html(figures: List[Figure], filename: str = "backtest_dashboard.html"):
+        """Creates a single html file from a list of plotly figures"""
+        dashboard: IO = open(filename, 'w')
+        dashboard.write("<html><head></head><body>" + "\n")
+        for figure in figures:
+            inner_html: str = figure.to_html().split('<body>')[1].split('</body>')[0]
+            dashboard.write(inner_html)
+        dashboard.write("</body></html>" + "\n")
 
     @staticmethod
     def get_signal_values(signals: dict) -> Tuple[List[datetime], List[float], List[datetime], List[float]]:
