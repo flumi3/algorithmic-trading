@@ -1,14 +1,15 @@
 import sys
 import logging
 
-from logging import Logger, Formatter, StreamHandler
+from logging import Formatter, Logger, StreamHandler
 
 
-FORMATTER: Formatter = Formatter('%(asctime)s - %(levelname)s - [%(module)s.py]: %(message)s', datefmt="%d.%m.%Y %H:%M:%S")
+FORMATTER: Formatter = Formatter('%(asctime)s - %(levelname)s - [%(module)s.py]: %(message)s',
+                                 datefmt="%d.%m.%Y %H:%M:%S")
 
 # Create Logger
-logger: Logger = logging.getLogger()
-logger.setLevel(logging.DEBUG)
+logger: Logger = logging.getLogger("__main__")
+logger.setLevel(logging.INFO)
 
 # Info log console handler
 console_handler: StreamHandler = StreamHandler(sys.stdout)  # Create handler
