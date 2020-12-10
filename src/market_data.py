@@ -5,7 +5,7 @@ from pandas import DataFrame
 from indicators import Indicator, SmoothedMovingAverage
 from logging import Logger
 
-logger: Logger = logging.getLogger(__name__)
+logger: Logger = logging.getLogger("__main__")
 
 
 class MarketData:

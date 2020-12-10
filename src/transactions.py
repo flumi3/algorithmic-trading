@@ -4,7 +4,7 @@ from uuid import UUID
 from logging import Logger
 from datetime import datetime
 
-logger: Logger = logging.getLogger(__name__)
+logger: Logger = logging.getLogger("__main__")
 
 
 class BuyTransaction:

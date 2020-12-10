@@ -4,7 +4,7 @@ from pandas import DataFrame
 from logging import Logger
 from pyti.smoothed_moving_average import smoothed_moving_average as sma
 
-logger: Logger = logging.getLogger(__name__)
+logger: Logger = logging.getLogger("__main__")
 
 
 # Parent class 

@@ -8,7 +8,7 @@ from logging import Logger
 from backtest.signals import BuySignal, SellSignal
 from uuid import UUID
 
-logger: Logger = logging.getLogger(__name__)
+logger: Logger = logging.getLogger("__main__")
 
 
 class MovingAverageStrategy:
@@ -19,6 +19,9 @@ class MovingAverageStrategy:
 
     # TODO: maybe assert the candlestick data for sma indicator because it is necessary for this strategy
     #  (maybe validate function)
+
+    # TODO: OR evaluate whether it would be good to pass the market data object to the strategy and let the strategy add
+    #  the indicators it needs.
 
     @staticmethod
     def calc_buy_signals(candlestick_df: DataFrame) -> OrderedDict:
