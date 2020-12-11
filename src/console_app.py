@@ -2,16 +2,19 @@ import os
 import sys
 import logging_conf  # Init the logger config
 
+from typing import Union, Any
+from collections import OrderedDict
 from market_data import MarketData
 from backtest.backtest import Backtest
 from console_app import backtest_terminal
 from util import TerminalColors as Color
 from strategies.moving_average_strategy import MovingAverageStrategy
+from plotly.graph_objs import Figure
 
 tab_str = "    "  # 4 blanks
 
 
-def display_title_bar():
+def display_title_bar() -> None:
     print(Color.OKGREEN + "##########################" + Color.ENDC)
     print(Color.OKGREEN + "#" + tab_str*2 + "Welcome!" + tab_str*2 + "#" + Color.ENDC)
     print(Color.OKGREEN + "##########################" + Color.ENDC)
@@ -30,22 +33,27 @@ def choose_action() -> int:
         print("Incorrect Input: Must be a number!\n")
 
 
-def create_new_backtest():
+def create_new_backtest() -> None:
     os.system("cls" if os.name == "nt" else "clear")  # Clear console content
 
     # Choose API
-    api = backtest_terminal.choose_api()  # Either the api object (e.g. Binance()) or 99 to quit
+    api: Union[Any, int] = backtest_terminal.choose_api()  # Either the api object (e.g. Binance()) or 99 to quit
     if api == 99:
         return
 
     # Choose symbol
-    symbol = backtest_terminal.choose_symbol()  # Either the symbol string or 99 to quit
+    symbol: Union[str, int] = backtest_terminal.choose_symbol()  # Either the symbol string or 99 to quit
     if symbol == 99:
         return
 
     # Choose strategy
-    strategy = backtest_terminal.choose_strategy()  # Either the strategy object or 99 to quit
+    strategy: Union[Any, int] = backtest_terminal.choose_strategy()  # Either the strategy object or 99 to quit
     if strategy == 99:
+        return
+
+    # Choose backtest time
+    limit: int = backtest_terminal.choose_time()
+    if limit == 99:
         return
 
     # Enter starting capital
@@ -69,27 +77,27 @@ def create_new_backtest():
 
     if user_input == "yes":
         # ==== Start backtest ==== #
-        market_data = MarketData(api.get_candlestick_data(symbol))  # Create market data
+        market_data: MarketData = MarketData(api.get_candlestick_data(symbol, limit=limit))  # Create market data
 
         # Check which indicators need to be added to the market data (based on the strategy we use)
         if type(strategy) == MovingAverageStrategy:
             market_data.add_sma("slow_sma", 30)
 
         # Calculate buy and sell signals
-        buy_signals = strategy.calc_buy_signals(market_data.candlestick_data)
-        sell_signals = strategy.calc_sell_signals(market_data.candlestick_data, buy_signals)
+        buy_signals: OrderedDict = strategy.calc_buy_signals(market_data.candlestick_data)
+        sell_signals: OrderedDict = strategy.calc_sell_signals(market_data.candlestick_data, buy_signals)
 
-        backtest = Backtest(symbol, api.name, strategy.name, starting_capital, buy_quantity, api.trading_fee,
-                            market_data, buy_signals, sell_signals)
+        backtest: Backtest = Backtest(symbol, api.name, strategy.name, starting_capital, buy_quantity, api.trading_fee,
+                                      market_data, buy_signals, sell_signals)
         backtest.run_backtest()
-        candlestick_figure = backtest.create_candlestick_figure()
-        capital_figure = backtest.create_capital_figure()
+        candlestick_figure: Figure = backtest.create_candlestick_figure()
+        capital_figure: Figure = backtest.create_capital_figure()
         backtest.figures_to_html([candlestick_figure, capital_figure])
         backtest.print_stats()
         input("Press Enter to continue...")
 
 
-def display_main_menu():
+def display_main_menu() -> None:
     while True:
         os.system("cls" if os.name == "nt" else "clear")
         display_title_bar()

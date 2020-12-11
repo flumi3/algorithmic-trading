@@ -1,6 +1,6 @@
 import logging
 
-from datetime import datetime
+from datetime import datetime, date
 from logging import Logger
 from plotly.graph_objs import Candlestick, Layout, Figure, Scatter
 from typing import List, Tuple, IO, Union
@@ -232,7 +232,13 @@ class Backtest:
         print(f"Symbol: {self.symbol}")
         print(f"API: {self.api}")
         print(f"Strategy: {self.strategy}")
-        print(f"Time period: xxx - xxx")  # TODO
+
+        # Time period
+        start: float = self.market_data.candlestick_data.iloc[0]["time"] / 1000
+        start_date: date = date.fromtimestamp(start)
+        end: float = self.market_data.candlestick_data.iloc[len(self.market_data.candlestick_data)-1]["time"] / 1000
+        end_date: date = date.fromtimestamp(end)
+        print(f"Time period: {start_date} - {end_date}")  # TODO
 
         print(f"Trading fee: {self.trading_fee * 100}%")
         print(f"Buy quantity: {self.buy_quantity} coins")

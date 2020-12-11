@@ -3,7 +3,6 @@ import os
 from api.binance import Binance
 from strategies.moving_average_strategy import MovingAverageStrategy
 from util import TerminalColors as Color
-from console_app.user_choice import UserChoice
 from typing import Union, Any
 
 
@@ -86,6 +85,35 @@ def choose_strategy():
             if user_input == 1:
                 strategy: MovingAverageStrategy = MovingAverageStrategy()
                 return strategy
+            elif user_input == 99:
+                return 99
+            else:
+                print("Incorrect input. Try again!")
+
+
+def choose_time() -> int:
+    while True:
+        clear_output()
+        print(Color.BOLD + "Choose time of backtest:" + Color.ENDC)
+        print("")
+        print("1) One month")
+        print("2) Three months")
+        print("3) Six months")
+        print("4) One year")
+        print("")
+        try:
+            user_input: int = int(input("Enter number: "))
+        except ValueError:
+            print(incorrect_input_str)
+        else:
+            if user_input == 1:
+                return 720  # 30 days * 24h = 720 candles
+            elif user_input == 2:
+                return 2160
+            elif user_input == 3:
+                return 4320
+            elif user_input == 4:
+                return 8640
             elif user_input == 99:
                 return 99
             else:
