@@ -3,7 +3,7 @@ import logging
 from datetime import datetime, date
 from logging import Logger
 from plotly.graph_objs import Candlestick, Layout, Figure, Scatter
-from typing import List, Tuple, IO, Union
+from typing import List, Tuple, IO, Union, Dict
 from collections import OrderedDict
 from market_data import MarketData
 from indicators import SmoothedMovingAverage
@@ -19,8 +19,8 @@ logger: Logger = logging.getLogger("__main__")
 class Backtest:
 
     def __init__(self, symbol: str, api_name: str, strategy_name: str, capital: float, buy_quantity: float,
-                 trading_fee: float, market_data: MarketData, buy_signals: OrderedDict,
-                 sell_signals: OrderedDict) -> None:
+                 trading_fee: float, market_data: MarketData, buy_signals: OrderedDict = None,
+                 sell_signals: OrderedDict = None) -> None:
         # Backtest configuration
         self.symbol = symbol
         self.api: str = api_name
@@ -42,17 +42,12 @@ class Backtest:
         self.buy_transactions: OrderedDict[UUID, BuyTransaction] = OrderedDict()
         self.sell_transactions: OrderedDict[UUID, SellTransaction] = OrderedDict()
         self.kept_coins: List[UUID] = list()  # List of id's from buy signals that have not been sold yet
-
-        times: List[datetime] = self.market_data.candlestick_data["time"].tolist()
-        capitals: List[float] = [self.capital for i in range(len(times))]
-        self.capitals_df: DataFrame = DataFrame(list(zip(times, capitals)), columns=["time", "capital"])
+        self.capital_over_time: List[Dict[str, float]] = list()  # Represents our capital over the time
+        self.capital_over_time.append({"time": self.market_data.candlestick_data["time"][0], "capital": self.capital})
 
     def create_candlestick_figure(self) -> Figure:
         """Creates a candlestick figure that visualizes the market data of the backtest including the signals"""
-        logger.info("Plotting candlestick chart...")
-
-        # Access candlestick data frame which gets hold by the market data object
-        df = self.market_data.candlestick_data
+        df = self.market_data.candlestick_data  # Access candlestick frame which gets hold by the market data object
 
         # Plot candlestick chart
         candle: Candlestick = Candlestick(
@@ -144,10 +139,16 @@ class Backtest:
         return figure
 
     def create_capital_figure(self) -> Figure:
+        # Get last entry of our market data and add its time and our current capital to the dict so the chart will not
+        # end at the time of the last transaction
+        last_time: datetime = self.market_data.candlestick_data["time"].iloc[-1]
+        self.capital_over_time.append({"time": last_time, "capital": self.capital})
+        capitals_df: DataFrame = DataFrame(self.capital_over_time, columns=["time", "capital"])
+
         """Creates a plotly figure that represents our capital over the time of the backtest"""
         capital_line: Scatter = Scatter(
-            x=self.capitals_df["time"],
-            y=self.capitals_df["capital"],
+            x=capitals_df["time"],
+            y=capitals_df["capital"],
             name="Capital [€]",
             line=dict(color="rgba(0, 0, 255, 1)")
         )
@@ -201,8 +202,8 @@ class Backtest:
                                                      test=True)
         self.update_stats(True, transaction)
 
-        # Change all capital values starting from this exact buying time to the current capital (for the capital chart)
-        self.capitals_df.loc[self.capitals_df["time"] >= signal.time, "capital"] = self.capital
+        # Add time of buy and capital to the list of capital over time
+        self.capital_over_time.append({"time": signal.time, "capital": self.capital})
 
     def sell(self, signal_id: UUID, signal: SellSignal) -> None:
         logger.debug(f"Sell signal accepted! Price: {signal.price}")
@@ -219,8 +220,8 @@ class Backtest:
                                                             test=True)
         self.update_stats(False, sell_transaction, transaction_cost)
 
-        # Change all capital values starting form this exact selling time to the current capital (for the capital chart)
-        self.capitals_df.loc[self.capitals_df["time"] >= signal.time, "capital"] = self.capital
+        # Add time of sell and new capital to the list of capital over time
+        self.capital_over_time.append({"time": signal.time, "capital": self.capital})
 
     def print_stats(self) -> None:
         print("")
@@ -228,7 +229,7 @@ class Backtest:
         print("")
 
         # Backtest config
-        print("---Configuration---")
+        print(Color.HEADER + "---Configuration---" + Color.ENDC)
         print(f"Symbol: {self.symbol}")
         print(f"API: {self.api}")
         print(f"Strategy: {self.strategy}")
@@ -238,7 +239,7 @@ class Backtest:
         start_date: date = date.fromtimestamp(start)
         end: float = self.market_data.candlestick_data.iloc[len(self.market_data.candlestick_data)-1]["time"] / 1000
         end_date: date = date.fromtimestamp(end)
-        print(f"Time period: {start_date} - {end_date}")  # TODO
+        print(f"Time period: {start_date} - {end_date}")
 
         print(f"Trading fee: {self.trading_fee * 100}%")
         print(f"Buy quantity: {self.buy_quantity} coins")
@@ -246,7 +247,7 @@ class Backtest:
         print(f"")
 
         # Test results
-        print("---Test Results---")
+        print(Color.HEADER + "---Test Results---" + Color.ENDC)
         print(f"Capital: {round(self.capital, 2)}€")
         print(f"Money spent: {round(self.money_spent, 2)}€")
         print(f"Money earned: {round(self.money_earned, 2)}€")
@@ -259,7 +260,12 @@ class Backtest:
         print(f"Buy signals accepted: {len(self.buy_transactions)}")
         print(f"Buy signals ignored: {len(self.buy_signals) - len(self.buy_transactions)}")
         print(f"Coins bought: {round(self.coins_bought, 2)}")
-        print(f"Average buying price {round(self.money_spent / len(self.buy_transactions))}€")
+
+        if len(self.buy_transactions) != 0:
+            avg_buying_price: float = round(self.money_spent / len(self.buy_transactions))
+        else:
+            avg_buying_price = 0.0
+        print(f"Average buying price {avg_buying_price}€")
         print("")
 
         # Sell stats
@@ -270,11 +276,10 @@ class Backtest:
         print("")
 
         # Coins still in our possession
-        print("Coins not sold:")
+        print(Color.UNDERLINE + "Coins not sold:" + Color.ENDC)
         for signal_id in self.kept_coins:
             transaction: BuyTransaction = self.buy_transactions.get(signal_id)
-            print(f"ID: {signal_id} \t Price: {round(transaction.price, 2)}€")
-
+            print(f"ID: {signal_id} \t Buying price: {round(transaction.price, 2)}€")  # TODO: add current price
         print("")
         print(Color.OKCYAN + "==============================" + Color.ENDC)
         print("")
@@ -302,6 +307,7 @@ class Backtest:
     @staticmethod
     def figures_to_html(figures: List[Figure], filename: str = "backtest_dashboard.html"):
         """Creates a single html file from a list of plotly figures"""
+        logger.info("Creating backtest dashboard...")
         dashboard: IO = open(filename, 'w')
         dashboard.write("<html><head></head><body>" + "\n")
         for figure in figures:
