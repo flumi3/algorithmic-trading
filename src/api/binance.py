@@ -1,16 +1,14 @@
-import re
 import requests
 import json
 import logging
 import pandas as pd
 
 from util import BinanceAPIException
-from typing import List
-from typing import Dict
+from typing import List, Dict, Union
 from pandas import DataFrame
 from logging import Logger
 from requests.models import Response
-from datetime import datetime
+from json.decoder import JSONDecodeError
 
 logger: Logger = logging.getLogger("__main__")
 
@@ -22,16 +20,22 @@ class Binance:
     TRADING_FEE: float = 0.001  # 0.1% on every trade
 
     def __init__(self):
-        self.name: str = "Binance"
         self.base: str = "https://api.binance.com"
         self.trading_fee = Binance.TRADING_FEE
         self.endpoints: Dict[str, str] = {
-            "klines": "/api/v3/klines"
+            "klines": "/api/v3/klines",
+            "price": "/api/v3/ticker/price"
         }
 
     def get_candlestick_data(self, symbol: str, interval: str = "1h", end_time: int = None,
-                             limit: int = 1000) -> DataFrame:
-        """Accesses candlestick data for a given symbol"""
+                             limit: int = 1000) -> Union[DataFrame, int]:
+        """
+        Accesses candlestick data for a given symbol.
+
+        Returns either a
+            - DataFrame containing the candlestick data
+            - Error code -1 in case of a failure
+        """
         logger.info("Accessing candlestick data...")
 
         # Check whether we need to get more candlesticks than we can access with one API call (1000)
@@ -39,19 +43,16 @@ class Binance:
             return self.__get_coherent_candlestick_data(symbol, interval, limit, end_time)
 
         # Create url
-        params = "?symbol=" + symbol + "&interval=" + interval + "&limit=" + str(limit)
+        params: str = "?symbol=" + symbol + "&interval=" + interval + "&limit=" + str(limit)
         if end_time:
             params = params + "&endTime=" + str(int(end_time))
-        url = self.base + self.endpoints["klines"] + params
+        url: str = self.base + self.endpoints["klines"] + params
 
         # Get data
         response: Response = requests.get(url)
-        data: dict = json.loads(response.text)
-        try:
-            self.__check_http_response(response)
-        except BinanceAPIException as e:
-            logger.error(f"BinanceAPIException occurred while trying to access {url}")
-            logger.error(e.message)
+        data: list = self.decode_http_response(response, url)
+        if data == -1:
+            return -1
 
         # Put data into a data frame and drop unnecessary columns, then rename them
         # [
@@ -70,7 +71,8 @@ class Binance:
         #     "17928899.62484339" // Ignore.
         #   ]
         # ]
-        df: DataFrame = DataFrame.from_dict(data)
+
+        df: DataFrame = DataFrame(data)
         df = df.drop(range(6, 12), axis=1)
         col_names: List[str] = ["time", "open", "high", "low", "close", "volume"]
         df.columns = col_names
@@ -115,37 +117,65 @@ class Binance:
             repeat_rounds = repeat_rounds - 1
         return df
 
+    def get_current_price(self, symbol: str = None) -> Union[int, List[Dict[str, str]], float]:
+        """
+        Returns the current price (float) for the given symbol.
+
+        If no symbol is passed it will return the prices for all symbols within a list of dicts where each dict
+        contains the symbol and its current price.
+
+        Returns with error code -1 in case of failure.
+        """
+        logger.info(f"Accessing current price for symbol '{symbol}'")
+
+        # Create URL
+        url: str = self.base + self.endpoints["price"]
+        if symbol:
+            url = self.base + "?symbol=" + symbol
+
+        # Get data
+        response: Response = requests.get(url)
+        data: Union[dict, list] = self.decode_http_response(response, url)
+        if data == -1:
+            return -1
+
+        if type(data) == list:
+            # Data contains list of dicts that contains prices for all symbols
+            return data
+        elif type(data) == dict:
+            return float(data.get("price"))
+
+    def decode_http_response(self, response: Response, url: str) -> Union[dict, list, int]:
+        """
+        Decodes the response text of a HTTP request.
+
+        The return type is defined by the kind of JSON text that will be decoded:
+        { "name":"John", "age":30, "car":null } -> dict
+        [ "Ford", "BMW", "Fiat" ] -> list
+
+        In case of exception returns with error code -1.
+        """
+
+        # Check the HTTP response and handle a possible BinanceAPIException
+        try:
+            self.__check_http_response(response)
+        except BinanceAPIException as e:
+            logger.error(f"BinanceAPIException occurred while trying to access {url}")
+            logger.error(e.message)
+
+        # Decode
+        try:
+            data: Union[Dict[str, str], List[Dict[str, str]]] = json.loads(response.text)
+            return data
+        except JSONDecodeError as e:
+            logger.error(f"Could not decode content of GET response from {url}")
+            logger.error(e.msg)
+            return -1  # return with error code, because we cannot continue without data
+
     @staticmethod
     def __check_http_response(response: Response) -> None:
+        """Checks status code of the HTTP response and raises a BinanceAPIException in case of error code."""
         if response.status_code >= 400:  # Status code signalizes error
             raise BinanceAPIException(response)
         elif response.status_code >= 500:  # Status code warns, failure is on site of Binance. Request might succeeded
             logger.warning("Internal Binance Error: Execution status unknown")
-
-    # TODO: evaluate
-    @staticmethod
-    def __calculate_limit(start_time: int, end_time: int, interval: str) -> int:
-        x = datetime.fromtimestamp(end_time / 1000)
-        y = datetime.fromtimestamp(start_time / 1000)
-        timedelta = x - y
-
-        days: int = timedelta.days
-        interval_number: int = int(re.search(r"\d+", interval)[0])
-
-        if "m" in interval:
-            # Interval must be in minutes
-            minutes: int = days * 24 * 60
-            print(minutes)
-            limit: int = int(minutes / interval_number)
-            return limit
-        elif "h" in interval:
-            # Interval must be in hours
-            hours: int = days * 24
-            limit: int = int(hours / interval_number)
-            return limit
-        elif "d" in interval:
-            # Interval must be in days
-            limit: int = int(days / interval_number)
-            return limit
-        else:
-            return -1
