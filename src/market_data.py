@@ -1,9 +1,9 @@
 import logging
 
+from logging import Logger
 from typing import List
 from pandas import DataFrame
 from indicators import Indicator, SmoothedMovingAverage
-from logging import Logger
 
 logger: Logger = logging.getLogger("__main__")
 
