@@ -1,5 +1,4 @@
-from datetime import datetime
-from typing import List
+from pathlib import Path
 
 
 class BinanceAPIException(Exception):
@@ -36,23 +35,6 @@ class TerminalColors:
     UNDERLINE = '\033[4m'
 
 
-# TODO: evaluate
-def datestr_to_timestamp(datestr: str) -> int:
-    """
-    Converts a given string of date to a binance timestamp
-
-    The passed date string has have the following format: dd.mm.yyyy
-    The created unix timestamp is in miliseconds and has timezone UTC
-    """
-    values: List[str] = datestr.split(".")
-    day: int = int(values[0])
-    month: int = int(values[1])
-    year: int = int(values[2])
-
-    # Validate time format
-    if (day < 1 or day > 31) or (month < 1 or month > 12) or (year < 1000):
-        raise Exception("Wrong time format")
-
-    dt: datetime = datetime(year, month, day)
-    ts: int = int(dt.timestamp())
-    return ts
+def get_project_root() -> Path:
+    """Returns the path of the project root"""
+    return Path(__file__).parent.parent
