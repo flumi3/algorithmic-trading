@@ -109,6 +109,8 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+venv
+wsl_venv
 
 # Spyder project settings
 .spyderproject
@@ -131,5 +133,21 @@ dmypy.json
 # VS Code
 .vscode
 
+# LaTeX
+docs/*.toc
+docs/*.out
+docs/*.xml
+docs/*.pdf
+docs/*.aux
+docs/*.bbl
+docs/*.bcf
+docs/*.gz
+docs/*.idx
+docs/*.blg
+docs/*.lof
+docs/*.lot
+docs/*.log
+docs/*.lol
+
 # Other
-.html
+dashboards
