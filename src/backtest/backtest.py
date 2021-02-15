@@ -1,33 +1,35 @@
 import logging
+import os
 
 from datetime import datetime, date
 from logging import Logger
+from pathlib import Path
 from plotly.graph_objs import Candlestick, Layout, Figure, Scatter
 from typing import List, Tuple, IO, Union, Dict
 from collections import OrderedDict
-from market_data import MarketData
+from api.binance import Binance
 from indicators import SmoothedMovingAverage
-from backtest.signals import BuySignal, SellSignal
+from signals import BuySignal, SellSignal
 from uuid import UUID
 from pandas import DataFrame
+from strategies.moving_average_strategy import MovingAverageStrategy
 from transactions import BuyTransaction, SellTransaction
-from util import TerminalColors as Color
+from util import TerminalColors as Color, get_project_root
 
 logger: Logger = logging.getLogger("__main__")
 
 
 class Backtest:
 
-    def __init__(self, symbol: str, api_name: str, strategy_name: str, capital: float, buy_quantity: float,
-                 trading_fee: float, market_data: MarketData, buy_signals: OrderedDict = None,
-                 sell_signals: OrderedDict = None) -> None:
+    def __init__(self, symbol: str, api: Union[Binance], strategy: Union[MovingAverageStrategy], capital: float,
+                 buy_quantity: float, kline_limit: int) -> None:
         # Backtest configuration
         self.symbol = symbol
-        self.api: str = api_name
-        self.strategy: str = strategy_name
+        self.api: Union[Binance] = api
+        self.strategy: Union[MovingAverageStrategy] = strategy
         self.starting_capital: float = capital
         self.buy_quantity: float = buy_quantity
-        self.trading_fee: float = trading_fee
+        self.kline_limit: int = kline_limit
         # Statistic properties
         self.money_spent: float = 0
         self.money_earned: float = 0
@@ -35,19 +37,24 @@ class Backtest:
         self.coins_bought: float = 0
         self.coins_sold: float = 0
         # Other
-        self.market_data: MarketData = market_data
         self.capital: float = capital
-        self.buy_signals: OrderedDict[UUID, BuySignal] = buy_signals
-        self.sell_signals: OrderedDict[UUID, SellSignal] = sell_signals
         self.buy_transactions: OrderedDict[UUID, BuyTransaction] = OrderedDict()
         self.sell_transactions: OrderedDict[UUID, SellTransaction] = OrderedDict()
         self.kept_coins: List[UUID] = list()  # List of id's from buy signals that have not been sold yet
         self.capital_over_time: List[Dict[str, float]] = list()  # Represents our capital over the time
-        self.capital_over_time.append({"time": self.market_data.candlestick_data["time"][0], "capital": self.capital})
+        self.dashboard_dir: str = os.path.join(get_project_root(), "dashboards/" + self.strategy.name.replace(" ", "_")
+                                               + "/" + self.symbol)
+        # Init some necessary properties to run the backtest
+        self.candlestick_df: DataFrame = self.api.get_candlestick_data(symbol=self.symbol, limit=self.kline_limit)
+        self.strategy.add_indicators(self.candlestick_df, column_name="close")
+        self.capital_over_time.append({"time": self.candlestick_df["time"][0], "capital": self.capital})
+        self.buy_signals: OrderedDict[UUID, BuySignal] = self.strategy.calc_buy_signals(self.candlestick_df)
+        self.sell_signals: OrderedDict[UUID, SellSignal] = self.strategy.calc_sell_signals(self.candlestick_df,
+                                                                                           self.buy_signals)
 
     def create_candlestick_figure(self) -> Figure:
         """Creates a candlestick figure that visualizes the market data of the backtest including the signals"""
-        df = self.market_data.candlestick_data  # Access candlestick frame which gets hold by the market data object
+        df = self.candlestick_df  # Access candlestick frame which gets hold by the market data object
 
         # Plot candlestick chart
         candle: Candlestick = Candlestick(
@@ -61,13 +68,13 @@ class Backtest:
         data: List[object] = [candle]
 
         # Loop through all indicators of the market data and plot them
-        for indicator in self.market_data.indicators:
+        for indicator in self.strategy.indicators:
             # Smoothed moving average
             if type(indicator) == SmoothedMovingAverage:
                 sma: Scatter = Scatter(
                     x=df["time"],
-                    y=df[indicator.get_name()],
-                    name=indicator.get_name(),
+                    y=df[indicator.name],
+                    name=indicator.name,
                     line=dict(color="rgba(255, 207, 102, 1)")
                 )
                 data.append(sma)
@@ -141,32 +148,33 @@ class Backtest:
     def create_capital_figure(self) -> Figure:
         # Get last entry of our market data and add its time and our current capital to the dict so the chart will not
         # end at the time of the last transaction
-        last_time: datetime = self.market_data.candlestick_data["time"].iloc[-1]
+        last_time: datetime = self.candlestick_df["time"].iloc[-1]
         self.capital_over_time.append({"time": last_time, "capital": self.capital})
-        capitals_df: DataFrame = DataFrame(self.capital_over_time, columns=["time", "capital"])
+        capitals_df: DataFrame = DataFrame(self.capital_over_time, columns=["time", "capital"])#
+        capitals_df = capitals_df.sort_values(by=["time"])
 
         """Creates a plotly figure that represents our capital over the time of the backtest"""
         capital_line: Scatter = Scatter(
             x=capitals_df["time"],
             y=capitals_df["capital"],
-            name="Capital [€]",
+            name="Capital",
             line=dict(color="rgba(0, 0, 255, 1)")
         )
         layout: Layout = Layout(
             xaxis={
                 "title": "Capital over time",
-                "rangeslider": {"visible": False},
+                "rangeslider": {"visible": True},
                 "type": "date"
             },
             yaxis={
                 "fixedrange": False,
-                "title": "Capital"
+                "title": "Capital in Euro"
             }
         )
         figure: Figure = Figure(capital_line, layout=layout)
         return figure
 
-    def run_backtest(self) -> None:
+    def run(self) -> None:
         logger.info("Running backtest...")
 
         for buy_signal_id, buy_signal in self.buy_signals.items():
@@ -193,11 +201,17 @@ class Backtest:
             if sell_signal:
                 self.sell(signal_id, sell_signal)
 
+        self.create_folder_structure()
+        cs_figure: Figure = self.create_candlestick_figure()
+        capital_figure: Figure = self.create_capital_figure()
+        self.figures_to_html([cs_figure, capital_figure])
+        self.print_stats()
+
     def buy(self, signal_id: UUID, signal: BuySignal) -> None:
         logger.debug(f"Buy signal accepted! Price: {signal.price}")
         signal.accepted = True  # Change signal status as accepted
         price: float = signal.price * self.buy_quantity
-        buy_quantity: float = self.buy_quantity - (self.buy_quantity * self.trading_fee)  # 0.1% transaction fee
+        buy_quantity: float = self.buy_quantity - (self.buy_quantity * self.api.trading_fee)  # 0.1% transaction fee
         transaction: BuyTransaction = BuyTransaction(signal_id, self.symbol, price, buy_quantity, signal.time,
                                                      test=True)
         self.update_stats(True, transaction)
@@ -214,7 +228,7 @@ class Backtest:
         # At the time, 1 BTC costs xxx €. Now we want to sell those 0.999 BTC that we bought, so we would earn
         # 0.999 BTC * xxx € - transaction fee
         buy_quantity: float = buy_transaction.quantity  # We bought 0.999 BTC
-        transaction_cost: float = buy_quantity * signal.price * self.trading_fee  # Costs of the fee
+        transaction_cost: float = buy_quantity * signal.price * self.api.trading_fee  # Costs of the fee
         quantity: float = buy_quantity * signal.price - transaction_cost
         sell_transaction: SellTransaction = SellTransaction(signal_id, self.symbol, buy_quantity, quantity, signal.time,
                                                             test=True)
@@ -227,21 +241,23 @@ class Backtest:
         print("")
         print(Color.OKCYAN + "========== BACKTEST ==========" + Color.ENDC)
         print("")
+        print(f"Find your dashboard at {self.dashboard_dir}")
+        print("")
 
         # Backtest config
         print(Color.HEADER + "---Configuration---" + Color.ENDC)
         print(f"Symbol: {self.symbol}")
-        print(f"API: {self.api}")
-        print(f"Strategy: {self.strategy}")
+        print(f"API: {self.api.base}")
+        print(f"Strategy: {self.strategy.name}")
 
         # Time period
-        start: float = self.market_data.candlestick_data.iloc[0]["time"] / 1000
+        start: float = self.candlestick_df.iloc[0]["time"] / 1000
         start_date: date = date.fromtimestamp(start)
-        end: float = self.market_data.candlestick_data.iloc[len(self.market_data.candlestick_data)-1]["time"] / 1000
+        end: float = self.candlestick_df.iloc[len(self.candlestick_df)-1]["time"] / 1000
         end_date: date = date.fromtimestamp(end)
         print(f"Time period: {start_date} - {end_date}")
 
-        print(f"Trading fee: {self.trading_fee * 100}%")
+        print(f"Trading fee: {self.api.trading_fee * 100}%")
         print(f"Buy quantity: {self.buy_quantity} coins")
         print(f"Starting capital: {self.starting_capital}€")
         print(f"")
@@ -291,7 +307,7 @@ class Backtest:
             assert type(transaction) == BuyTransaction
             self.capital -= transaction.price
             self.coins_bought += transaction.quantity
-            self.transaction_costs += transaction.price * self.trading_fee
+            self.transaction_costs += transaction.price * self.api.trading_fee
             self.money_spent += transaction.price
             self.kept_coins.append(transaction.transaction_id)  # Add signal id to list of coins in our possession
             self.buy_transactions[transaction.transaction_id] = transaction  # Add to dict of buy transactions
@@ -304,11 +320,26 @@ class Backtest:
             self.kept_coins.remove(transaction.transaction_id)  # Remove signal id from list of coins in our possession
             self.sell_transactions[transaction.transaction_id] = transaction  # Add to dict of sell transactions
 
-    @staticmethod
-    def figures_to_html(figures: List[Figure], filename: str = "backtest_dashboard.html"):
-        """Creates a single html file from a list of plotly figures"""
+    def create_folder_structure(self):
+        """
+        Creates the folder structure in which all executed backtest dashboards are stored.
+
+        The symbol structure goes like this: .../Algorithmic-Trading/dashboards/<strategy name>/<symbol>/
+        """
+        logger.debug("Creating backtest folder structure...")
+        Path(self.dashboard_dir).mkdir(parents=True, exist_ok=True)
+
+    def figures_to_html(self, figures: List[Figure]):
+        """Creates a single HTML file from a list of plotly figures"""
         logger.info("Creating backtest dashboard...")
-        dashboard: IO = open(filename, 'w')
+
+        # Create dashboard name/path based on the date of the backtest
+        timestamp: str = datetime.now().strftime("%Y%m%d-%H%M%S")
+        filename: str = self.symbol + "_" + timestamp + ".html"
+        path: str = os.path.join(self.dashboard_dir, filename)
+
+        # Create html file
+        dashboard: IO = open(path, 'w')
         dashboard.write("<html><head></head><body>" + "\n")
         for figure in figures:
             inner_html: str = figure.to_html().split('<body>')[1].split('</body>')[0]

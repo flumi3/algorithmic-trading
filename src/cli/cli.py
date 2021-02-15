@@ -1,9 +1,8 @@
 import sys
 import logging_conf  # Init the logger config (do not remove)
 
-from pandas import DataFrame
 from prompt_toolkit import prompt
-from typing import List, Union, OrderedDict
+from typing import List, Union
 from api.binance import Binance
 from backtest.backtest import Backtest
 from bot import Bot
@@ -11,7 +10,7 @@ from bot_runner import BotRunner
 from cli.choices import choose_api, choose_symbol, choose_strat, choose_time_frame
 from cli.headers import HEADER_NEW_BACKTEST, HEADER_WELCOME, HEADER_NEW_BOT, HEADER_DISPLAY_BOTS
 from cli.cli_util import choose_option, clear_output, display_header, print_bold
-from cli.validator import FloatValidator, YesNoValidator
+from cli.validators import FloatValidator, YesNoValidator
 from strategies.moving_average_strategy import MovingAverageStrategy
 from util import TerminalColors
 
@@ -83,20 +82,8 @@ class CommandLineInterface:
         print("")
 
         if user_input == "y":
-            # Create market data
-            candlestick_df: DataFrame = api.get_candlestick_data(symbol, limit=kline_limit)
-
-            # Let the chosen strategy decide which indicators to add to the market data
-            strategy.add_indicators(candlestick_df, column_name="close")
-
-            # Calculate buy and sell signals
-            buy_signals: OrderedDict = strategy.calc_buy_signals(candlestick_df)
-            sell_signals: OrderedDict = strategy.calc_sell_signals(candlestick_df, buy_signals)
-
             # Create backtest
-            backtest: Backtest = Backtest(symbol, api.base, strategy.name, starting_capital, buy_quantity,
-                                          api.trading_fee, candlestick_df, strategy.indicators, buy_signals,
-                                          sell_signals)
+            backtest: Backtest = Backtest(symbol, api, strategy, starting_capital, buy_quantity, kline_limit)
             backtest.run()
             input("Press Enter to continue...")
         elif user_input == "n":
