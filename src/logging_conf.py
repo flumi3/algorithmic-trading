@@ -11,8 +11,8 @@ FORMATTER: Formatter = Formatter('%(asctime)s - %(levelname)s - [%(module)s.py]:
 logger: Logger = logging.getLogger("__main__")
 logger.setLevel(logging.INFO)
 
-# Info log console handler
+# Debug log console handler
 console_handler: StreamHandler = StreamHandler(sys.stdout)  # Create handler
-console_handler.setLevel(logging.DEBUG)  # Set level to INFO so every INFO log gets displayed in the stdout
+console_handler.setLevel(logging.DEBUG)  # Set level to DEBUG so every DEBUG log gets passed to the logger
 console_handler.setFormatter(FORMATTER)  # Set formatting of the log output
 logger.addHandler(console_handler)  # Add handler to the logger

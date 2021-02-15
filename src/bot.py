@@ -7,7 +7,7 @@ from uuid import UUID
 from pandas import DataFrame
 from prompt_toolkit import prompt
 from api.binance import Binance
-from cli.validator import YesNoValidator
+from cli.validators import YesNoValidator
 from signals import BuySignal, SellSignal
 from market_data import MarketData
 from strategies.moving_average_strategy import MovingAverageStrategy
@@ -40,7 +40,7 @@ class Bot:
         self.status = self.STATUS_INIT
 
     def get_init_data(self) -> MarketData:
-        logger.info(f"Collecting initial market data for bot {self.name}...")
+        logger.info(f"Collecting initial market data for bot '{self.name}'...")
 
         # Calculate limit: 2 months * 30 days * 24 hours * 60 minutes = 86.400 candles
         #   -> Two months of price data for every minute
