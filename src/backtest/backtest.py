@@ -294,8 +294,7 @@ class Backtest:
         # Coins still in our possession
         print(Color.UNDERLINE + "Coins not sold:" + Color.ENDC)
         for signal_id in self.kept_coins:
-            transaction: BuyTransaction = self.buy_transactions.get(signal_id)
-            print(f"ID: {signal_id} \t Buying price: {round(transaction.price, 2)}€")  # TODO: add current price
+            print(f"ID: {signal_id} \t Current price: {round(self.api.get_current_price(), 2)}€")
         print("")
         print(Color.OKCYAN + "==============================" + Color.ENDC)
         print("")

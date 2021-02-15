@@ -3,8 +3,6 @@ import uuid
 from datetime import datetime
 from uuid import UUID
 
-# TODO: Decide whether to put them into one class or let them be two separate ones with the same properties
-
 
 class BuySignal:
     def __init__(self, price: float, time: datetime, ) -> None:
