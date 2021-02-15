@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import requests
 import json
 import logging
@@ -12,29 +14,49 @@ from json.decoder import JSONDecodeError
 
 logger: Logger = logging.getLogger("__main__")
 
-# Symbols
-BITCOIN_EURO: str = "BTCEUR"
-
 
 class Binance:
     TRADING_FEE: float = 0.001  # 0.1% on every trade
 
+    # Symbols
+    SYMBOL_BITCOIN_EURO: str = "BTCEUR"
+
+    # Order sides
+    SIDE_BUY: str = "BUY"
+    SIDE_SELL: str = "SELL"
+
+    # Order types
+    ORDER_TYPE_LIMIT = "LIMIT"
+    ORDER_TYPE_MARKET = "MARKET"
+    ORDER_TYPE_STOP_LOSS = "STOP_LOSS"
+    ORDER_TYPE_STOP_LOSS_LIMIT = "STOP_LOSS_LIMIT"
+    ORDER_TYPE_TAKE_PROFIT = "TAKE_PROFIT"
+    ORDER_TYPE_TAKE_PROFIT_LIMIT = "TAKE_PROFIT_LIMIT"
+    ORDER_TYPE_LIMIT_MAKER = "LIMIT_MAKER"
+
+    # Endpoints
+    ENDPOINT_KLINES = "/api/v3/klines"
+    ENDPOINT_PRICE = "/api/v3/ticker/price"
+    ENDPOINT_TIME = "/api/v3/time"
+    ENDPOINT_TEST_ORDER = "/api/v3/order/test"
+    ENDPOINT_EXCHANGE_INFO = "/api/v3/exchangeInfo"
+
+    # Filter types
+    FILTER_TYPE_PRICE_FILTER = "PRICE_FILTER"
+    FILTER_TYPE_LOT_SIZE = "LOT_SIZE"
+
     def __init__(self):
         self.base: str = "https://api.binance.com"
         self.trading_fee = Binance.TRADING_FEE
-        self.endpoints: Dict[str, str] = {
-            "klines": "/api/v3/klines",
-            "price": "/api/v3/ticker/price"
-        }
 
     def get_candlestick_data(self, symbol: str, interval: str = "1h", end_time: int = None,
-                             limit: int = 1000) -> Union[DataFrame, int]:
+                             limit: int = 1000) -> Union[DataFrame, bool]:
         """
         Accesses candlestick data for a given symbol.
 
-        Returns either a
+        Returns:
             - DataFrame containing the candlestick data
-            - Error code -1 in case of a failure
+            - False in case of a failure
         """
         logger.info("Accessing candlestick data...")
 
@@ -42,17 +64,16 @@ class Binance:
         if limit > 1000:
             return self.__get_coherent_candlestick_data(symbol, interval, limit, end_time)
 
-        # Create url
-        params: str = "?symbol=" + symbol + "&interval=" + interval + "&limit=" + str(limit)
-        if end_time:
-            params = params + "&endTime=" + str(int(end_time))
-        url: str = self.base + self.endpoints["klines"] + params
-
         # Get data
-        response: Response = requests.get(url)
-        data: list = self.decode_http_response(response, url)
-        if data == -1:
-            return -1
+        params: List[str] = [
+            "symbol=" + symbol,
+            "interval=" + interval,
+            "limit=" + str(limit)
+        ]
+        data: Union[dict, list, bool] = self.http_request(endpoint=self.ENDPOINT_KLINES, params=params)
+        if not data:
+            logger.error("Missing candlestick data")
+            return False
 
         # Put data into a data frame and drop unnecessary columns, then rename them
         # [
@@ -71,7 +92,6 @@ class Binance:
         #     "17928899.62484339" // Ignore.
         #   ]
         # ]
-
         df: DataFrame = DataFrame(data)
         df = df.drop(range(6, 12), axis=1)
         col_names: List[str] = ["time", "open", "high", "low", "close", "volume"]
@@ -117,27 +137,23 @@ class Binance:
             repeat_rounds = repeat_rounds - 1
         return df
 
-    def get_current_price(self, symbol: str = None) -> Union[int, List[Dict[str, str]], float]:
+    def get_current_price(self, symbol: str = None) -> Union[List[Dict[str, str]], float, bool]:
         """
         Returns the current price (float) for the given symbol.
 
         If no symbol is passed it will return the prices for all symbols within a list of dicts where each dict
         contains the symbol and its current price.
 
-        Returns with error code -1 in case of failure.
+        Returns false in case of failure.
         """
         logger.info(f"Accessing current price for symbol '{symbol}'")
 
-        # Create URL
-        url: str = self.base + self.endpoints["price"]
-        if symbol:
-            url = self.base + "?symbol=" + symbol
-
         # Get data
-        response: Response = requests.get(url)
-        data: Union[dict, list] = self.decode_http_response(response, url)
-        if data == -1:
-            return -1
+        params: List[str] = ["symbol=" + symbol]
+        data: Union[dict, list, bool] = self.http_request(endpoint=self.ENDPOINT_PRICE, params=params)
+        if not data:
+            logger.error("Missing price data")
+            return False
 
         if type(data) == list:
             # Data contains list of dicts that contains prices for all symbols
@@ -145,37 +161,115 @@ class Binance:
         elif type(data) == dict:
             return float(data.get("price"))
 
-    def decode_http_response(self, response: Response, url: str) -> Union[dict, list, int]:
+    def get_server_time(self) -> Union[datetime, bool]:
         """
-        Decodes the response text of a HTTP request.
+        Get current Binance server time.
+
+        Returns:
+            - Server time in datetime format
+            - False in case of error
+        """
+
+        # Get data
+        data: Union[dict, list, bool] = self.http_request(endpoint=self.ENDPOINT_TIME)
+        if not data:
+            logger.error("Missing server time data")
+            return False
+
+        time: datetime = datetime.fromtimestamp(data.get("serverTime") / 1000)
+        return time
+
+    def __get_exchange_info(self) -> Union[Dict, bool]:
+        """
+        Get exchange trading rules and symbol information on all currently tradable symbols.
+
+        Returns:
+            - Exchange information as dict
+            - False in case of error
+        """
+        # Get data
+        data: Union[dict, list, bool] = self.http_request(endpoint=self.ENDPOINT_EXCHANGE_INFO)
+        if not data:
+            logger.error("Missing exchange info data")
+            return False
+        else:
+            return data
+
+    def __get_symbol_data(self, symbol: str) -> Dict[str, Union[str, list]]:
+        """
+        Returns all symbol data for a given symbol.
+
+        {
+          "symbol": "ETHBTC",
+          "status": "TRADING",
+          "baseAsset": "ETH",
+          "baseAssetPrecision": 8,
+          "quoteAsset": "BTC",
+          "filters": [
+            ...
+          ],
+          ...
+        }
+        """
+        exchange_info: Dict = self.__get_exchange_info()
+        # Get list of dicts where each dict contains data for one symbol
+        symbols: List[Dict[str, str]] = exchange_info.get("symbols")
+        for symbol_data in symbols:
+            # Loop through all symbol data until we have found the data for the symbol we search for
+            if symbol_data.get("symbol") == symbol:
+                return symbol_data
+
+    def get_symbol_filters(self, symbol:str) -> List[Dict[str, str]]:
+        """
+        Returns all filters (trading rules) for a given symbol.
+
+        "filters": [
+            {
+              "filterType": "MARKET_LOT_SIZE",
+              "minQty": "0.00100000",
+              "maxQty": "100000.00000000",
+              "stepSize": "0.00100000"
+            },
+            ...
+        ],
+        """
+        symbol_data: Dict[str, Union[str, list]] = self.__get_symbol_data(symbol)
+        filters: List[Dict[str, str]] = symbol_data.get("filters")
+        return filters
+
+    def http_request(self, endpoint: str, params: List[str] = None) -> Union[dict, list, bool]:
+        """
+        Creates and executes a HTTP request with the given url and parameters.
 
         The return type is defined by the kind of JSON text that will be decoded:
         { "name":"John", "age":30, "car":null } -> dict
         [ "Ford", "BMW", "Fiat" ] -> list
 
-        In case of exception returns with error code -1.
+        Returns false in case of exception.
         """
+        # Create URL
+        url: str = self.base + endpoint
+        for i in range(len(params)):
+            if i == 0:
+                # First param has to connect with a question mark to the url
+                url = url + "?" + params[i]
+            else:
+                # Other params connect with a ampersand
+                url = url + "&" + params[i]
 
-        # Check the HTTP response and handle a possible BinanceAPIException
+        # Get response and check for whether the request was successful
+        logger.debug(f"Calling {url}...")
+        response: Response = requests.get(url)
         try:
-            self.__check_http_response(response)
-        except BinanceAPIException as e:
-            logger.error(f"BinanceAPIException occurred while trying to access {url}")
-            logger.error(e.message)
+            response.raise_for_status()
+        except requests.exceptions.HTTPError as e:
+            logger.error(f"HTTP error occurred: {e}")
 
-        # Decode
+        # Decode data
         try:
-            data: Union[Dict[str, str], List[Dict[str, str]]] = json.loads(response.text)
-            return data
+            data: Union[Dict[str, str], List[Dict[str, str]]] = response.json()
         except JSONDecodeError as e:
-            logger.error(f"Could not decode content of GET response from {url}")
-            logger.error(e.msg)
-            return -1  # return with error code, because we cannot continue without data
-
-    @staticmethod
-    def __check_http_response(response: Response) -> None:
-        """Checks status code of the HTTP response and raises a BinanceAPIException in case of error code."""
-        if response.status_code >= 400:  # Status code signalizes error
-            raise BinanceAPIException(response)
-        elif response.status_code >= 500:  # Status code warns, failure is on site of Binance. Request might succeeded
-            logger.warning("Internal Binance Error: Execution status unknown")
+            logger.error(f"Could not decode data from {url}: {e}")
+            return False
+        else:
+            return data
