@@ -5,7 +5,7 @@ from prompt_toolkit import print_formatted_text, prompt
 from prompt_toolkit.formatted_text import FormattedText
 from prompt_toolkit.styles import Style
 
-from cli.validator import NumberValidator
+from cli.validators import NumberValidator
 
 style: Style = Style.from_dict(
     {

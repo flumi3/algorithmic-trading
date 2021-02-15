@@ -2,7 +2,7 @@ import logging
 
 from datetime import datetime
 from logging import Logger
-from typing import Union, List
+from typing import Union, List, Dict
 from uuid import UUID
 from pandas import DataFrame
 from prompt_toolkit import prompt
@@ -37,6 +37,7 @@ class Bot:
         self.buy_signals: List[BuySignal] = list()
         self.buy_transactions: List[BuyTransaction] = list()
         self.sell_transactions: List[SellTransaction] = list()
+        self.not_sold_yet: Dict[UUID, BuySignal] = list()
         self.status = self.STATUS_INIT
 
     def get_init_data(self) -> MarketData:
@@ -81,21 +82,8 @@ class Bot:
                     self.buy(buy_signal)
 
     def evaluate_sell(self) -> None:
-        # Get all sell transaction ids
-        sell_transaction_ids: List[UUID] = list()
-        for sell_trans in self.sell_transactions:
-            sell_transaction_ids.append(sell_trans.transaction_id)
-
-        # Go through list of buy signals and check whether we have an ID that has not had a corresponding sell signal
-        # yet. This means that the coin that we have bought, has not been sold with profit until now.
-        kept_coins: List[BuySignal] = list()
-        for buy_signal in self.buy_signals:
-            if buy_signal.signal_id not in sell_transaction_ids:
-                kept_coins.append(buy_signal)
-
-        # Check whether those buy transactions meet the conditions of a sell signal
-        market_data_df = self.market_data.create_dataframe()
-        sell_signals: List[SellSignal] = self.strategy.check_sell_condition(market_data_df, kept_coins)
+        signals: List[BuySignal] = list(self.not_sold_yet.values())  # Extract signals from the dict
+        sell_signals: List[SellSignal] = self.strategy.check_sell_condition(self.market_data, signals)
         if sell_signals:
             for signal in sell_signals:
                 self.sell(signal)
@@ -105,6 +93,7 @@ class Bot:
         buy_transaction: BuyTransaction = BuyTransaction(buy_signal.signal_id, self.symbol, trans_price,
                                                          self.buy_quantity, buy_signal.time, True)
         self.buy_transactions.append(buy_transaction)
+        self.not_sold_yet[buy_signal.signal_id] = buy_signal
 
     def sell(self, sell_signal: SellSignal):
         # Get corresponding buy transaction
@@ -115,3 +104,4 @@ class Bot:
                                                                     buy_transaction.quantity * sell_signal.price,
                                                                     sell_signal.time, True)
                 self.sell_transactions.append(sell_transaction)
+                self.not_sold_yet.pop(sell_signal.signal_id)

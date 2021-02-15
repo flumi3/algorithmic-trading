@@ -10,21 +10,28 @@ logger: Logger = logging.getLogger("__main__")
 # Parent class 
 class Indicator:
     def __init__(self, name: str) -> None:
-        self.__name: str = name
-
-    def get_name(self) -> str:
-        return self.__name
+        self.name: str = name
     
 
 # Subclass
 class SmoothedMovingAverage(Indicator):
+
     def __init__(self, name: str, period: int) -> None:
         logger.info(f"Creating new indicator {name}...")
         Indicator.__init__(self, name)  # Init parent class
-        self.__period: int = period
+        self.period: int = period
 
-    def add_data(self, candlestick_data: DataFrame):
-        logger.info(f"Adding indicator {self.get_name()} to market data...")
-        df: DataFrame = candlestick_data
-        df[self.get_name()] = sma(df["close"].tolist(), self.__period)
+    def add_data(self, data: DataFrame, column_name: str) -> DataFrame:
+        """
+        Adds smoothed moving average to the data.
 
+        Parameters:
+            data: The data frame to which we will add the sma
+            column_name: The name of the column containing the data on which we calculate the sma
+
+        Return:
+            The data frame that now contains the indicator
+        """
+        logger.info(f"Adding indicator '{self.name}' to market data...")
+        data[self.name] = sma(data[column_name].tolist(), self.period)
+        return data
