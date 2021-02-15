@@ -28,9 +28,7 @@ class MarketData:
     def create_dataframe(self) -> DataFrame:
         return DataFrame(list(zip(self.times, self.prices)), columns=["time", "price"])
 
-
-# market data mit einem data property das einen dataframe hält. dataframe enthält bestimmte feste anzahl an entries,
-# welche man vorher angeben muss. entries bestehen nur aus zeit und preis. es gibt dann eine add entry methode die
-# einen neuen entry hinten anhängt und den ältesten entry aus dem df löscht, um das limit einzuhalten. dann kann man
-# immer das gleiche market data object verwalten und auf kopien dessen die indicator anwenden und check ob der neueste
-# entry die strat conditions matched
+    def get_latest_entry(self):
+        time: datetime = self.times[len(self.times)-1]
+        price: float = self.prices[len(self.times)-1]
+        return time, price
