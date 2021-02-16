@@ -196,7 +196,7 @@ class Backtest:
                 logger.debug("Buy signal ignored! Not enough capital.")
 
         # Check sell options for all coins we have not sold yet
-        for signal_id in self.kept_coins:
+        for signal_id in self.kept_coins.copy():
             sell_signal: SellSignal = self.sell_signals.get(signal_id)
             if sell_signal:
                 self.sell(signal_id, sell_signal)
@@ -204,7 +204,9 @@ class Backtest:
         self.create_folder_structure()
         cs_figure: Figure = self.create_candlestick_figure()
         capital_figure: Figure = self.create_capital_figure()
-        self.figures_to_html([cs_figure, capital_figure])
+        html_figures: str = self.figures_to_html([cs_figure, capital_figure])
+        html_stats: str = self.stats_to_html()
+        self.create_html_dashboard(html_figures, html_stats)
         self.print_stats()
 
     def buy(self, signal_id: UUID, signal: BuySignal) -> None:
@@ -238,6 +240,7 @@ class Backtest:
         self.capital_over_time.append({"time": signal.time, "capital": self.capital})
 
     def print_stats(self) -> None:
+        current_price: float = round(self.api.get_current_price(symbol=self.symbol), 2)
         print("")
         print(Color.OKCYAN + "========== BACKTEST ==========" + Color.ENDC)
         print("")
@@ -251,10 +254,11 @@ class Backtest:
         print(f"Strategy: {self.strategy.name}")
 
         # Time period
+        date_format: str = "%d.%m.%Y"
         start: float = self.candlestick_df.iloc[0]["time"] / 1000
-        start_date: date = date.fromtimestamp(start)
+        start_date: str = date.fromtimestamp(start).strftime(date_format)
         end: float = self.candlestick_df.iloc[len(self.candlestick_df)-1]["time"] / 1000
-        end_date: date = date.fromtimestamp(end)
+        end_date: str = date.fromtimestamp(end).strftime(date_format)
         print(f"Time period: {start_date} - {end_date}")
 
         print(f"Trading fee: {self.api.trading_fee * 100}%")
@@ -275,7 +279,7 @@ class Backtest:
         print(f"Buy signals created: {len(self.buy_signals)}")
         print(f"Buy signals accepted: {len(self.buy_transactions)}")
         print(f"Buy signals ignored: {len(self.buy_signals) - len(self.buy_transactions)}")
-        print(f"Coins bought: {round(self.coins_bought, 2)}")
+        print(f"Coins bought: {round(self.coins_bought, 4)}")
 
         if len(self.buy_transactions) != 0:
             avg_buying_price: float = round(self.money_spent / len(self.buy_transactions))
@@ -294,7 +298,7 @@ class Backtest:
         # Coins still in our possession
         print(Color.UNDERLINE + "Coins not sold:" + Color.ENDC)
         for signal_id in self.kept_coins:
-            print(f"ID: {signal_id} \t Current price: {round(self.api.get_current_price(), 2)}€")
+            print(f"ID: {signal_id} \t Current price: {current_price}€")
         print("")
         print(Color.OKCYAN + "==============================" + Color.ENDC)
         print("")
@@ -328,21 +332,71 @@ class Backtest:
         logger.debug("Creating backtest folder structure...")
         Path(self.dashboard_dir).mkdir(parents=True, exist_ok=True)
 
-    def figures_to_html(self, figures: List[Figure]):
-        """Creates a single HTML file from a list of plotly figures"""
-        logger.info("Creating backtest dashboard...")
+    def stats_to_html(self) -> str:
+        if len(self.buy_transactions) != 0:
+            average_buying_price_var: float = round(self.money_spent / len(self.buy_transactions))
+        else:
+            average_buying_price_var = 0.0
+        symbol_var = self.symbol
+        api_var = self.api.base
+        strategy_var = self.strategy.name
+        trading_fee_var = self.api.trading_fee * 100
+        buy_quantity_var = self.buy_quantity
+        starting_capital_var = self.starting_capital
+        capital_var = round(self.capital, 2)
+        money_spent_var = round(self.money_spent, 2)
+        money_earned_var = round(self.money_earned, 2)
+        transaction_fees_var = round(self.transaction_costs, 2)
+        profit_var = round(self.money_earned - self.money_spent, 2)
+        buy_signals_created_var = len(self.buy_signals)
+        buy_signals_accepted_var = len(self.buy_transactions)
+        buy_signals_ignored_var = len(self.buy_signals) - len(self.buy_transactions)
+        coins_bought_var = round(self.coins_bought, 4)
+        sell_signals_created_var = len(self.sell_signals)
+        sell_signals_accepted_var = len(self.sell_transactions)
+        sell_signals_ignored_var = len(self.sell_signals) - len(self.sell_transactions)
+        coins_sold_var = round(self.coins_sold, 5)
+        coins_not_sold_var = len(self.kept_coins)
+        current_price_var = round(self.api.get_current_price(symbol=self.symbol), 2)
 
+        # Get html code skeleton from file
+        path: str = os.path.join(get_project_root(), "src/backtest/backtest_stats.html")
+        f = open(path, "r")
+        html_code: str = f.read()
+
+        # Substitute variables in html code with local variables from here
+        html_code = html_code.format(**locals())
+        return html_code
+
+    @staticmethod
+    def figures_to_html(figures: List[Figure]) -> str:
+        """Creates a single HTML file from a list of plotly figures"""
+        logger.debug("Converting plot figures to html code...")
+        inner_html: str = ""
+        for figure in figures:
+            inner_html = inner_html + figure.to_html().split('<body>')[1].split('</body>')[0]
+        return inner_html
+
+    def create_html_dashboard(self, html_figures: str, html_stats: str) -> None:
+        logger.info("Creating backtest dashboard...")
         # Create dashboard name/path based on the date of the backtest
         timestamp: str = datetime.now().strftime("%Y%m%d-%H%M%S")
         filename: str = self.symbol + "_" + timestamp + ".html"
         path: str = os.path.join(self.dashboard_dir, filename)
 
-        # Create html file
-        dashboard: IO = open(path, 'w')
+        # Create headline
+        html_headline: str = f"""
+        <p><br /></p>
+        <h1 style="text-align: center;"><span style="font-size: 48px; font-family: Arial, Helvetica, sans-serif;">Backtest Dashboard</span></h1>
+        <h1 style="text-align: center;"><span style="font-size: 24px; font-family: Arial, Helvetica, sans-serif;">{date.today().strftime("%d.%m.%Y")}</span></h1>
+        """
+
+        # Write content to html file
+        dashboard: IO = open(path, "w")
         dashboard.write("<html><head></head><body>" + "\n")
-        for figure in figures:
-            inner_html: str = figure.to_html().split('<body>')[1].split('</body>')[0]
-            dashboard.write(inner_html)
+        dashboard.write(html_headline)  # add headline
+        dashboard.write(html_figures)  # add plots
+        dashboard.write(html_stats)  # add backtest stats
         dashboard.write("</body></html>" + "\n")
 
     @staticmethod
