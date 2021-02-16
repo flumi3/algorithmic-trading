@@ -5,7 +5,6 @@ from typing import List, Union
 from pandas import DataFrame
 from collections import OrderedDict
 from logging import Logger
-
 from market_data import MarketData
 from signals import BuySignal, SellSignal
 from uuid import UUID

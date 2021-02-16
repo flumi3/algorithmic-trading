@@ -1,9 +1,8 @@
 import logging
-from datetime import datetime
 
+from datetime import datetime
 from logging import Logger
 from typing import List
-
 from pandas import DataFrame
 
 logger: Logger = logging.getLogger("__main__")

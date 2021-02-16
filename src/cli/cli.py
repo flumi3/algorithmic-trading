@@ -125,9 +125,26 @@ class CommandLineInterface:
         display_header(HEADER_NEW_BOT)
         description: str = prompt("Enter description (optional): ")
 
-        # Create bot
-        bot: Bot = Bot(name, symbol, api, strategy, starting_capital, buy_quantity, description)
-        bot_id: int = self.bot_runner.add_bot(bot)
+        display_header(HEADER_NEW_BOT)
+        print_bold("Check configuration: ")
+        print("")
+        print(f"Name: {name}")
+        print(f"Symbol: {symbol}")
+        print(f"API: {api.base}")
+        print(f"Strategy: {strategy.name}")
+        print(f"Starting capital: {starting_capital}")
+        print(f"Buy quantity: {buy_quantity}")
+        print(f"Description: {description}")
+        print("")
+        user_input: str = prompt("Do you want to start the backtest? [y/n] ", validator=YesNoValidator())
+        print("")
+
+        if user_input == "y":
+            # Create bot
+            bot: Bot = Bot(name, symbol, api, strategy, starting_capital, buy_quantity, description)
+            bot_id: int = self.bot_runner.add_bot(bot)
+        elif user_input == "n":
+            return
 
     def display_trading_bots(self) -> None:
         display_header(HEADER_DISPLAY_BOTS)

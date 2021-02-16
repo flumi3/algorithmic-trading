@@ -1,11 +1,8 @@
-from datetime import datetime
-
 import requests
-import json
 import logging
 import pandas as pd
 
-from util import BinanceAPIException
+from datetime import datetime
 from typing import List, Dict, Union
 from pandas import DataFrame
 from logging import Logger
