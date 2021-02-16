@@ -162,5 +162,3 @@ class CommandLineInterface:
             print(f"{bot_id}\t\t{bot.name}\t\t{bot.symbol}\t\t{status_text}")
         print("")
         input("Press Enter to go back...")
-
-

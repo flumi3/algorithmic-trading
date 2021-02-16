@@ -223,7 +223,7 @@ class Binance:
             if symbol_data.get("symbol") == symbol:
                 return symbol_data
 
-    def get_symbol_filters(self, symbol:str) -> List[Dict[str, str]]:
+    def get_symbol_filters(self, symbol: str) -> List[Dict[str, str]]:
         """
         Returns all filters (trading rules) for a given symbol.
 

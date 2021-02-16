@@ -37,7 +37,7 @@ class Bot:
         self.buy_signals: List[BuySignal] = list()
         self.buy_transactions: List[BuyTransaction] = list()
         self.sell_transactions: List[SellTransaction] = list()
-        self.not_sold_yet: Dict[UUID, BuySignal] = list()
+        self.not_sold_yet: Dict[UUID, BuySignal] = dict()
         self.status = self.STATUS_INIT
 
     def get_init_data(self) -> MarketData:
