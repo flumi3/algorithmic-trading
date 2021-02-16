@@ -20,11 +20,15 @@ def choose_api(header: str) -> Union[Binance, int]:
 def choose_symbol(header: str) -> Union[str, int]:
     display_header(header)
     symbol_title: str = "Choose symbol:"
-    symbol_options: List[str] = ["1) Bitcoin/Euro", "99) Quit"]
+    symbol_options: List[str] = ["1) Bitcoin/Euro", "2) Ethereum/Euro", "3) Litecoin/Euro", "99) Quit"]
     symbol_choice: int = choose_option(symbol_title, symbol_options)
 
     if symbol_choice == 1:
         return Binance.SYMBOL_BITCOIN_EURO
+    if symbol_choice == 2:
+        return Binance.SYMBOL_ETHEREUM_EURO
+    if symbol_choice == 3:
+        return Binance.SYMBOL_LITECOIN_EURO
     elif symbol_choice == 99:
         return 99
 

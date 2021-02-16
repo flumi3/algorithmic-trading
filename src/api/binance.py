@@ -17,6 +17,8 @@ class Binance:
 
     # Symbols
     SYMBOL_BITCOIN_EURO: str = "BTCEUR"
+    SYMBOL_ETHEREUM_EURO: str = "ETHEUR"
+    SYMBOL_LITECOIN_EURO: str = "LTCEUR"
 
     # Order sides
     SIDE_BUY: str = "BUY"
@@ -67,6 +69,8 @@ class Binance:
             "interval=" + interval,
             "limit=" + str(limit)
         ]
+        if end_time:
+            params.append("endTime=" + str(end_time))
         data: Union[dict, list, bool] = self.http_request(endpoint=self.ENDPOINT_KLINES, params=params)
         if not data:
             logger.error("Missing candlestick data")
@@ -105,6 +109,8 @@ class Binance:
     def __get_coherent_candlestick_data(self, symbol: str, interval: str, limit: int = 1000, end_time: int = None
                                         ) -> DataFrame:
         """
+        Accesses long term historical candlestick market data.
+
         This function extends the "get_candlestick_data" function and it's purpose is for the accessing of long term
         market data. Binance only allows to get 1000 candles to be sent for one call. So if we want to collect market
         data over a long time span, we will have to make several calls for market data with each going backwards in time
@@ -121,7 +127,7 @@ class Binance:
             initial_limit = 1000
 
         # First, we will get the last initial candles. E.g. if the limit is 5120 candles that we want to access, we will
-        # start to get the market data for the 120 candles first in order to have clean values in steps of thousands
+        # start to get the market data for the 120 candles first, in order to have clean values in steps of thousands
         # (like 5000). Then we can get the rest of the limit with the repeat rounds value accessing 1000 candles per
         # repeat round. The data will start at the end time going backwards (or starting in the present data if no end
         # time is specified
@@ -129,7 +135,8 @@ class Binance:
         while repeat_rounds > 0:
             # Then, for every other 1000 candles, we get them, but starting at the beginning of the previously received
             # candles
-            tmp_df: DataFrame = self.get_candlestick_data(symbol, interval, limit=1000, end_time=df["time"][0])
+            tmp_df: DataFrame = self.get_candlestick_data(symbol, interval, limit=1000, end_time=int(df["time"][0]))
+            tmp_df.drop(tmp_df.tail(1).index, inplace=True)
             df = tmp_df.append(df, ignore_index=True)
             repeat_rounds = repeat_rounds - 1
         return df

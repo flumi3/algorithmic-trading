@@ -150,7 +150,7 @@ class Backtest:
         # end at the time of the last transaction
         last_time: datetime = self.candlestick_df["time"].iloc[-1]
         self.capital_over_time.append({"time": last_time, "capital": self.capital})
-        capitals_df: DataFrame = DataFrame(self.capital_over_time, columns=["time", "capital"])#
+        capitals_df: DataFrame = DataFrame(self.capital_over_time, columns=["time", "capital"])
         capitals_df = capitals_df.sort_values(by=["time"])
 
         """Creates a plotly figure that represents our capital over the time of the backtest"""
