@@ -155,6 +155,8 @@ class CommandLineInterface:
                 status_text: str = TerminalColors.OKCYAN + bot.status + TerminalColors.ENDC
             elif bot.status == bot.STATUS_RUNNING:
                 status_text: str = TerminalColors.OKGREEN + bot.status + TerminalColors.ENDC
+            elif bot.status == bot.STATUS_PAUSED:
+                status_text: str = TerminalColors.WARNING + bot.status + TerminalColors.ENDC
             elif bot.status == bot.STATUS_ABORTED:
                 status_text: str = TerminalColors.FAIL + bot.status + TerminalColors.ENDC
             else:
