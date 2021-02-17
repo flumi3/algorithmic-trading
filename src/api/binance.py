@@ -260,14 +260,21 @@ class Binance:
             else:
                 # Other params connect with a ampersand
                 url = url + "&" + params[i]
-
-        # Get response and check for whether the request was successful
         logger.debug(f"Calling {url}...")
-        response: Response = requests.get(url)
+
+        # Call url to get excepted response
+        try:
+            response: Response = requests.get(url)
+        except requests.exceptions.ConnectionError as e:
+            logger.error(f"ConnectionError: {e}")
+            return False
+
+        # Check response
         try:
             response.raise_for_status()
         except requests.exceptions.HTTPError as e:
-            logger.error(f"HTTP error occurred: {e}")
+            logger.error(f"HTTP error: {e}")
+            return False
 
         # Decode data
         try:
