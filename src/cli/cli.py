@@ -9,7 +9,7 @@ from bot import Bot
 from bot_runner import BotRunner
 from cli.choices import choose_api, choose_symbol, choose_strat, choose_time_frame
 from cli.headers import HEADER_NEW_BACKTEST, HEADER_WELCOME, HEADER_NEW_BOT, HEADER_DISPLAY_BOTS
-from cli.cli_util import choose_option, clear_output, display_header, print_bold
+from cli.cli_util import choose_option, display_header, print_bold
 from cli.validators import FloatValidator, YesNoValidator
 from strategies.moving_average_strategy import MovingAverageStrategy
 from util import TerminalColors
@@ -24,9 +24,6 @@ class CommandLineInterface:
         """Displays the main menu and lets the user choose what he would like to do."""
 
         while True:
-            clear_output()
-            display_header(HEADER_WELCOME)
-
             # Get user choice
             title: str = "What would you like to do?"
             options: List[str] = [
@@ -35,7 +32,7 @@ class CommandLineInterface:
                 "3) Display trading bots",
                 "99) Exit program"
             ]
-            choice: int = choose_option(title, options)
+            choice: int = choose_option(title, options, HEADER_WELCOME)
 
             # Check what the user chose to do
             if choice == 1:
@@ -47,8 +44,7 @@ class CommandLineInterface:
             elif choice == 99:
                 sys.exit()
 
-    @staticmethod
-    def create_backtest() -> None:
+    def create_backtest(self) -> None:
         # Backtest config
         api: Union[Binance] = choose_api(HEADER_NEW_BACKTEST)
         if api == 99:
@@ -62,10 +58,8 @@ class CommandLineInterface:
         kline_limit, time_frame_name = choose_time_frame(HEADER_NEW_BACKTEST)
         if kline_limit == 99:
             return
-        display_header(HEADER_NEW_BACKTEST)
-        starting_capital: float = float(prompt("Enter starting capital: ", validator=FloatValidator()))
-        display_header(HEADER_NEW_BACKTEST)
-        buy_quantity: float = float(prompt("Enter buy quantity: ", validator=FloatValidator()))
+        starting_capital: float = self.__get_starting_capital(HEADER_NEW_BACKTEST)
+        buy_quantity: float = self.__get_buy_quantity(HEADER_NEW_BACKTEST)
 
         # Check config and ask whether the user wants to start the backtest
         display_header(HEADER_NEW_BACKTEST)
@@ -93,33 +87,26 @@ class CommandLineInterface:
         display_header(HEADER_NEW_BOT)
 
         # Ask for name of bot
-        name: str = prompt("Enter name: ")
+        name: str = ""
+        while name == "":
+            display_header(HEADER_NEW_BOT)
+            name = prompt("Enter name: ")
 
         # Get symbol choice
         symbol: str = choose_symbol(HEADER_NEW_BOT)
         if symbol == 99:
             return
-
-        # Get API choice
         api: Union[Binance] = choose_api(HEADER_NEW_BOT)
         if api == 99:
-            return
-        # TODO: check whether we have access to the binance account
-
-        # Get strategy choice
+            return  # TODO: check whether we have access to the binance account
         strategy: Union[MovingAverageStrategy] = choose_strat(HEADER_NEW_BOT)
         if strategy == 99:
             return
 
         # Give user the option to cap the capital that the bot can use
         # E.g. we have 600€ capital on our Binance account. Then we can let the bot use only 200€ of those 600€.
-        # TODO: check whether our account has enough capital
-        display_header(HEADER_NEW_BOT)
-        starting_capital: float = float(prompt("Enter starting capital: ", validator=FloatValidator()))
-
-        display_header(HEADER_NEW_BOT)
-        buy_quantity: float = float(prompt("Enter buy quantity: ", validator=FloatValidator()))
-        # TODO: how to handle the quantity filters?
+        starting_capital: float = self.__get_starting_capital(HEADER_NEW_BOT)
+        buy_quantity: float = self.__get_buy_quantity(HEADER_NEW_BOT)
 
         # Let user enter description
         display_header(HEADER_NEW_BOT)
@@ -164,3 +151,23 @@ class CommandLineInterface:
             print(f"{bot_id}\t\t{bot.name}\t\t{bot.symbol}\t\t{status_text}")
         print("")
         input("Press Enter to go back...")
+
+    @staticmethod
+    def __get_starting_capital(header) -> float:
+        user_input: str = ""
+        while user_input == "":
+            display_header(header)
+            user_input = prompt("Enter starting capital: ", validator=FloatValidator())
+        if header == HEADER_NEW_BOT:
+            # TODO: check whether our account has enough capital
+            pass
+        return float(user_input)
+
+    @staticmethod
+    def __get_buy_quantity(header) -> float:
+        # TODO: how to handle quantity filters? Because you have to specify a quantity that is allowed by the platform
+        user_input: str = ""
+        while user_input == "":
+            display_header(header)
+            user_input = prompt("Enter buy quantity: ", validator=FloatValidator())
+        return float(user_input)

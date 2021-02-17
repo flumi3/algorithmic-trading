@@ -44,16 +44,25 @@ def print_bold(string: str) -> None:
     print_formatted_text(text, style=style)
 
 
-def choose_option(title: str, options: List[str]) -> int:
-    text: FormattedText = FormattedText([("class:bold", title)])
-    print_formatted_text(text, style=style)
+def choose_option(title: str, options: List[str], header: str, note: str = None) -> int:
+    user_input: str = ""
+    while user_input == "":
+        display_header(header)
+        text: FormattedText = FormattedText([("class:bold", title)])
+        print_formatted_text(text, style=style)
 
-    for option in options:
-        print(option)
-    print("")
+        # Display all options
+        for option in options:
+            print(option)
+        print("")
+        if note:
+            text: FormattedText = FormattedText([("class:yellow", "Note: " + note)])
+            print_formatted_text(text, style=style)
+            print("")
 
-    number: int = int(prompt("Enter number: ", validator=NumberValidator()))
-    return number
+        # Get user input
+        user_input = prompt("Enter number: ", validator=NumberValidator())
+    return int(user_input)
 
 
 # def radiolist_dialog(title='', values=None, style=None, async_=False):

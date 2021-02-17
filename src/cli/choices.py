@@ -1,15 +1,14 @@
 from typing import Union, List, Tuple
 
 from api.binance import Binance
-from cli.cli_util import display_header, choose_option
+from cli.cli_util import choose_option
 from strategies.moving_average_strategy import MovingAverageStrategy
 
 
 def choose_api(header: str) -> Union[Binance, int]:
-    display_header(header)
     api_title: str = "Choose API:"
     api_options: List[str] = ["1) Binance", "99) Quit"]
-    api_choice: int = choose_option(api_title, api_options)
+    api_choice: int = choose_option(api_title, api_options, header)
 
     if api_choice == 1:
         return Binance()
@@ -18,10 +17,9 @@ def choose_api(header: str) -> Union[Binance, int]:
 
 
 def choose_symbol(header: str) -> Union[str, int]:
-    display_header(header)
     symbol_title: str = "Choose symbol:"
     symbol_options: List[str] = ["1) Bitcoin/Euro", "2) Ethereum/Euro", "3) Litecoin/Euro", "99) Quit"]
-    symbol_choice: int = choose_option(symbol_title, symbol_options)
+    symbol_choice: int = choose_option(symbol_title, symbol_options, header)
 
     if symbol_choice == 1:
         return Binance.SYMBOL_BITCOIN_EURO
@@ -34,10 +32,9 @@ def choose_symbol(header: str) -> Union[str, int]:
 
 
 def choose_strat(header: str) -> Union[MovingAverageStrategy, int]:
-    display_header(header)
     strat_title: str = "Choose strategy:"
     strat_options: List[str] = ["1) Moving Average Strategy", "99) Quit"]
-    strat_choice: int = choose_option(strat_title, strat_options)
+    strat_choice: int = choose_option(strat_title, strat_options, header)
 
     if strat_choice == 1:
         return MovingAverageStrategy()
@@ -46,10 +43,9 @@ def choose_strat(header: str) -> Union[MovingAverageStrategy, int]:
 
 
 def choose_time_frame(header: str) -> Tuple[int, str]:
-    display_header(header)
     time_title: str = "Choose time frame:"
     time_options: List[str] = ["1) One month", "2) Three months", "3) Six months", "4) One year", "99) Quit"]
-    time_choice: int = choose_option(time_title, time_options)
+    time_choice: int = choose_option(time_title, time_options, header)
 
     if time_choice == 1:
         return 720, "One month"  # 30 days * 24h = 720 candles
