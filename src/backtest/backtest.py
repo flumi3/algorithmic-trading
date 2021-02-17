@@ -5,7 +5,7 @@ from datetime import datetime, date
 from logging import Logger
 from pathlib import Path
 from plotly.graph_objs import Candlestick, Layout, Figure, Scatter
-from typing import List, Tuple, IO, Union, Dict
+from typing import List, Tuple, Union, Dict
 from collections import OrderedDict
 from api.binance import Binance
 from indicators import SmoothedMovingAverage
@@ -392,12 +392,12 @@ class Backtest:
         """
 
         # Write content to html file
-        dashboard: IO = open(path, "w")
-        dashboard.write("<html><head></head><body>" + "\n")
-        dashboard.write(html_headline)  # add headline
-        dashboard.write(html_figures)  # add plots
-        dashboard.write(html_stats)  # add backtest stats
-        dashboard.write("</body></html>" + "\n")
+        with open(path, "w") as dashboard:
+            dashboard.write("<html><head></head><body>" + "\n")
+            dashboard.write(html_headline)  # add headline
+            dashboard.write(html_figures)  # add plots
+            dashboard.write(html_stats)  # add backtest stats
+            dashboard.write("</body></html>" + "\n")
 
     @staticmethod
     def get_signal_values(signals: dict) -> Tuple[List[datetime], List[float], List[datetime], List[float]]:
