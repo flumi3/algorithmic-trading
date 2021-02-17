@@ -29,7 +29,7 @@
 %   \DataScience
 \Informatik
 
-\title{Algorithmic Trading}
+\title{Algorithmisches Handeln von Kryptowährungen}
 
 \author{Sebastian Flum}
 \matrikelnr{76855}
@@ -61,24 +61,23 @@
 
 %---
 \begin{abstract}
-  Ziel der Kurzfassung ist es, einen (eiligen) Leser zu informieren, so 
-  dass dieser entscheiden kann, ob der Bericht für ihn hilfreich ist oder 
-  nicht (neudeutsch: Management Summary). Die Kurzfassung gibt daher eine 
-  kurze Darstellung
 
-  \begin{itemize}
-    \item des in der Arbeit angegangenen Problems
-    \item der verwendeten Methode(n)
-    \item des in der Arbeit erzielten Fortschritts.
-  \end{itemize}
+Beim algorithmischen Handeln werden Handelsentscheidungen auf der Grundlage zuvor definierter Anweisungen und Regeln getroffen, die in Form eines Computerprogramms umgesetzt wurden. Dabei wird Code geschrieben, der die Trades im Namen des Händlers oder Investors ausführt, wenn bestimmte Bedingungen erfüllt sind. 
 
-  Dabei sollte nicht auf die Struktur der Arbeit eingegangen werden, also 
-  Kapitel~\ref{cha:grundlagen} etc. denn die Kurzfassung soll ja gerade 
-  das Wichtigste der Arbeit vermitteln, ohne dass diese gelesen werden muss.
-  Eine Kapitelbezogene Darstellung sollte sich in Kapitel~%
-  \ref{cha:einleitung} unter Vorgehen befinden.
+Im Rahmen dieser Arbeit wurde versucht, jenes Verfahren auf den Handel von kryptographischen Währungen wie Bitcoin oder Ethereum anzuwenden und ein algorithmisches Handelssystem für diese zu entwerfen. So soll herausgefunden werden, ob der automatisierte Handel von Kryptowährungen, durch ein selbst entwickeltes System, erfolgreich sein kann.
 
-  Länge: Maximal 1 Seite.
+Dabei beschäftigt sich diese Arbeit im grundlegenden mit folgenden Konzepten:
+
+\begin{enumerate}
+	\item Algorithmische Handelsstrategien und technische Indikatoren
+	\item Implementierung einer Schnittstelle für Handelsplattformen
+	\item Backtesting von Handelsstrategien
+	\item Erstellung einer Konsolenanwendung
+	\item Verknüpfung dieser Elemente innerhalb eines modularen Systems
+\end{enumerate}
+
+Umgesetzt wurde dieses Projekt fast ausschließlich unter der objektorientierten Verwendung der Programmiersprache Python, in Verbindung mit einigen wenigen HTML Elementen.
+
 \end{abstract}
 %-----------------------------------------------------------------------
 \cleardoublepage
@@ -115,12 +114,12 @@
 \chapter{Einleitung}
 \label{cha:einleitung}
 
-Die Einleitung dient dazu, beim Leser Interesse für die Inhalte 
-Praxissemesterberichts zu wecken, die behandelten Probleme aufzuzeigen 
-und die zu ihrer Lösung entwickelten Konzepte zu beschreiben.
+"Neues Allzeithoch: Bitcoin-Rekordjagd geht ungebremst weiter".\cite{bitcoin_artikel_1} "Kryptowährung: Bitcoin knackt Marke von 50.000 Dollar".\cite{bitcoin_artikel_2} Artikel wie diese sind schon lange keine Seltenheit mehr. Kryptowährungen, allen voran der Bitcoin, entwickelten sich in den letzten Jahren zum Sinnbild schnellen Reichtums. Doch das war nicht immer so. Im Jahre 2011, als sich der Bitcoin noch in seinen Kinderschuhen befand, kostete ein Coin gerade einmal 1 Dollar.\cite{bitcoin_kurs_2011} Vielleicht erwischt man sich nun selbst bei dem Gedanken daran, was wohl wäre, wenn man zu dieser Zeit schon das Potential dieser, damals unscheinbaren, Internetwährung erkannt hätte. Einige vorausdenkende Köpfe erkannten dies frühzeitig und wurden dadurch reich. Andere wiederum nutzten die neu entdeckte Kryptowährung dazu, online für ihre Pizza zu bezahlen. Verrückt, wenn man sich vor Augen führt, dass man mit der selben Menge Bitcoins heute zehntausende Pizzen bezahlen könnte. Vielleicht lässt dieser Gedanke die Herzen einiger Pizzaliebhaber höher schlagen, vorrangig stellt sich jedoch die Frage, ob man mit dem Besitz und Handel von Kryptowährungen heutzutage noch Erfolg haben kann. Und wenn ja - kann das auch ein Computerprogramm?
 
 \section{Motivation}
 \label{sec:motivation}
+
+
 
 In der Motivation wird dargestellt, welche Bedeutung die im 
 Praxissemester zu entwickelnden Lösungen für das betreuende Unternehmen 
