@@ -1,6 +1,7 @@
 \documentclass[oneside]{ausarbeitung}
 \bibliography{latexlit}
 
+\usepackage{float}
 
 % ----------------------------------------------------------------------
 
@@ -173,23 +174,6 @@ hierfür findet sich in Abbildung \ref{fig:1}.
 \chapter{Grundlagen}
 \label{cha:grundlagen}
 
-In diesem Kapitel das für das Praktikum relevante Grundlagenwissen 
-dargestellt. Der Praktikant soll hierzu das ihm durch Vorlesungen 
-bekannte, bzw. durch Recherchen vertiefte theoretische Wissen 
-darstellen, das für die Lösung der im Praktikum gestellten Probleme 
-notwendig ist.
-
-Dabei ist darauf zu achten, nur solche Inhalte in das Grundlagenkapitel 
-aufzunehmen, die später auch verwendet werden (Problembezogenheit). 
-Ebenso ist auf eine ausreichend tiefe und vollständige Darstellung der 
-Grundlagen zu achten.
-
-Für die Erstellung des Literaturverzeichnisses 
-wird das Werkzeug JabRef\autocite{JabRef:JabRef} verwendet. 
-
-Sie können aber auch das Werkzeug Citavi\autocite{SAS:Citavi} benutzen
-und dort nach \textsc{Bib}\TeX{} exportieren.
-
 %----
 \section{Trading}
 \label{sec:trading}
@@ -201,10 +185,47 @@ Trading bedeutet, die Schwankungen der Finanzmärkte mithilfe von Trades für di
 \subsection{Algorithmischer Handel}
 \label{sub:algorithmischer_handel}
 
-Algorithmischer beschreibt den automatischen Handel von Finanzinstrumenten durch Computerprogramme.
+Algorithmischer beschreibt den automatischen Handel von Finanzinstrumenten durch Computerprogramme. Dabei folgt das Computerprogramm einem vordefiniertem Satz von Anweisungen (Algorithmus), um einen Trade zu platzieren. Die Trades können theoretisch Gewinne mit einer Geschwindigkeit und Häufigkeit generieren, die für einen menschlichen Trader unmöglich sind. (vgl. \cite{algorithmic_trading})
 
-\subsection{Finanzdiagramme}
-\label{sub:finanzdiagramme}
+Die definierten Sätze von Anweisungen basieren auf Timing, Preis, Menge oder einem beliebigen mathematischen Modell. Abgesehen von den Gewinnmöglichkeiten für den Trader, macht der algorithmische Handel die Märkte liquider und den Handel systematischer, da der Einfluss menschlicher Emotionen auf die Handelsaktivität ausgeschlossen wird. (vgl. \cite{algorithmic_trading})
+
+\subsection{Candlestick Charts}
+\label{sub:candlestick_charts}
+
+Ein Candlestick Chart ist ein Finanzdiagramm, mit dem sich die Kursbewegungen eines Wertpapiers oder Ähnlichem darstellen lassen. Es besteht aus einer Aneinanderreihung von sogenannten \textbf{Candles} (Kerzen), welche für die verschiedenste Zeiteinheiten verwendet werden können und vier zentrale Informationswerte enthalten:
+
+\begin{itemize}
+	\item Eröffnungskurs (Open)
+	\item Schlusskurs (Close)
+	\item Höchstkurs (High)
+	\item Tiefstkurs (Low)
+\end{itemize}
+
+(vgl. \cite{candlestick_basics})
+
+Die Candles haben gegenüber den früher gängigeren Balkencharts den Vorteil, optisch anschaulicher zu sein, ohne dabei gleich kompliziert zu werden. Grundsätzlich wird dabei zwischen zwei verschiedenen Kerzen unterschieden, welche in der nachfolgenden Abbildung (\ref{fig:1}) dargestellt werden. \\
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[height=0.45\textheight]{img/candles.png}
+  \caption{Kerzen eines Candlestick Charts}
+  \label{fig:1}
+\end{figure}
+
+Jede Kerze kann dabei für jede beliebige Zeitspanne stehen. Für einen Tag, eine Woche, einen Monat, oder auch für kurzfristigere Zeitebenen auf Minutenbasis. Die Aussagen der Kerzen sind dabei jedoch immer dieselben.
+
+Die Farbe der Candles lässt dabei sofort erkennen, ob es sich um eine bullische, oder eine bärische Kerze handelt. Die \textbf{bullische Kerze} symbolisiert ein Zeitintervall, welches positiv verlief, weil der Schlusskurs über dem Eröffnungskurs des Intervalls lag. Analog dazu bedeutet die \textbf{bärische Kerze}, dass der Kursverlauf während des Zeitintervalls der Kerze negativ verlief, weil der Schlusskurs unter dem Eröffnungskurs lag. Wichtig ist es dabei, sich im Kopf zu behalten, dass jede Kerze immer nur eine Aussage über den Kursverlauf ihres Zeitintervalls darstellt. (vgl. \cite{candles_explained})
+ 
+Fügt man alle Candles zu einem Candlestick Chart zusammen erhält man ein Diagramm wie in Abbildung \ref{fig:2} dargestellt. \\
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[height=0.45\textheight]{img/candlestick_chart.png}
+  \caption{Beispiel eines Candlestick Chart\cite{candlestick_chart_pic}}
+  \label{fig:2}
+\end{figure}
+
+
 
 \subsection{Technische Indikatoren}
 \label{sub:technische_Indikatoren}
