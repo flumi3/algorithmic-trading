@@ -51,13 +51,19 @@ class Binance:
     def get_candlestick_data(self, symbol: str, interval: str = "1h", end_time: int = None,
                              limit: int = 1000) -> Union[DataFrame, bool]:
         """
-        Accesses candlestick data for a given symbol.
+        Collects candlestick data for a given symbol.
+
+        Parameters:
+            - symbol: (str) The symbol for which we want to collect the kline data
+            - interval: (str) The time interval of the candles
+            - end_time: (int) point in time we want to get the data backwards from
+            - limit: (int) Number of candles we want to collect
 
         Returns:
             - DataFrame containing the candlestick data
-            - False in case of a failure
+            - False in case of failure
         """
-        logger.info("Accessing candlestick data...")
+        logger.info("Collecting candlestick data...")
 
         # Check whether we need to get more candlesticks than we can access with one API call (1000)
         if limit > 1000:
@@ -107,7 +113,7 @@ class Binance:
         return df
 
     def __get_coherent_candlestick_data(self, symbol: str, interval: str, limit: int = 1000, end_time: int = None
-                                        ) -> DataFrame:
+                                        ) -> Union[DataFrame, bool]:
         """
         Accesses long term historical candlestick market data.
 
@@ -116,6 +122,16 @@ class Binance:
         data over a long time span, we will have to make several calls for market data with each going backwards in time
         from the beginning of the previous market data. Then, all market data information will be merged into one long
         data frame.
+
+        Parameters:
+            - symbol: (str) The symbol for which we want to collect the kline data
+            - interval: (str) The time interval of the candles
+            - limit: (int) Number of candles we want to collect
+            - end_time: (int) point in time we want to get the data backwards from
+
+        Returns:
+            - df: (DataFrame) Long term candlestick data (more than 1000 candles in one frame)
+            - False in case of error
         """
         logger.debug("Collecting longtime historical candlestick data...")
 
@@ -131,7 +147,10 @@ class Binance:
         # (like 5000). Then we can get the rest of the limit with the repeat rounds value accessing 1000 candles per
         # repeat round. The data will start at the end time going backwards (or starting in the present data if no end
         # time is specified
-        df: DataFrame = self.get_candlestick_data(symbol, interval, end_time=end_time, limit=initial_limit)
+        df: Union[DataFrame, bool] = self.get_candlestick_data(symbol, interval, end_time=end_time, limit=initial_limit)
+        if not isinstance(df, DataFrame):
+            logger.error("Missing candlestick data")
+            return False
         while repeat_rounds > 0:
             # Then, for every other 1000 candles, we get them, but starting at the beginning of the previously received
             # candles
@@ -141,27 +160,37 @@ class Binance:
             repeat_rounds = repeat_rounds - 1
         return df
 
-    def get_current_price(self, symbol: str = None) -> Union[List[Dict[str, str]], float, bool]:
+    def get_current_price(self, symbol: str = None) -> Union[Dict[str, float], float, bool]:
         """
         Returns the current price (float) for the given symbol.
 
-        If no symbol is passed it will return the prices for all symbols within a list of dicts where each dict
-        contains the symbol and its current price.
+        Parameters:
+            - symbol: (str) The symbol for which we want to get the current price
 
-        Returns false in case of failure.
+        Returns:
+            - List of float prices if no symbol was passed
+            - price of the passed symbol (float)
+            - False in case of missing price data
         """
         logger.info(f"Accessing current price for symbol '{symbol}'")
 
         # Get data
-        params: List[str] = ["symbol=" + symbol]
-        data: Union[dict, list, bool] = self.http_request(endpoint=self.ENDPOINT_PRICE, params=params)
+        if symbol:
+            params: List[str] = ["symbol=" + symbol]
+            data: Union[dict, list, bool] = self.http_request(endpoint=self.ENDPOINT_PRICE, params=params)
+        else:
+            data: Union[dict, list, bool] = self.http_request(endpoint=self.ENDPOINT_PRICE)
         if not data:
             logger.error("Missing price data")
             return False
 
         if type(data) == list:
-            # Data contains list of dicts that contains prices for all symbols
-            return data
+            prices: Dict[str, float] = dict()
+            for price_dict in data:
+                price_symbol: str = price_dict.get("symbol")
+                price: float = price_dict.get("price")
+                prices[price_symbol] = float(price)
+            return prices
         elif type(data) == dict:
             return float(data.get("price"))
 
@@ -199,47 +228,90 @@ class Binance:
         else:
             return data
 
-    def __get_symbol_data(self, symbol: str) -> Dict[str, Union[str, list]]:
+    def __get_symbol_data(self, symbol: str = None) -> Union[Dict[str, str], List[Dict[str, str]], bool]:
         """
-        Returns all symbol data for a given symbol.
+        Returns the symbol data for a given symbol, or the data for all symbols if no symbol was passed.
 
-        {
-          "symbol": "ETHBTC",
-          "status": "TRADING",
-          "baseAsset": "ETH",
-          "baseAssetPrecision": 8,
-          "quoteAsset": "BTC",
-          "filters": [
-            ...
-          ],
-          ...
-        }
+        Parameters:
+            - symbol: (str) The symbol for which we want to get the data
+
+        Returns:
+            - symbol_data:
+                {
+                  "symbol": "ETHBTC",
+                  "status": "TRADING",
+                  "baseAsset": "ETH",
+                  "baseAssetPrecision": 8,
+                  "quoteAsset": "BTC",
+                  "filters": [
+                    ...
+                  ],
+                  ...
+                },
+                ...
+            - False in case of error
         """
-        exchange_info: Dict = self.__get_exchange_info()
-        # Get list of dicts where each dict contains data for one symbol
+        exchange_info: Union[Dict, bool] = self.__get_exchange_info()
         symbols: List[Dict[str, str]] = exchange_info.get("symbols")
-        for symbol_data in symbols:
-            # Loop through all symbol data until we have found the data for the symbol we search for
-            if symbol_data.get("symbol") == symbol:
-                return symbol_data
+        if not symbols:
+            logger.error("Could not find 'symbols' in exchange info")
+            return False
 
-    def get_symbol_filters(self, symbol: str) -> List[Dict[str, str]]:
+        # Check whether we want to return symbol data for one symbol or all symbols
+        if symbol:
+            for symbol_data in symbols:
+                # Loop through all symbols data until we have found the data for the symbol we search for
+                if symbol_data.get("symbol") == symbol:
+                    return symbol_data
+            logger.error(f"Could not find symbol '{symbol}' in symbols data")
+        else:
+            return symbols
+
+    def get_symbol_filters(self, symbol: str) -> Union[List[Dict[str, str]], bool]:
         """
         Returns all filters (trading rules) for a given symbol.
 
-        "filters": [
-            {
-              "filterType": "MARKET_LOT_SIZE",
-              "minQty": "0.00100000",
-              "maxQty": "100000.00000000",
-              "stepSize": "0.00100000"
-            },
-            ...
-        ],
+        Parameters:
+            symbol: (str) The symbol for which we want to get the trading rules
+
+        Returns:
+            - A list containing all different filters as invidual dicts
+                "filters": [
+                    {
+                      "filterType": "MARKET_LOT_SIZE",
+                      "minQty": "0.00100000",
+                      "maxQty": "100000.00000000",
+                      "stepSize": "0.00100000"
+                    },
+                    ...
+                ],
+            - False in case of error
         """
         symbol_data: Dict[str, Union[str, list]] = self.__get_symbol_data(symbol)
         filters: List[Dict[str, str]] = symbol_data.get("filters")
-        return filters
+        if not filters:
+            logger.error("Could not find filters in symbol data")
+            return False
+        else:
+            return filters
+
+    def get_trading_symbols(self) -> Union[List[str], bool]:
+        """
+        Returns a list of all currently tradable symbols on Binance.
+
+        Returns:
+            - symbols: (List[str]) List of all currently tradable symbols on Binance
+            - False in case we cannot access the symbol data
+        """
+        symbols_data: List[Dict[str, str], bool] = self.__get_symbol_data()
+        if symbols_data:
+            symbols: List[str] = list()
+            for dict_ in symbols_data:
+                if "symbol" in dict_:
+                    symbols.append(dict_.get("symbol"))
+            return symbols
+        else:
+            return False
 
     def http_request(self, endpoint: str, params: List[str] = None) -> Union[dict, list, bool]:
         """
@@ -249,17 +321,24 @@ class Binance:
         { "name":"John", "age":30, "car":null } -> dict
         [ "Ford", "BMW", "Fiat" ] -> list
 
-        Returns false in case of exception.
+        Parameters:
+            - endpoint: (str) The endpoint which we want to access
+            - params: (List[str]) The params we want to attach to the url
+
+        Returns:
+            - Dict or list containing the string data
+            - False in case of error
         """
         # Create URL
         url: str = self.base + endpoint
-        for i in range(len(params)):
-            if i == 0:
-                # First param has to connect with a question mark to the url
-                url = url + "?" + params[i]
-            else:
-                # Other params connect with a ampersand
-                url = url + "&" + params[i]
+        if params:
+            for i in range(len(params)):
+                if i == 0:
+                    # First param has to connect with a question mark to the url
+                    url = url + "?" + params[i]
+                else:
+                    # Other params connect with a ampersand
+                    url = url + "&" + params[i]
         logger.debug(f"Calling {url}...")
 
         # Call url to get excepted response
