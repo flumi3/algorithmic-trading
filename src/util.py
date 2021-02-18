@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 
 
@@ -38,3 +39,8 @@ class TerminalColors:
 def get_project_root() -> Path:
     """Returns the path of the project root"""
     return Path(__file__).parent.parent
+
+
+def run_tests() -> None:
+    tests_dir_path = str(Path(__file__).parent) + "/tests"
+    os.system(f"pytest {tests_dir_path}")

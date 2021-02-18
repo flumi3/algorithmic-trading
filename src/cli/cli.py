@@ -9,10 +9,10 @@ from bot import Bot
 from bot_runner import BotRunner
 from cli.choices import choose_api, choose_symbol, choose_strat, choose_time_frame
 from cli.headers import HEADER_NEW_BACKTEST, HEADER_WELCOME, HEADER_NEW_BOT, HEADER_DISPLAY_BOTS
-from cli.cli_util import choose_option, display_header, print_bold
+from cli.cli_util import choose_option, display_header, print_bold, clear_output
 from cli.validators import FloatValidator, YesNoValidator
 from strategies.moving_average_strategy import MovingAverageStrategy
-from util import TerminalColors
+from util import TerminalColors, run_tests
 
 
 class CommandLineInterface:
@@ -30,6 +30,7 @@ class CommandLineInterface:
                 "1) Create new backtest",
                 "2) Create new trading bot",
                 "3) Display trading bots",
+                "4) Test system functionality",
                 "99) Exit program"
             ]
             choice: int = choose_option(title, options, HEADER_WELCOME)
@@ -41,6 +42,10 @@ class CommandLineInterface:
                 self.create_bot()
             elif choice == 3:
                 self.display_trading_bots()
+            elif choice == 4:
+                clear_output()
+                run_tests()
+                input("\nPress Enter to continue...")
             elif choice == 99:
                 sys.exit()
 
