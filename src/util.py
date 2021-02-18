@@ -43,4 +43,4 @@ def get_project_root() -> Path:
 
 def run_tests() -> None:
     tests_dir_path = str(Path(__file__).parent) + "/tests"
-    os.system(f"pytest {tests_dir_path}")
+    os.system(f"pytest {tests_dir_path} -o cache_dir={tests_dir_path}/pytest_cache")
