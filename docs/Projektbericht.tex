@@ -104,6 +104,7 @@ Umgesetzt wurde dieses Projekt fast ausschließlich unter der objektorientierten
 %% Eintrag: \acro{Referenzname}[Kürzel]{Langform}
 %% Im Text wird die Abkürzung dann mit \ac{Referenzname} benutzt.
 \acro{api}[API]{Application Programming Interface}
+\acro{sma}[SMA]{Simple Moving Average}
 \end{acronym}
 %---
 
@@ -131,13 +132,13 @@ Abgesehen davon finde ich großen Gefallen daran, Lösungen für gegebene Proble
 Als Ganzes betrachtet ist die Problemstellung, ein algorithmisches Handelssystem zu entwerfen, relativ unüberschaubar. Zur Bewältigung muss es daher in mehrere Teilprobleme heruntergebrochen werden. Daraus ergeben sich folgende, im nachfolgenden grob beschriebene, Problemstellungen:
 
 \textbf{1. Algorithmische Handelsstrategien und technische Indikatoren} \\
-Ohne eine geeignete Trading-Strategie, die entscheidet, wann Einkäufe und Verkäufe zu tätigen sind, kann wohl kein System Erfolg haben. Diesen Trading-Strategien liegen technische Indikatoren zu Grunde. Ein technischer Indikator dient dabei zur alternativen Darstellung der Kursverläufe liefert der Strategie wertvolle Analyseinformationen. Der Fokus soll dabei jedoch weniger auf der Findung und Konzeption neuer Strategien und Indikatoren liegen, sondern darauf, wie diese möglichst einfach und modular in das System eingebunden werden können.
+Ohne eine geeignete Trading Strategie, die entscheidet, wann Einkäufe und Verkäufe zu tätigen sind, kann wohl kein System Erfolg haben. Diesen Trading Strategien liegen technische Indikatoren zu Grunde. Ein technischer Indikator dient dabei zur alternativen Darstellung der Kursverläufe liefert der Strategie wertvolle Analyseinformationen. Der Fokus soll dabei jedoch weniger auf der Findung und Konzeption neuer Strategien und Indikatoren liegen, sondern darauf, wie diese möglichst einfach und modular in das System eingebunden werden können.
 
 \textbf{2. Implementierung einer Schnittstelle für Handelsplattformen} \\
-Der Handel von Kryptowährungen mittels eines algorithmischen Systems erfordert, genauso wie beim Handeln von Hand, eine Plattform, auf der die Ein- und Verkäufe getätigt werden. Im Vergleich zum Handeln von Hand, benötigt das Trading-System jedoch eine Schnittstelle \ac{api}, an die es anknüpfen kann, um mögliche Aktionen der Plattform tätigen zu können. Einige Plattformen bieten solche APIs zum Teil kostenlos an. Die Problemstellung ergibt sich daraus, die von den Plattformen bereitgestellten APIs zu nutzen und eigene, möglichst modulare, Schnittstellen zur Verwendung dieser zu entwerfen.
+Der Handel von Kryptowährungen mittels eines algorithmischen Systems erfordert, genauso wie beim Handeln von Hand, eine Plattform, auf der die Ein- und Verkäufe getätigt werden. Im Vergleich zum Handeln von Hand, benötigt das Trading-System jedoch ein \ac{api}, an die es anknüpfen kann, um mögliche Aktionen der Plattform tätigen zu können. Einige Plattformen bieten solche APIs zum Teil kostenlos an. Die Problemstellung ergibt sich daraus, die von den Plattformen bereitgestellten APIs zu nutzen und eigene, möglichst modulare, Schnittstellen zur Verwendung dieser zu entwerfen.
 
 \textbf{3. Backtesting von Handelsstrategien} \\
-Backtesting bzw. Rückvergleich bezeichnet den Prozess, eine Strategie zu evaluieren, indem die Strategie auf historische Daten angewandt wird. Findet man beispielsweise eine neue, vielversprechende Trading-Strategie und möchte diese nun nach der Umsetzung in Code testen, ist es sehr riskant, die Strategie im Echtzeitbetrieb laufen zu lassen. Sollte die Strategie nämlich doch nicht so vielversprechend sein, läuft man Gefahr, große Verluste durch schlecht platzierte Ein- und Verkäufe hinnehmen zu müssen. Der Backtest wirkt diesem Risiko entgegen und stellt somit eine der wichtigsten Komponenten des Systems dar. 
+Backtesting bzw. Rückvergleich bezeichnet den Prozess, eine Strategie zu evaluieren, indem die Strategie auf historische Daten angewandt wird. Findet man beispielsweise eine neue, vielversprechende Trading Strategie und möchte diese nun nach der Umsetzung in Code testen, ist es sehr riskant, die Strategie im Echtzeitbetrieb laufen zu lassen. Sollte die Strategie nämlich doch nicht so vielversprechend sein, läuft man Gefahr, große Verluste durch schlecht platzierte Ein- und Verkäufe hinnehmen zu müssen. Der Backtest wirkt diesem Risiko entgegen und stellt somit eine der wichtigsten Komponenten des Systems dar. 
 
 \textbf{4. Erstellung einer Konsolenanwendung} \\
 Alle Features des zu entwickelnden Systems, sollen dem Nutzer als Teil einer Konsolenanwendung zur Verfügung stehen. Mit dieser soll es beispielsweise möglich sein, Backtests sowie neue "Händler-Instanzen" aka Trading-Bots zu erstellen, welche verschiedenen Parametern wie Auswahl der Kryptowährung, Strategie, Kapital, usw. zu Grunde liegen.
@@ -220,26 +221,71 @@ Fügt man alle Candles zu einem Candlestick Chart zusammen erhält man ein Diagr
 
 \begin{figure}[H]
   \centering
-  \includegraphics[height=0.45\textheight]{img/candlestick_chart.png}
+  \includegraphics[height=0.43\textheight]{img/candlestick_chart.png}
   \caption{Beispiel eines Candlestick Chart\cite{candlestick_chart_pic}}
   \label{fig:2}
 \end{figure}
 
-
-
 \subsection{Technische Indikatoren}
 \label{sub:technische_Indikatoren}
 
-\subsection{Trading-Strategien}
+Technische Indikatoren sind Chart-Analyse-Tools, die Tradern helfen können, Preisbewegungen besser zu verstehen und darauf zu reagieren. Es gibt eine riesige Auswahl an technischen Analysewerkzeugen, die Trends analysieren, Preisdurchschnitte liefern, die Volatilität (Schwankung) messen und mehr. (vgl. \cite{technical_indicators})
+
+Ein sehr beliebter technischer Indikator ist der \textbf{Moving Average}, zu Deutsch: gleitender Mittelwert, welcher benutzt wird, um den durchschnittlichen Schlusskurs des Marktes über einen bestimmten Zeitraum darzustellen. Trader machen oft Gebrauch von Moving Averages, da sie ein guter Hinweis auf die aktuelle Marktdynamik sein können. (vgl. \cite{moving_average})
+
+\textbf{Wie wird ein Moving Average berechnet?} \\
+Eine der gängigsten Moving Averages ist der einfache gleitende Mittelwert bzw. \ac{sma}, welche einfach der Durschnitt aller Datenpunkte in der Serie geteilt durch die Anzahl der Punkte\cite{moving_average}.
+
+A = $ \{ $ {a$_{1}$, a$_{2}$, ..., a$_{n}$} $ \} $ \\
+n = Number of time periods / price elements
+
+SMA = $\frac{a_1 \ + \ a_2 \ + \ ... \ + \ a_n}{n}$
+
+Betrachtet man zum Beispiel eine 5-Tage-SMA auf einem Tages-Chart von EUR/USD und die Schlusskurse über die letzten 5 Tage sind wie folgt.
+
+Tag 1: 1.321 \\
+Tag 2: 1.301 \\
+Tag 3: 1.325 \\
+Tag 4: 1.327 \\
+Tag 5: 1.326
+
+SMA = (1.321 + 1.301 + 1.325 + 1.327 + 1.326)/5 = 1.32
+
+Veranschaulichen lässt sich dieser Indikator gut in einem Candlestick Chart, wie in Abbildung \ref{fig:3} dargestellt.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[height=0.32\textheight]{img/sma.png}
+  \caption{Simple Moving Average (in Gelb) innerhalb eines Candlestick Charts}
+  \label{fig:3}
+\end{figure} 
+
+\subsection{Trading Strategien}
 \label{sub:trading_strategien}
+
+Eine Trading Strategie ist eine Methode zum Kaufen und Verkaufen auf Märkten, die auf vordefinierten Regeln basiert, die zum Treffen von Handelsentscheidungen verwendet werden\cite{trading_strategy}.
+
+Es gibt viele Arten von Handelsstrategien, aber sie basieren größtenteils entweder auf technischen Daten oder auf Fundamentaldaten. Letzteres beschreibt langfristige, grundlegende Informationen über die realen Produktionsmöglichkeiten, die Strukturen der Wirtschaft sowie den Vermögensstatus der Wirtschaftseinheiten, welche in dieser Arbeit jedoch nicht näher betrachtet werden\cite{fundamentaldaten}. Die Gemeinsamkeit ist, dass sich beide auf quantifizierbare Informationen stützen, die auf ihre Genauigkeit hin rückgetestet werden können.
+Technische Handelsstrategien verlassen sich auf technische Indikatoren, um Handelssignale zu generieren. Technische Trader glauben, dass alle Informationen über ein bestimmtes Wertpapier o.Ä. in seinem Preis enthalten sind und dass er sich in Trends bewegt. (vgl. \cite{trading_strategy}) 
+
+Eine einfache Trading Strategie kann zum Beispiel eine Moving-Average-Strategy sein, bei welcher ein Kaufsignal erzeugt wird, sobald der aktuelle Preis einen gewissen Wert unter dem der Moving Average liegt. Betrachtet man im Hinblick auf diese Strategie noch einmal Abbildung \ref{fig:3}, lassen sich einige Stellen im Chart erkennen, bei denen diese Strategie wohl Kaufsignale erzeugen würde.
 
 %----
 
 \section{Kryptowährungen}
 \label{sec:kryptowährungen}
 
+Eine Kryptowährung ist eine digitale oder virtuelle Währung, die durch Kryptographie gesichert ist, was es nahezu unmöglich macht, sie zu fälschen oder doppelt auszugeben. Viele Kryptowährungen sind dezentralisierte Netzwerke, die auf der Blockchain-Technologie basieren - einem verteilten Hauptbuch, das von einem verteilten Netzwerk von Computern erzwungen wird. Ein entscheidendes Merkmal von Kryptowährungen ist, dass sie im Allgemeinen nicht von einer zentralen Behörde ausgegeben werden, was sie theoretisch immun gegen staatliche Eingriffe oder Manipulationen macht.
+
+Die erste Blockchain-basierte Kryptowährung war Bitcoin, die immernoch die beliebteste und wertvollste ist. Heute gibt es tausende von alternativen Kryptowährungen mit verschiedenen Funktionen und Spezifikationen. Einige davon sind Klone oder Abspaltungen von Bicoin, während andere neue Währungen sind, die von Grund auf neu entwickelt wurden.
+
+(vgl. \cite{cryptocurrency_explained})
+
 \subsection{Funktionsweise}
-\label{sub:blockchain}
+\label{sub:funktionsweise}
+
+\textbf{Wallets} \\
+Kryptowährungen werden in sogenannten Wallets gespeichert. Das sind digitale Geldbörsen, die auf den unterschiedlichsten digitalen Geräten wie beispielsweise einem Computer, Smartphone oder USB-Stick liegen können. Anders als beim klassischen Geldsystem, wo das Geld bei einer Bank und innerhalb eines Girokontos verwaltet wird, gehören diese Wallets nur dem Besitzer, was bedeutet, dass niemand diese Geldbörsen sperren kann. 
 
 \subsection{Handel von Kryptowährungen}
 \label{sub:handel_von_kryptowährungen}
