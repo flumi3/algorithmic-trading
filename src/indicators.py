@@ -26,11 +26,11 @@ class SmoothedMovingAverage(Indicator):
         Adds smoothed moving average to the data.
 
         Parameters:
-            data: The data frame to which we will add the sma
-            column_name: The name of the column containing the data on which we calculate the sma
+            - data: (DataFrame) The data frame to which we will add the sma
+            - column_name: (str) The name of the column containing the data on which we calculate the sma
 
         Return:
-            The data frame that now contains the indicator
+            data: (DataFrame) The frame that now contains the indicator
         """
         logger.info(f"Adding indicator '{self.name}' to market data...")
         data[self.name] = sma(data[column_name].tolist(), self.period)
