@@ -105,6 +105,7 @@ Umgesetzt wurde dieses Projekt fast ausschließlich unter der objektorientierten
 %% Im Text wird die Abkürzung dann mit \ac{Referenzname} benutzt.
 \acro{api}[API]{Application Programming Interface}
 \acro{sma}[SMA]{Simple Moving Average}
+\acro{cfd}[CFD]{Contract for Difference}
 \end{acronym}
 %---
 
@@ -277,18 +278,51 @@ Eine einfache Trading Strategie kann zum Beispiel eine Moving-Average-Strategy s
 
 Eine Kryptowährung ist eine digitale oder virtuelle Währung, die durch Kryptographie gesichert ist, was es nahezu unmöglich macht, sie zu fälschen oder doppelt auszugeben. Viele Kryptowährungen sind dezentralisierte Netzwerke, die auf der Blockchain-Technologie basieren - einem verteilten Hauptbuch, das von einem verteilten Netzwerk von Computern erzwungen wird. Ein entscheidendes Merkmal von Kryptowährungen ist, dass sie im Allgemeinen nicht von einer zentralen Behörde ausgegeben werden, was sie theoretisch immun gegen staatliche Eingriffe oder Manipulationen macht.
 
-Die erste Blockchain-basierte Kryptowährung war Bitcoin, die immernoch die beliebteste und wertvollste ist. Heute gibt es tausende von alternativen Kryptowährungen mit verschiedenen Funktionen und Spezifikationen. Einige davon sind Klone oder Abspaltungen von Bicoin, während andere neue Währungen sind, die von Grund auf neu entwickelt wurden.
+Die erste Blockchain-basierte Kryptowährung war Bitcoin, die immernoch die beliebteste und wertvollste ist. Heute gibt es tausende von alternativen Kryptowährungen mit verschiedenen Funktionen und Spezifikationen. Einige davon sind Klone oder Abspaltungen von Bicoin, während andere neue Währungen sind, die von Grund auf neu entwickelt wurden. (vgl. \cite{cryptocurrency_explained})
 
-(vgl. \cite{cryptocurrency_explained})
+\subsection{Die Blockchain}
+\label{sub:blockchain}
 
-\subsection{Funktionsweise}
-\label{sub:funktionsweise}
+Trivial ausgedrückt ist eine Blockchain nichts anderes als eine verteilte, öffentliche Datenbank\cite{blockchain_definition}, wessen Funktionsprinzip die meisten Kryptowährungen zugrunde liegen\cite{blockchain_1}.
+Um das Prinzip einer Blockchain verstehen zu können, hilft der Vergleich mit einem Gruppenchat:
 
-\textbf{Wallets} \\
-Kryptowährungen werden in sogenannten Wallets gespeichert. Das sind digitale Geldbörsen, die auf den unterschiedlichsten digitalen Geräten wie beispielsweise einem Computer, Smartphone oder USB-Stick liegen können. Anders als beim klassischen Geldsystem, wo das Geld bei einer Bank und innerhalb eines Girokontos verwaltet wird, gehören diese Wallets nur dem Besitzer, was bedeutet, dass niemand diese Geldbörsen sperren kann. 
+Ben, Lisa und Mia haben sich um 14 Uhr im Park verabredet. Diese Information ist nach dem Absenden auf allen Smartphones im Chatverlauf gespeichert. Mia überlegt es sich anders und möchte sich erst um 16 Uhr treffen. Diese Entscheidung kann sie aber nicht alleine fällen. Sie kann auch nicht einfach die Uhrzeit im Chatverlauf nachträglich ändern. Mia muss also entweder gemeinsam mit den anderen von vorne planen, oder sie steht um 16 Uhr alleine im Park. Niemand kann nachträglich etwas verändern. Dieses Prinzip ist der Kern einer Blockchain, denn auch hier werden Informationen in einem "Verlauf" gespeichert. Informationen sind hierbei hauptsächlich Transaktionsinformationen von Nutzern die diese getätigt haben.
+
+Jede Information bildet einen Block, für welche ein Hash - vergleichbar mit einem digitalen Fingerabdruck - berechnet wird. Zusätzlich enthält dieser Hash, den Hash des vorherigen Blocks. So werden die Blöcke über die Hashes, wie in Abbildung \ref{fig:4} veranschaulicht, zu einer Kette verbunden. Ähnlich wie bei einem Chatverlauf können die Informationen nicht verändert werden. Verändert sich nämlich die Information, verändert sich auch der Hash und die Kette würde auseinander brechen. Genau wie Mia und ihre Freunde mit der Planung von vorne beginnen müssten, müssten die Hashes aller folgenden Blöcke neu berechnet werden. (vgl. \cite{blockchain})
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[height=0.16\textheight]{img/blockchain.png}
+  \caption{Veranschaulichung einer Blockchain\cite{blockchain}}
+  \label{fig:4}
+\end{figure} 
+
+Die Blockchain wird über ein dezentrales Netzwerk verwaltet, dem jeder beitreten kann. Jedes Mitglied hat eine vollständige Kopie der kompletten Blockchain auf dem Computer, welche von diesem auch geprüft wird. Ein neuer Block wird erst hinzugefügt, wenn ihn jeder im Netzwerk verifiziert hat. Jeder kontrolliert sozusagen jeden, was die Blockchain damit sehr sicher macht. Wichtig ist dabei aber nicht der Mensch vor dem Computer, oder eine dritte Instanz wie beispielsweise ein Notar. Die Kontrolle, und somit das Vertrauen, werden von der Blockchain technisch hergestellt. (vgl. \cite{blockchain})
+
+\subsection{Mining}
+\label{sub:mining}
+
+Wie das Geld herkömmlicher Währungen wie beispielsweise Euro oder Dollar entsteht, ist kein Geheimnis. Das Bargeld entsteht unter staatlicher Regie. Das Recht zur Prägung von Münzen liegt direkt beim Staat, während die staatliche Bundesbank Scheine herstellt. Beides müssen die privaten Geschäftsbanken bei der Bundesbank kaufen. (vgl. \cite{herstellung_fiat_waehrung}). Doch wie funktioniert dies bei Kryptowährungen? 
+
+Instanzen einer Kryptowährung werden bei einem Prozess erzeugt, der \textbf{Mining}, zu Deutsch: Bergbau, genannt wird. Diese Analogie ist eigentlich recht passend, da neue Coins nur gefunden werden können, wenn ein bestimmter Arbeitsaufwand betrieben wird.
+
+Der vorrangige Sinn des Minings ist jedoch nicht die Erschaffung von Coins, welcher eher als Nebeneffekt zu verstehen ist. Der Sinn des Mining ist vor allem das Verifizieren und Durchführen von Transaktionen sowie die Überprüfung, ob sich alle Teilnehmer des Netzwerks an dessen Regeln halten. Der Prozess des Minings wird dabei von Minern - also Computern mit Rechenleistung - durchgeführt. Wie bereits in Unterkapitel \ref{sub:blockchain} beschrieben, enthalten die Blöcke gewisse Transaktionsinformationen. Zustäzlich zu diesen Transaktionsinformationen besitzt jeder Block eine \textbf{Coinbase Transaktion}, welche neue Coins enthält, die dann als "Belohnung" für das Sichern des Netzwerkes an die Miner ausgezahlt werden. 
+
+Ein Miner versucht im Endeffekt also, Transaktionen zu einem Block zu verbinden. Hat er diese Transaktionsinformationen zu einem passenden Block verbunden, wird er der Blockchain hinzugefügt und der Miner für seine Arbeistleistung bezahlt. Veranschaulichen lässt sich dieser Prozess durch die Analogie eines Puzzles.  Hierbei versucht der Miner, das Bild des Puzzles (Blockchain) zu bilden, indem er Puzzlestücke (Blöcke) zusammenfügt. Wer das passende Puzzlestück findet, erhält die Belohnung. (vgl. \cite{mining})
+
 
 \subsection{Handel von Kryptowährungen}
 \label{sub:handel_von_kryptowährungen}
+
+Kryptowährungen werden in sogenannten \textbf{Wallets} gespeichert. Das sind digitale Geldbörsen, die auf den unterschiedlichsten digitalen Geräten wie beispielsweise einem Computer, Smartphone oder USB-Stick liegen können. Anders als beim klassischen Geldsystem, wo das Geld bei einer Bank und innerhalb eines Girokontos verwaltet wird, gehören diese Wallets nur dem Besitzer, was bedeutet, dass niemand diese Geldbörsen sperren kann. Auch viele andere Einschränkungen normaler Wärhungen kennt eine Kryptowährung nicht. So gibt es beispielsweise keine Überweisungslimits, maximale Transaktionshöhen oder geografische Einschränkungen. Überweisungen können problemlos von jedem Ort der Welt an jeden Ort der Welt gesendet werden, solange Sender und Empfänger Internetzugang haben und ein Wallet besitzen. (vgl. \cite{bitcoins_erklärung})
+
+Wer sich nun dazu entschlossen hat mit Kryptowährungen zu handeln, hat generell zwei Möglichkeiten:
+
+\textbf{1. Bitcoins kaufen} \\
+Der direkte Weg wäre Coins zu kaufen und diese solange zu halten, bis der erwünschte Kursanstieg erreicht wurde, um sie dann wieder zu verkaufen. Dazu wird jedoch, wie oben beschrieben, ein Wallet benötigt. Die Coins werden dann auf Exchange Börsen oder Krypto-Marktplätzen im Internet gekauft und an das eigene Wallet geschickt. 
+
+\textbf{2. Trading über CFDs} \\
+Alternativ besteht die Möglichkeit des Crypto Trading per \ac{cfd}. Hierbei spekulieren Anleger lediglich auf den Anstieg bzw. den Fall des Bitcoin Kurses. Dabei können Basiswerte festegelegt werden, zu denen die CFDs gekauft bzw. verkauft werden sollen. Steigt der Bitcoin im Wert um 10\%, dann steigt auch der Wert der erworbenen CFDs um 10\%. (vgl. \cite{crypto_trading})
 
 %----
 
