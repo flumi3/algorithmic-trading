@@ -269,7 +269,10 @@ Eine Trading Strategie ist eine Methode zum Kaufen und Verkaufen auf Märkten, d
 Es gibt viele Arten von Handelsstrategien, aber sie basieren größtenteils entweder auf technischen Daten oder auf Fundamentaldaten. Letzteres beschreibt langfristige, grundlegende Informationen über die realen Produktionsmöglichkeiten, die Strukturen der Wirtschaft sowie den Vermögensstatus der Wirtschaftseinheiten, welche in dieser Arbeit jedoch nicht näher betrachtet werden\cite{fundamentaldaten}. Die Gemeinsamkeit ist, dass sich beide auf quantifizierbare Informationen stützen, die auf ihre Genauigkeit hin rückgetestet werden können.
 Technische Handelsstrategien verlassen sich auf technische Indikatoren, um Handelssignale zu generieren. Technische Trader glauben, dass alle Informationen über ein bestimmtes Wertpapier o.Ä. in seinem Preis enthalten sind und dass er sich in Trends bewegt. (vgl. \cite{trading_strategy}) 
 
-Eine einfache Trading Strategie kann zum Beispiel eine Moving-Average-Strategy sein, bei welcher ein Kaufsignal erzeugt wird, sobald der aktuelle Preis einen gewissen Wert unter dem der Moving Average liegt. Betrachtet man im Hinblick auf diese Strategie noch einmal Abbildung \ref{fig:3}, lassen sich einige Stellen im Chart erkennen, bei denen diese Strategie wohl Kaufsignale erzeugen würde.
+Eine einfache Trading Strategie kann zum Beispiel eine \textbf{Moving-Average-Strategy} sein, bei welcher ein Kaufsignal erzeugt wird, sobald der aktuelle Preis einen gewissen Wert unter dem der Moving Average liegt. Betrachtet man im Hinblick auf diese Strategie noch einmal Abbildung \ref{fig:3}, lassen sich einige Stellen im Chart erkennen, bei denen diese Strategie wohl Kaufsignale erzeugen würde.
+
+\subsection{Order Types}
+\label{sub:order_types}
 
 %----
 
@@ -329,11 +332,29 @@ Alternativ besteht die Möglichkeit des Crypto Trading per \ac{cfd}. Hierbei spe
 \section{Python}
 \label{sec:python}
 
-\subsection{Vorteile}
-\label{sub:vorteile}
+Technisch gesehen ist Python eine interpretierte, objektorientierte High-Level-Programmiersprache mit dynamischer Semantik. Ihre auf hoher Ebene eingebauten
+Datenstrukturen, kombiniert mit dynamischer Typisierung und dynamischer Bindung, machen sie sehr attraktiv für die schnelle Anwendungsentwicklung sowie
+für den Einsatz als Skript-Sprache, um bestehende Komponenten miteinander zu
+verbinden. Die einfach, leicht zu erlernende Syntax von Python betont die Lesbarkeit und reduziert somit die Kosten für die Programmwartung. Python unterstützt
+Module und Pakete, was die Modularität der Programme und die Wiederverwendung
+von Code fördert. Der Python-Interpreter und die umfangreiche Standardbibliothek
+sind in Quell- oder Binärform für alle wichtigen Plattformen kostenlos erhältlich
+und können frei verteilt werden. (vgl. \cite{python_definition})
 
-\subsection{Einsatzgebiete}
-\label{sub:einsatzgebiete}
+Ein Python-Programm wird vom Python-Interpreter ausgeführt. Dieser stellt dabei
+eine umfangreiche Standardbibliothek bereit, die vom Programm verwendet werden
+kann. Außerdem erlaubt es die Python API einem externen C-Programm, den
+Interpreter zu verwenden oder zu erweitern. Dargestellt in Abbildung \ref{fig:5}.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[height=0.43\textheight]{img/python_konzept.png}
+  \caption{Veranschaulichung der grundlegenden Konzepte\cite{python_konzepte}}
+  \label{fig:5}
+\end{figure} 
+
+\subsection{Typing}
+\label{sub:typing}
 
 %----
 
@@ -354,6 +375,89 @@ Alternativ besteht die Möglichkeit des Crypto Trading per \ac{cfd}. Hierbei spe
 %---------------------------------------------------
 \chapter{Problemanalyse}
 \label{cha:problemanalyse}
+
+Wie bereits in Kapitel \ref{sec:problemstellung} grob beschrieben, befasst sich das Projekt und die Arbeit in erster Linie damit, ein algorithmisches Handelssystem zu entwerfen. Um dieses Problem angehen zu können, muss es vorab in mehrere Teilprobleme gebrochen werden, welche wiederum in noch kleinere Teilprobleme zerlegt werden. So wird klar, wie an das Problem herangegangen werden muss, welche Komponenten zu entwickeln sind und welche Abhängigkeiten zwischen diesen bestehen.
+
+\section{Implementierung einer Schnittstelle für Handelsplattformen}
+\label{sec:schnittstelle_handelsplatform}
+
+Wer Kryptowährungen handeln will, benötigt dazu eine Plattform, auf der Einkäufe und Verkäufe getätigt werden. Hat man sich dazu entschlossen am Handel von Kryptowährungen teilzunehmen, erstellt man sich dazu ein Konto bei einem der hunderten Crypto-Trading-Anbieter. Einmal getan, loggt man sich auf der Homepage oder der App des Anbieters ein und ist für den Handel von Kryptowährungen bereit. Im Vergleich zum Handeln von Hand, benötigt das Trading-System jedoch eine \ac{api}, an die es anknüpfen kann, um mögliche Aktionen der Plattform tätigen zu können. Einige der Anbieter für Crypto-Trading stellen kostenlose \ac{api}s für die Nutzung mittels Code bereit.
+
+\subsection{Auswahl einer Handelsplattform}
+\label{sub:auswahl_plattform}
+
+Um sich für eine geeignete Plattform entscheiden zu können, bedarf es mehr als die Bereitstellung einer funktionstüchtigen \ac{api}. Da mit dieser Arbeit der Grundstein für eine zukünftige Weiterentwicklung des Trading Systems gelegt werden soll, ist es besonders wichtig, auch Anforderungen zu betrachten, die über den Entwicklungsstand innerhalb dieser Arbeit hinausgehen. Nach welchen Kriterien sollte eine Handelsplattform also ausgewählt werden? \\
+
+\textbf{Anforderungen an die Plattform}
+\begin{enumerate}
+	\item \textbf{Gewährleistung der Sicherheit des Accounts} \\
+		Die Sicherheit des Accounts und der damit 
+		verbundene Wert, der aus dem Besitz von Kryptowährungs hervorgeht hat
+		höchste Priorität. Eine Bereitstellung von Zwei-Faktor-Authentifizierung
+		sollte daher gegeben sein.
+	\item \textbf{Niedrige Transaktionsgebühren} \\
+		Alle Plattformen verdienen einen Großteil ihres Umsatzes durch das
+		Erheben von Transaktionsgebühren. Oft unterscheiden sich diese von
+		Plattform zu Plattform. Ein Abwägen der Gebühren untereinander ist
+		somit durchaus sinnvoll.
+	\item \textbf{Handeln von Kryptowährungen gegen Fiatgeld} \\
+		Das Handeln von Kryptowährungen gegen Fiatgeld (Euro, Dollar, usw.)
+		ist von großem Vorteil. Denn so entfällt der oft mühsame Währungs-
+		wechsel. Fehlt die Möglichkeit dazu, dann können Trader aussschließlich
+		Kryptowährungen untereinander tauschen.
+	\item \textbf{Breite Auswahl an verschiedenen Kryptowährungen} \\
+		Eine breite Auswahl an handelbaren Kryptowährungen ist von großem
+		Vorteil. Die Kurse verschiedener Kryptowährungen unterliegen
+		unterschiedlich großen Schwankungen und manche Strategien funktionieren
+		bei einigen Währungen besonders gut. \\
+\end{enumerate}
+
+\textbf{Anforderungen an die \ac{api}}
+\begin{enumerate}
+	\item \textbf{Geeignete Dokumentation der \ac{api}} \\
+		Um später mit den von der \ac{api} bereitgestellten Funktionen arbeiten
+		zu können, bedarf es einer guten und nutzerfreundlichen Dokumentation.
+		Wird diese garnicht oder in nur sehr geringen Maße von der Plattform
+		angeboten, gestaltet sich die Einbindung und Verwendung der 
+		Funktionalitäten sehr schwierig und mühsam.
+	\item \textbf{Bereitstellung von Marktdaten} \\
+		Einer der wohl wichtigsten Anforderungen an eine \ac{api} für
+		Crypto-Trading ist die Bereitstellung von Marktdaten. Dabei müssen nicht
+		nur aktuelle Preisdaten zur Verfügung gestellt werden, sondern auch
+		historische - also bereits verganene - Preisdaten bereitgestellt werden.
+		Diese werden vor allem für den Backtest und die Verwendung von
+		Strategien und deren Indikatoren benötigt. 
+	\item \textbf{Bereitstellung von Symbolinformationen} \\
+		Als Symbolinformationen bezeichnet man Informationen über die von der
+		Handelsplattform angebotenen Symbole bzw. Kryptowährungen. Ein Symbol
+		bezeichnet die Art des Handels und besteht dabei immer aus den Währungen
+		zwischen denen gehandelt wird - also beispielsweise Bitcoin und Euro.
+		Natürlich möchte man wissen, welche Symbole derzeit handelbar sind und
+		welche Kaufoptionen für sie möglich sind.
+	\item \textbf{Bereitstellung der Börsenhandelsregeln} \\
+		Alle Handelsaktionen unterliegen Handelsregeln. Dabei unterscheidet man
+		zwischen Handelsregeln für die Börse und den Handelsregeln eines
+		bestimmten Symbols wie z.B. Mindestmenge und Maximalpreis.
+	\item \textbf{Platzieren von verschiedenen Kaufaufträgen} \\
+		Grundlegend muss es möglich sein, Käufe und Verkäufe platzieren zu
+		können. Für zukünftige Zwecke werden jedoch die gängigen Order Types
+		wie beispielsweise der Stop-Loss- oder Limit-Order benötigt. 
+	\item \textbf{Bereitstellung von Accountdaten} \\
+		Natürlich soll es außerdem möglich sein, Accountdaten per \ac{api}
+		abfragen zu können. So können Daten wie z.B. derzeitiges Kapital, 
+		offene Trades und viele andere Dinge dargestellt oder visualisiert
+		werden.
+\end{enumerate}
+
+
+
+
+
+
+
+
+
+
 
 Die Analyse des zu lösenden Problems ist Grundlage für jedes 
 ingenieurmäßige Vorgehen. Daher soll in diesem Kapitel das zu lösenden 
