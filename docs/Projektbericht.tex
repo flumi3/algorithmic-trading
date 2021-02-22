@@ -64,9 +64,18 @@
 \begin{abstract}
 \label{abstract}
 
-Beim algorithmischen Handeln werden Handelsentscheidungen auf der Grundlage zuvor definierter Anweisungen und Regeln getroffen, die in Form eines Computerprogramms umgesetzt wurden. Dabei wird Code geschrieben, der die Trades im Namen des Händlers oder Investors ausführt, wenn bestimmte Bedingungen erfüllt sind. 
+Beim algorithmischen Handeln werden Handelsentscheidungen auf der
+Grundlage zuvor definierter Anweisungen und Regeln getroffen, die in
+Form eines Computerprogramms umgesetzt wurden. Dabei wird Code
+geschrieben, der die Trades im Namen des Händlers oder Investors
+ausführt, wenn bestimmte Bedingungen erfüllt sind.  
 
-Im Rahmen dieser Arbeit wurde versucht, jenes Verfahren auf den Handel von kryptographischen Währungen wie Bitcoin oder Ethereum anzuwenden und den Grundstein eines algorithmisches Handelssystem für diese zu entwerfen. So soll herausgefunden werden, ob der automatisierte Handel von Kryptowährungen, durch ein selbst entwickeltes System, erfolgreich sein kann.
+Im Rahmen dieser Arbeit wurde versucht, jenes Verfahren auf den Handel
+von kryptographischen Währungen wie Bitcoin oder Ethereum anzuwenden
+und den Grundstein eines algorithmisches Handelssystem für diese zu
+entwerfen. So soll herausgefunden werden, ob der automatisierte Handel
+von Kryptowährungen, durch ein selbst entwickeltes System,
+erfolgreich sein kann.
 
 Dabei beschäftigt sich diese Arbeit im grundlegenden mit folgenden Konzepten:
 
@@ -78,7 +87,9 @@ Dabei beschäftigt sich diese Arbeit im grundlegenden mit folgenden Konzepten:
 	\item Verknüpfung dieser Elemente innerhalb eines modularen Systems
 \end{enumerate}
 
-Umgesetzt wurde dieses Projekt fast ausschließlich unter der objektorientierten Verwendung der Programmiersprache Python, in Verbindung mit einigen wenigen HTML Elementen.
+Umgesetzt wurde dieses Projekt fast ausschließlich unter der
+objektorientierten Verwendung der Programmiersprache Python, in
+Verbindung mit einigen wenigen HTML Elementen.
 
 \end{abstract}
 
@@ -120,39 +131,118 @@ Umgesetzt wurde dieses Projekt fast ausschließlich unter der objektorientierten
 \chapter{Einleitung}
 \label{cha:einleitung}
 
-"Neues Allzeithoch: Bitcoin-Rekordjagd geht ungebremst weiter"\cite{bitcoin_artikel_1}. "Kryptowährung: Bitcoin knackt Marke von 50.000 Dollar"\cite{bitcoin_artikel_2}. Artikel wie diese sind schon lange keine Seltenheit mehr. Kryptowährungen, allen voran der Bitcoin, entwickelten sich in den letzten Jahren zum Sinnbild schnellen Reichtums. Doch das war nicht immer so. Im Jahre 2011, als sich der Bitcoin noch in seinen Kinderschuhen befand, kostete ein Coin gerade einmal 1 Dollar\cite{bitcoin_kurs_2011}. Vielleicht erwischt man sich nun selbst bei dem Gedanken daran, was wohl wäre, wenn man zu dieser Zeit schon das Potential dieser, damals unscheinbaren, Internetwährung erkannt hätte. Einige vorausdenkende Köpfe erkannten dies frühzeitig und wurden dadurch reich. Andere wiederum nutzten die neu entdeckte Kryptowährung dazu, online für ihre Pizza zu bezahlen. Verrückt, wenn man sich vor Augen führt, dass man mit der selben Menge Bitcoins heute zehntausende Pizzen bezahlen könnte. Vielleicht lässt dieser Gedanke die Herzen einiger Pizzaliebhaber höher schlagen, vorrangig stellt sich jedoch die Frage, ob man mit dem Besitz und Handel von Kryptowährungen heutzutage noch Erfolg haben kann. Und wenn ja - kann das auch ein Computerprogramm?
+"Neues Allzeithoch: Bitcoin-Rekordjagd geht ungebremst
+weiter"\cite{bitcoin_artikel_1}. "Kryptowährung: Bitcoin knackt Marke
+von 50.000 Dollar"\cite{bitcoin_artikel_2}. Artikel wie diese sind
+schon lange keine Seltenheit mehr. Kryptowährungen, allen voran der
+Bitcoin, entwickelten sich in den letzten Jahren zum Sinnbild
+schnellen Reichtums. Doch das war nicht immer so. Im Jahre 2011, als
+sich der Bitcoin noch in seinen Kinderschuhen befand, kostete ein Coin
+gerade einmal 1 Dollar\cite{bitcoin_kurs_2011}. Vielleicht erwischt
+man sich nun selbst bei dem Gedanken daran, was wohl wäre, wenn man
+zu dieser Zeit schon das Potential dieser, damals unscheinbaren,
+Internetwährung erkannt hätte. Einige vorausdenkende Köpfe
+erkannten dies frühzeitig und wurden dadurch reich. Andere wiederum
+nutzten die neu entdeckte Kryptowährung dazu, online für ihre Pizza
+zu bezahlen. Verrückt, wenn man sich vor Augen führt, dass man mit
+der selben Menge Bitcoins heute zehntausende Pizzen bezahlen könnte.
+Vielleicht lässt dieser Gedanke die Herzen einiger Pizzaliebhaber
+höher schlagen, vorrangig stellt sich jedoch die Frage, ob man mit
+dem Besitz und Handel von Kryptowährungen heutzutage noch Erfolg
+haben kann. Und wenn ja - kann das auch ein Computerprogramm?
+
 
 \section{Motivation}
 \label{sec:motivation}
 
-Natürlich stellt die Aussicht auf realisierbaren Gewinn, erzeugt durch ein selbst entwickeltes Handelssystem, ein großer Motivationsfaktor dar - doch es ist mehr als das. Kryptowährungen liegen einem faszinierendem Stück Technologie zugrunde. Der sogenannten \textbf{Blockchain} (dazu später mehr). Dennoch können die digitalen Währungen wie jede herkömmliche Währung getauscht und gehandelt werden, befinden sich gleichzeitig aber außerhalb der Kontrolle finanzieller Institutionen. Somit verbinden Kryptowährungen die Welt des Finanzhandels mit der Welt der Informatik. Für jemanden, den der herkömmliche Handel mit Wertpapieren oder Ähnlichem nur wenig anspricht, bieten Kryptowährungen die Möglichkeit eines interessanten Einblicks in beide Welten. 
+Natürlich stellt die Aussicht auf realisierbaren Gewinn, erzeugt
+durch ein selbst entwickeltes Handelssystem, ein großer
+Motivationsfaktor dar - doch es ist mehr als das. Kryptowährungen
+liegen einem faszinierendem Stück Technologie zugrunde. Der
+sogenannten \textbf{Blockchain} (dazu später mehr). Dennoch können
+die digitalen Währungen wie jede herkömmliche Währung getauscht und
+gehandelt werden, befinden sich gleichzeitig aber außerhalb der
+Kontrolle finanzieller Institutionen. Somit verbinden Kryptowährungen
+die Welt des Finanzhandels mit der Welt der Informatik. Für jemanden,
+den der herkömmliche Handel mit Wertpapieren oder Ähnlichem nur
+wenig anspricht, bieten Kryptowährungen die Möglichkeit eines
+interessanten Einblicks in beide Welten. 
 
-Abgesehen davon finde ich großen Gefallen daran, Lösungen für gegebene Problemstellungen zu entwerfen und in Programmcode umzusetzen. Es macht mir Spaß, neue Technologien kennenzulernen und deren Konzepte praktisch einzusetzen. Der Entwurf eines algorithmischen Handelssystems bietet dafür die perfekte Grundlage, da es beliebig erweitert werden kann und viele Schlüsselkonzepte vereint. So stellt das Projekt eine interessante Möglichkeit für mich dar, Dinge wie objektorientierte Programmierung, Entwurf von Softwarearchitekturen und Datenbanken, Web-Entwicklung und vielem mehr, innerhalb eines zusammenhängenden Projektes, kennenzulernen und anzuwenden.
+Abgesehen davon finde ich großen Gefallen daran, Lösungen für
+gegebene Problemstellungen zu entwerfen und in Programmcode
+umzusetzen. Es macht mir Spaß, neue Technologien kennenzulernen und
+deren Konzepte praktisch einzusetzen. Der Entwurf eines
+algorithmischen Handelssystems bietet dafür die perfekte Grundlage,
+da es beliebig erweitert werden kann und viele Schlüsselkonzepte
+vereint. So stellt das Projekt eine interessante Möglichkeit für
+mich dar, Dinge wie objektorientierte Programmierung, Entwurf von
+Softwarearchitekturen und Datenbanken, Web-Entwicklung und vielem
+mehr, innerhalb eines zusammenhängenden Projektes, kennenzulernen und
+anzuwenden.
+
 
 \section{Problemstellung und -abgrenzung}
 \label{sec:problemstellung}
 
-Als Ganzes betrachtet ist die Problemstellung, ein algorithmisches Handelssystem zu entwerfen, relativ unüberschaubar. Zur Bewältigung muss es daher in mehrere Teilprobleme heruntergebrochen werden. Daraus ergeben sich folgende, im nachfolgenden grob beschriebene, Problemstellungen:
+Als Ganzes betrachtet ist die Problemstellung, ein algorithmisches
+Handelssystem zu entwerfen, relativ unüberschaubar. Zur Bewältigung
+muss es daher in mehrere Teilprobleme heruntergebrochen werden. Daraus
+ergeben sich folgende, im nachfolgenden grob beschriebene,
+Problemstellungen:
 
 \textbf{1. Algorithmische Handelsstrategien und technische Indikatoren} \\
-Ohne eine geeignete Trading Strategie, die entscheidet, wann Einkäufe und Verkäufe zu tätigen sind, kann wohl kein System Erfolg haben. Diesen Trading Strategien liegen technische Indikatoren zu Grunde. Ein technischer Indikator dient dabei zur alternativen Darstellung der Kursverläufe liefert der Strategie wertvolle Analyseinformationen. Der Fokus soll dabei jedoch weniger auf der Findung und Konzeption neuer Strategien und Indikatoren liegen, sondern darauf, wie diese möglichst einfach und modular in das System eingebunden werden können.
+Ohne eine geeignete Trading Strategie, die entscheidet, wann Einkäufe
+und Verkäufe zu tätigen sind, kann wohl kein System Erfolg haben.
+Diesen Trading Strategien liegen technische Indikatoren zu Grunde. Ein
+technischer Indikator dient dabei zur alternativen Darstellung der
+Kursverläufe liefert der Strategie wertvolle Analyseinformationen.
+Der Fokus soll dabei jedoch weniger auf der Findung und Konzeption
+neuer Strategien und Indikatoren liegen, sondern darauf, wie diese
+möglichst einfach und modular in das System eingebunden werden
+können.
 
 \textbf{2. Implementierung einer Schnittstelle für Handelsplattformen} \\
-Der Handel von Kryptowährungen mittels eines algorithmischen Systems erfordert, genauso wie beim Handeln von Hand, eine Plattform, auf der die Ein- und Verkäufe getätigt werden. Im Vergleich zum Handeln von Hand, benötigt das Trading-System jedoch ein \ac{api}, an die es anknüpfen kann, um mögliche Aktionen der Plattform tätigen zu können. Einige Plattformen bieten solche APIs zum Teil kostenlos an. Die Problemstellung ergibt sich daraus, die von den Plattformen bereitgestellten APIs zu nutzen und eigene, möglichst modulare, Schnittstellen zur Verwendung dieser zu entwerfen.
+Der Handel von Kryptowährungen mittels eines algorithmischen Systems
+erfordert, genauso wie beim Handeln von Hand, eine Plattform, auf der
+die Ein- und Verkäufe getätigt werden. Im Vergleich zum Handeln von
+Hand, benötigt das Trading-System jedoch ein \ac{api}, an die es
+anknüpfen kann, um mögliche Aktionen der Plattform tätigen zu
+können. Einige Plattformen bieten solche APIs zum Teil kostenlos an.
+Die Problemstellung ergibt sich daraus, die von den Plattformen
+bereitgestellten APIs zu nutzen und eigene, möglichst modulare,
+Schnittstellen zur Verwendung dieser zu entwerfen.
 
 \textbf{3. Backtesting von Handelsstrategien} \\
-Backtesting bzw. Rückvergleich bezeichnet den Prozess, eine Strategie zu evaluieren, indem die Strategie auf historische Daten angewandt wird. Findet man beispielsweise eine neue, vielversprechende Trading Strategie und möchte diese nun nach der Umsetzung in Code testen, ist es sehr riskant, die Strategie im Echtzeitbetrieb laufen zu lassen. Sollte die Strategie nämlich doch nicht so vielversprechend sein, läuft man Gefahr, große Verluste durch schlecht platzierte Ein- und Verkäufe hinnehmen zu müssen. Der Backtest wirkt diesem Risiko entgegen und stellt somit eine der wichtigsten Komponenten des Systems dar. 
+Backtesting bzw. Rückvergleich bezeichnet den Prozess, eine Strategie
+zu evaluieren, indem die Strategie auf historische Daten angewandt
+wird. Findet man beispielsweise eine neue, vielversprechende Trading
+Strategie und möchte diese nun nach der Umsetzung in Code testen, ist
+es sehr riskant, die Strategie im Echtzeitbetrieb laufen zu lassen.
+Sollte die Strategie nämlich doch nicht so vielversprechend sein,
+läuft man Gefahr, große Verluste durch schlecht platzierte Ein- und
+Verkäufe hinnehmen zu müssen. Der Backtest wirkt diesem Risiko
+entgegen und stellt somit eine der wichtigsten Komponenten des Systems
+dar. 
 
 \textbf{4. Erstellung einer Konsolenanwendung} \\
-Alle Features des zu entwickelnden Systems, sollen dem Nutzer als Teil einer Konsolenanwendung zur Verfügung stehen. Mit dieser soll es beispielsweise möglich sein, Backtests sowie neue "Händler-Instanzen" aka Trading-Bots zu erstellen, welche verschiedenen Parametern wie Auswahl der Kryptowährung, Strategie, Kapital, usw. zu Grunde liegen.
+Alle Features des zu entwickelnden Systems, sollen dem Nutzer als Teil
+einer Konsolenanwendung zur Verfügung stehen. Mit dieser soll es
+beispielsweise möglich sein, Backtests sowie neue
+"Händler-Instanzen" aka Trading-Bots zu erstellen, welche
+verschiedenen Parametern wie Auswahl der Kryptowährung, Strategie,
+Kapital, usw. zu Grunde liegen.
 
 \textbf{5. Verknüpfung der Komponenten innerhalb eines modularen Systems} \\
-Im laufe der Arbeit werden Lösungskonzepte für die, hier aufgeführten, Problemstellungen entworfen und implementiert. Wichtig ist es dabei, die Komponenten mit Hinblick auf das Gesamtsystem und dessen Erweiterbarkeit/Modularität zu entwerfen, sowie ein sauberes und klar definiertes Zusammenspiel zu ermöglichen. 
+Im laufe der Arbeit werden Lösungskonzepte für die, hier
+aufgeführten, Problemstellungen entworfen und implementiert. Wichtig
+ist es dabei, die Komponenten mit Hinblick auf das Gesamtsystem und
+dessen Erweiterbarkeit/Modularität zu entwerfen, sowie ein sauberes
+und klar definiertes Zusammenspiel zu ermöglichen. 
 
 \section{Ziel der Arbeit}
 \label{sec:ziel}
 
-Wie sich aus den vorherigen Abschnitten bereits erkennen lässt, stellt das Ziel dieser Arbeit den Entwurf und die Implementierung eines algorithmischen Handelssystems für Kryptowährungen dar. Dabei soll es dem System möglich sein, Marktdaten über Kryptowährungen zu sammeln und automatisiert auszuwerten. Des weiteren soll das System über eine Teststrategie sowie den dazugehörigen technischen Indikatoren enthalten, welche durch einen, ebenfalls im System implementierten, Backtest ausgewertet werden kann. Dabei soll es dem System möglich sein, ausgewählte Markdaten und Backtest-Ergebnisse zu visualisieren und anschaulich darzustellen. Unter anderem soll das System einen Prototyp eines Trading-Bots enthalten, welcher mit zukünftigen Erweiterungen in der Lage sein soll, echte Handelsaktionen durchzuführen. All diese Funktionen sollen dem Nutzer durch eine Konsolenanwendung bereitgestellt werden.
+Wie sich aus den vorherigen Abschnitten bereits erkennen lässt, stellt das Ziel dieser Arbeit den Entwurf und die Implementierung eines algorithmischen Handelssystems für Kryptowährungen dar. Dabei soll es dem System möglich sein, Marktdaten über Kryptowährungen zu sammeln und automatisiert auszuwerten. Des weiteren soll das System über eine Teststrategie sowie den dazugehörigen technischen Indikatoren enthalten, welche durch einen, ebenfalls im System implementierten, Backtest ausgewertet werden kann. Dabei soll es dem System möglich sein, ausgewählte Markdaten und Backtest-Ergebnisse zu visualisieren und anschaulich darzustellen. Unter anderem soll das System einen Prototyp eines Trading-Bots enthalten, welcher mit zukünftigen Erweiterungen in der Lage sein soll, echte Handelsaktionen durchzuführen. Diese Handelsaktionen werden innerhalb dieser Arbeit jedoch \underline{nicht} implementiert, d.h. das System ist innerhalb diesen Projekts nicht in der Lage, eigenständig reale Käufe und Verkäufe zu tätigten. Die zuvor genannten Funktionen sollen dem Nutzer letztendlich durch eine Konsolenanwendung bereitgestellt werden.
 
 \section{Vorgehen}
 \label{sec:vorgehen}
@@ -401,7 +491,9 @@ Interpreter zu verwenden oder zu erweitern. Dargestellt in Abbildung \ref{fig:5}
 \chapter{Problemanalyse}
 \label{cha:problemanalyse}
 
-Wie bereits in Kapitel \ref{sec:problemstellung} grob beschrieben, befasst sich das Projekt und die Arbeit in erster Linie damit, ein algorithmisches Handelssystem zu entwerfen. Um dieses Problem angehen zu können, muss es vorab in mehrere Teilprobleme gebrochen werden, welche wiederum in noch kleinere Teilprobleme zerlegt werden. So wird klar, wie an das Problem herangegangen werden muss, welche Komponenten zu entwickeln sind und welche Abhängigkeiten zwischen diesen bestehen.
+Wie bereits in Kapitel \ref{sec:problemstellung} grob beschrieben, befasst sich das Projekt und die Arbeit in erster Linie damit, ein algorithmisches Handelssystem zu entwerfen. Um dieses Problem angehen zu können, muss es vorab in mehrere Teilprobleme gebrochen werden, welche wiederum in noch kleinere Teilprobleme zerlegt werden. So wird klar, wie an das Problem herangegangen werden muss, welche Komponenten zu entwickeln sind und welche Abhängigkeiten zwischen diesen bestehen. 
+
+%----
 
 \section{Implementierung einer Schnittstelle für Handelsplattformen}
 \label{sec:schnittstelle_handelsplatform}
@@ -411,7 +503,7 @@ Wer Kryptowährungen handeln will, benötigt dazu eine Plattform, auf der Einkä
 \subsection{Auswahl einer Handelsplattform}
 \label{sub:auswahl_plattform}
 
-Um sich für eine geeignete Plattform entscheiden zu können, bedarf es mehr als die Bereitstellung einer funktionstüchtigen \ac{api}. Da mit dieser Arbeit der Grundstein für eine zukünftige Weiterentwicklung des Trading Systems gelegt werden soll, ist es besonders wichtig, auch Anforderungen zu betrachten, die über den Entwicklungsstand innerhalb dieser Arbeit hinausgehen. Nach welchen Kriterien sollte eine Handelsplattform also ausgewählt werden? \\
+Um sich für eine geeignete Plattform entscheiden zu können, bedarf es mehr als die Bereitstellung einer funktionstüchtigen \ac{api}. Nach welchen Kriterien sollte eine Handelsplattform also ausgewählt werden? \\
 
 \textbf{Anforderungen an die Plattform}
 \begin{enumerate}
@@ -479,6 +571,10 @@ Um sich für eine geeignete Plattform entscheiden zu können, bedarf es mehr als
 
 Eine von einer Plattform bereitgestellte \ac{api} reicht natürlich nicht aus, um loslegen zu können. Vorerst muss sie sorgfältig in das System eingebunden werden, das sie nutzen möchte. Dazu muss eine weitere Schnittstelle entwickelt werden - sozusagen eine Schnittstelle der Schnittstelle, um die Nutzung der \ac{api} einfacher zu gestalten. Die Schwierigkeit liegt darin, die Schnittstelle möglichst generisch und unkompliziert zu entwerfen. Es kann nämlich durchaus vorkommen, dass sich eine andere Plattform als besser erweist als die Bisherige, oder eine \ac{api} nicht länger unterstützt wird. Somit ist es überaus wichtig, sicherzustellen, dass beim Austausch einer \ac{api} so wenige andere Systemkomponenten beeinträchtigt werden wie möglich.
 
+%----
+
+\section{Algorithmische Handelsstrategien und technische Indikatoren}
+\label{sec:strategie_und_indikatoren}
 
 
 
