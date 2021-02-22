@@ -106,6 +106,8 @@ Umgesetzt wurde dieses Projekt fast ausschließlich unter der objektorientierten
 \acro{api}[API]{Application Programming Interface}
 \acro{sma}[SMA]{Simple Moving Average}
 \acro{cfd}[CFD]{Contract for Difference}
+\acro{rest}[REST]{Representational State Transfer}
+\acro{http}[HTTP]{Hypertext Transfer Protocol}
 \end{acronym}
 %---
 
@@ -329,6 +331,29 @@ Alternativ besteht die Möglichkeit des Crypto Trading per \ac{cfd}. Hierbei spe
 
 %----
 
+\section{Application Programming Interface}
+\label{sec:api}
+
+Ein Application Programming Interface, bzw. Programmierschnittstelle, ist ein Programmteil, der von einem Softwaresystem anderen Programmen zur Anbindung an das System zur Verfügung gestellt wird. Die Programmanbindung findet dabei auf Quelltext-Ebene statt. (vgl. \cite{api_definition})
+
+Veranschaulichen lässt sich dies durch die Analogie mit einem Restaurant: \\
+Ein Restaurant bildet ein System. Kunden wollen dieses System nutzen, indem sie mithilfe einer Essenskarte Bestellungen aufgeben. Dabei ist die Küche der Teil des Systems, der die Bestellungen der Gäste zubereitet. Was fehlt, ist das entscheidende Bindeglied, um die Bestellung der Kunden an die Küche zu übermitteln und ihnen ihr Essen an den Tisch zu liefern. An dieser Stelle kommt der Kellner ins Spiel. Der Kellner ist der Bote, bzw. \ac{api}, der die Anfrage der Kunden entgegennimmt und der Küche - bzw. dem System - mitteilt, was zu tun ist. Dann liefert der Kellner die Antwort an den Kunden zurück. In diesem Fall ist es das Essen. (vgl. \cite{api_example})  
+
+\subsection{REST API}
+\label{sub:rest_api}
+REST steht für Representational State Transfer und beschreibt ein Paradigma (grunsätzliche Denkweise) für die Softwarearchitektur von verteilten Systemen, insbesondere für Webservices. \ac{rest} ist eine Abstraktion der Struktur und des Verhaltens des World Wide Web und hat das Ziel, einen Architekturstil zu schaffen, der die Anforderungen des moderen Web besser darstellt. Der Zweck von \ac{rest} liegt schwerpunktmäßig auf der Kommunikation zwischen Client und Server in Netzwerken. Eine \ac{rest} \ac{api} ist demnach also eine Programmierschnittstelle die diesem Paradigma folgt. (vgl. \cite{rest})
+
+Die Funktionsweise wird in Abbildung \ref{fig:5} ersichtlich.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[height=0.35\textheight]{img/rest_api.jpeg}
+  \caption{Funktionsweise einer REST API\cite{rest_pic}}
+  \label{fig:5}
+\end{figure}
+
+Die \ac{api} kommuniziert mit dem Server über das sogenannte \ac{http} - ein Protokoll zur Übertragung von Daten über ein Rechnernetz. Es wird hauptsächlich eingesetzt, um Websiten aus dem World Wide Web in einen Webbrowser zu laden\cite{http_definition}. Mittels \ac{http} Request, werden also Informationen vom Server angefordert, wodurch der Server wiederum eine \ac{http} Response erzeugt, die der Client dann erhält.
+
 \section{Python}
 \label{sec:python}
 
@@ -350,7 +375,7 @@ Interpreter zu verwenden oder zu erweitern. Dargestellt in Abbildung \ref{fig:5}
   \centering
   \includegraphics[height=0.43\textheight]{img/python_konzept.png}
   \caption{Veranschaulichung der grundlegenden Konzepte\cite{python_konzepte}}
-  \label{fig:5}
+  \label{fig:6}
 \end{figure} 
 
 \subsection{Typing}
@@ -448,6 +473,12 @@ Um sich für eine geeignete Plattform entscheiden zu können, bedarf es mehr als
 		offene Trades und viele andere Dinge dargestellt oder visualisiert
 		werden.
 \end{enumerate}
+
+\subsection{Schnittstelle der API}
+\label{sub:schnittstelle_der_api}
+
+Eine von einer Plattform bereitgestellte \ac{api} reicht natürlich nicht aus, um loslegen zu können. Vorerst muss sie sorgfältig in das System eingebunden werden, das sie nutzen möchte. Dazu muss eine weitere Schnittstelle entwickelt werden - sozusagen eine Schnittstelle der Schnittstelle, um die Nutzung der \ac{api} einfacher zu gestalten. Die Schwierigkeit liegt darin, die Schnittstelle möglichst generisch und unkompliziert zu entwerfen. Es kann nämlich durchaus vorkommen, dass sich eine andere Plattform als besser erweist als die Bisherige, oder eine \ac{api} nicht länger unterstützt wird. Somit ist es überaus wichtig, sicherzustellen, dass beim Austausch einer \ac{api} so wenige andere Systemkomponenten beeinträchtigt werden wie möglich.
+
 
 
 
