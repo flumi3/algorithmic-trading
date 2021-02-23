@@ -195,7 +195,7 @@ Ohne eine geeignete Trading Strategie, die entscheidet, wann Einkäufe
 und Verkäufe zu tätigen sind, kann wohl kein System Erfolg haben.
 Diesen Trading Strategien liegen technische Indikatoren zu Grunde. Ein
 technischer Indikator dient dabei zur alternativen Darstellung der
-Kursverläufe liefert der Strategie wertvolle Analyseinformationen.
+Kursverläufe und liefert der Strategie wertvolle Analyseinformationen.
 Der Fokus soll dabei jedoch weniger auf der Findung und Konzeption
 neuer Strategien und Indikatoren liegen, sondern darauf, wie diese
 möglichst einfach und modular in das System eingebunden werden
@@ -215,16 +215,21 @@ Schnittstellen zur Verwendung dieser zu entwerfen.
 \textbf{3. Backtesting von Handelsstrategien} \\
 Backtesting bzw. Rückvergleich bezeichnet den Prozess, eine Strategie
 zu evaluieren, indem die Strategie auf historische Daten angewandt
-wird. Findet man beispielsweise eine neue, vielversprechende Trading
+wird\cite{backtesting_definition}. Findet man beispielsweise eine neue,
+vielversprechende Trading
 Strategie und möchte diese nun nach der Umsetzung in Code testen, ist
 es sehr riskant, die Strategie im Echtzeitbetrieb laufen zu lassen.
 Sollte die Strategie nämlich doch nicht so vielversprechend sein,
 läuft man Gefahr, große Verluste durch schlecht platzierte Ein- und
 Verkäufe hinnehmen zu müssen. Der Backtest wirkt diesem Risiko
 entgegen und stellt somit eine der wichtigsten Komponenten des Systems
-dar. 
+dar.
 
-\textbf{4. Erstellung einer Konsolenanwendung} \\
+\textbf{4. Entwurf und Verwaltung eines Trading Bots} \\
+Zu einem richtigen Trading System gehört die Möglichkeit, das System selbständig
+Echzeitdaten auswerten und automatisiert Einkäufe und Verkäufe tätigen zu lassen. Da dies den Umfang dieser Arbeit jedoch übersteigt, soll innerhalb dieses Projekts nur der Grundstein dieses Features gelegt werden.
+
+\textbf{5. Erstellung einer Konsolenanwendung} \\
 Alle Features des zu entwickelnden Systems, sollen dem Nutzer als Teil
 einer Konsolenanwendung zur Verfügung stehen. Mit dieser soll es
 beispielsweise möglich sein, Backtests sowie neue
@@ -232,7 +237,7 @@ beispielsweise möglich sein, Backtests sowie neue
 verschiedenen Parametern wie Auswahl der Kryptowährung, Strategie,
 Kapital, usw. zu Grunde liegen.
 
-\textbf{5. Verknüpfung der Komponenten innerhalb eines modularen Systems} \\
+\textbf{6. Verknüpfung der Komponenten innerhalb eines modularen Systems} \\
 Im laufe der Arbeit werden Lösungskonzepte für die, hier
 aufgeführten, Problemstellungen entworfen und implementiert. Wichtig
 ist es dabei, die Komponenten mit Hinblick auf das Gesamtsystem und
@@ -696,7 +701,10 @@ erweitern. Dargestellt in Abbildung \ref{fig:5}.
   \includegraphics[height=0.43\textheight]{img/python_konzept.png}
   \caption{Veranschaulichung der grundlegenden Konzepte\cite{python_konzepte}}
   \label{fig:6}
-\end{figure} 
+\end{figure}
+
+\subsection{Pandas DataFrame}
+\label{sub:dataframe}
 
 \subsection{Typing}
 \label{sub:typing}
@@ -754,7 +762,7 @@ es mehr als die Bereitstellung einer funktionstüchtigen \ac{api}.
 Nach welchen Kriterien sollte eine Handelsplattform also ausgewählt
 werden? \\
 
-\textbf{Anforderungen an die Plattform}
+\underline{Anforderungen an die Plattform:}
 \begin{enumerate}
 	\item \textbf{Gewährleistung der Sicherheit des Accounts} \\
 		Die Sicherheit des Accounts und der damit 
@@ -778,7 +786,7 @@ werden? \\
 		bei einigen Währungen besonders gut. \\
 \end{enumerate}
 
-\textbf{Anforderungen an die \ac{api}}
+\underline{Anforderungen an die \ac{api}:}
 \begin{enumerate}
 	\item \textbf{Geeignete Dokumentation der \ac{api}} \\
 		Um später mit den von der \ac{api} bereitgestellten Funktionen arbeiten
@@ -836,25 +844,195 @@ möglich.
 \section{Algorithmische Handelsstrategien und technische Indikatoren}
 \label{sec:strategie_und_indikatoren}
 
+Die richtige Trading Strategie entscheidet über Gewinn und Verlust während technische Indikatoren die Werkzeuge jeder algorithmischen Strategie sind. Somit stellen beide also eine enorm wichtige Komponente des Systems dar. Wie bereits angedeutet, soll der Fokus jedoch weniger auf der Findung und Konzeption neuer Strategien und Indikatoren liegen, sondern darauf, wie diese möglichst einfach und modular in das System eingebunden werden können. Ein Blick ins World Wide Web genügt, um zu wissen, dass dort hunderte Kaufstrategien und Indikatoren auf eine Implementierung in Code warten. Welche Strategie davon nun die Beste ist, wird der Backtest früher oder später herausfinden. Das ist jedoch nicht Teil dieser Arbeit.
 
+Teil dieser Arbeit ist es aber, das System auf die parallele Nutzung vieler Strategien und Indikatoren vorzubereiten, bzw. das System so zu entwerfen, dass diese nach belieben ein- und ausgehängt werden können. Das bedeutet, dass der Backtest beispielsweise in der Lage sein soll, jede beliebige implementierte Strategie für seinen Test zu Nutzen. Entscheidet man sich dazu, eine neue Strategie zu implementieren, soll die Strategie (inklusive ihren Indikatoren) ins System eingebunden werden können, ohne dabei die anderen Komponenten des Systems zu verändern - also nahtlos. \\
 
+\underline{Anforderungen an die technischen Indikatoren:}
+\begin{enumerate}
+	\item \textbf{Berechnen der Indikatordaten für gegebene Marktdaten} \\
+		Jeder Indikator soll in der Lage sein, seine eigenen Indikatordaten
+		auf der Basis gegebener Marktdaten zu berechnen. Bereitgestellt werden
+		diese Daten durch die jeweilige Schnittstelle der Trading-Plattform-
+		\ac{api}. 
+	\item \textbf{Anhängen der Indikatordaten an die gegebenen Markdaten} \\
+		Außerdem soll es möglich sein, die zuvor berechneten Indikatordaten an
+		die Marktdaten anzuhängen, um somit ein Datenobjekt zu bilden, welches
+		der jeweiligen Trading Strategie von Nutzen ist. \\
+\end{enumerate}
 
+\underline{Anforderungen an die Trading Strategie:}
+\begin{enumerate}
+	\item \textbf{Eigenständiges Hinzufügen der benötigten Indikatoren} \\
+		Jede Strategie benötigt eine mehr oder weniger große Anzahl an
+		Indikatoren, durch welche die Strategie in der Lage ist, Kaufs- und
+		Verkaufsentscheidungen zu treffen. Jede Strategie sollte daher in der
+		Lage sein, die benötigten Indikator-Instanzen selbst zu erzeugen und
+		deren Daten anschließend an die Marktdaten anhängen zu lassen.
+	\item \textbf{Berechnen von Kaufsignalen} \\
+		Um einen Backtest ausführen zu können, muss die Strategie Kaufsignale 
+		für historische Marktdaten erzeugen. Sozusagen soll die Strategie also 
+		berechnen können, zu welchen Zeitpunkten sie
+		einen Kauf für sinnvoll gehalten hätte.
+	\item \textbf{Berechnen von Verkaufssignalen} \\
+		Ebenso wie beim Berechnen der Kaufsignale, sollte die Strategie auch
+		im Stande sein, die selben historischen Markdaten zu nutzen, um
+		geeignete Verkaufspunkte für die zuvor berechneten Kaufpunkte zu finden.
+	\item \textbf{Überprüfen der Buy Condition} \\
+		Die Buy Condition bezeichnet die Bedingung des Kaufes - also die
+		Bedingung, die erfüllt sein muss, damit die Strategie einen Kauf für
+		sinnvoll hält. Für die zukünftige Nutzung des Systems, soll die 
+		Strategie die also die Möglichkeit besitzen, Echtzeitdaten zu überprüfen 
+		und für diese zu Entscheiden, ob ein Kauf platziert werden soll oder 
+		nicht. 
+	\item \textbf{Überprüfen der Sell Condition} \\
+		Analog zu Buy Condition, besitzt die Strategie eine Sell Condition,
+		welche festlegt, wann ein bereit gekaufte Instanz einer Kryptowährung
+		verkauft werden soll. So soll auch hierbei gegeben sein, dass diese
+		Bedingung für gegebene Echtzeitdaten überprüft werden soll.
+\end{enumerate}
 
+%----
 
+\section{Backtesting von Trading Strategien}
+\label{sec:backtesting}
 
+Der Backtest ist die wohl wichtigste Komponente des zu entwickelnden Systems. Durch den Backtest soll der Nutzer in der Lage sein, eine beliebige, im System implementierte, Trading Strategie auszuwählen und auf Trading Symbole wie Bitcoin/Euro oder Ethereum/Euro laufen zu lassen. Da der Backtest für seinen Rückvergleich sowohl die Trading Strategie als auch die vergangenen Marktdaten benötigt, erfordert er das Zusammenspiel der anderen Komponenten mit sich selbt. \\
 
+\underline{Anforderungen an den Backtest:}
+\begin{enumerate}
+	\item \textbf{Durchführen des eigentlichen Backtest} \\
+		Zur Durchführung des eigentlichen Backtests gehört das auswerten der 
+		historischen Marktdaten. Es soll möglich sein, ein Startkapital
+		festzulegen, mit welchem der Backtest startet. Anschließend soll ein
+		Echtzeitszenario nachgeahmt werden, bei dem der Backtest chronologisch
+		durch die historischen Marktdaten geht und ein Kaufen und Verkaufen von
+		Kryptowährungs-Instanzen simuliert.  
+	\item \textbf{Sammeln von Backtestdaten und Statistiken} \\
+		Um erkennen zu können, ob die Strategie innerhalb des Zeitraums der 
+		vergangenen Marktdaten Erfolg gehabt hätte, ist es wichtig, während des 
+		Backtests eine Vielzahl	von Daten und Statistiken zu sammeln. So soll am
+		Ende des Rückvergleichs beispielsweise ersichtlich werden, wie sich das
+		Kapital entwickelt hat, wie viel Geld ausgegeben wurde und wie viel
+		Gewinn die Strategie generiert hätte.
+	\item \textbf{Bereitstellung der Backtestdaten} \\
+		Die während des Backtests gesammelten Informationen sollen dem Nutzer
+		in einem gut lesbaren Format ausgegeben werden. Damit soll ihm
+		die Möglichkeit gegeben werden, die Effizienz der Strategie anhand der
+		gesammelten Statistiken zu bewerten.
+	\item \textbf{Visualisierung der Backtestdaten} \\
+		Um dem Nutzer das Evaluieren der Backtest-Ergebnisse einfacher zu
+		gestalten, sollen die historischen Marktdaten mithilfe eines
+		Candlestick Charts visualisiert werden. Zusätzlich sollen auch die
+		von der Strategie genutzten Indikatoren und die erzeugten Kauf- und
+		Verkaufspunkte ersichtlich werden.
+	\item \textbf{Speichern der Backtestdaten} \\
+		Damit der Nutzer die Ergebnisse verschiedener Backtests auch noch in
+		Zukunft auswerten und vergleichen kann, sollen die Backtest-Ergebnisse
+		persistent gemacht werden.
+\end{enumerate}
 
-Die Analyse des zu lösenden Problems ist Grundlage für jedes 
-ingenieurmäßige Vorgehen. Daher soll in diesem Kapitel das zu lösenden 
-Problem auf Basis des im Grundlagenkapitel aufbereiteten Wissens 
-analysiert werden. Hierzu ist insbesondere notwendig zu klären, wie sich 
-das Gesamtproblem in Teilprobleme zerlegen lässt und welche 
-Abhängigkeiten zwischen diesen bestehen.
+%----
 
-Bei Software-Projekten befindet sich an dieser Stelle typischerweise die 
-Anforderungsanalyse des \ac{rup}.
+\section{Entwurf und Verwaltung eines Trading Bots}
+\label{sec:trading_bot}
 
-%---
+Da innerhalb dieser Arbeit nur das Fundament für die Erstellung und Verwaltung von Trading Bots gelegt werden soll, wird der Trading Bot nicht in der Lage sein, eigenständig Einkäufe und Verkäufe zu tätigen. Vielmehr soll ein Konzept erarbeitet werden, das die Erstellung und Nutzung dieser Trading Bots in das System integriert. Die zukünftige Implementierung des Features für reale Käufe und Verkäufe soll dann auf diesem Konzept aufbauen. \\
+
+\underline{Anforderungen an den Trading Bot}
+\begin{enumerate}
+	\item \textbf{Sammeln der nötigen Marktdaten} \\
+		Damit ein Trading Bot Anwendung findet, benötigt er einen Datensatz aus
+		Echtzeitdaten. Daher soll er in der Lage sein, nach der Instanzierung
+		eines neuen Bots, eigenständig die richtigen Marktdaten zu sammeln und zu
+		verwalten.
+	\item \textbf{Updaten der Marktdaten} \\
+		Um die Marktdaten aktuell zu halten, muss der Trading Bot die Möglichkeit
+		haben, seinen Datensatz selbständig zu aktualisieren.
+	\item \textbf{Evaluierung von Echtzeitdaten} \\
+		Der Bot soll zudem in der Lage sein, diesen Ständig aktualisierten
+		Marktdatensatz auszuwerten, um die Empfehlung eines Kaufes oder Verkaufes
+		zu signalisieren. \\
+\end{enumerate}
+
+\underline{Anforderungen an die Verwaltung des Trading Bots}
+\begin{enumerate}
+	\item \textbf{Hinzufügen und Entfernen neuer Trading Bots} \\
+		Die Verwaltungskomponente soll sowohl in der Lage sein alle Trading Bots 
+		zu verwalten, als auch neue zur Verwaltung hinzuzufügen.
+	\item \textbf{Starten und Stoppen der Trading Bots} \\
+		Analog zum Hinzufügen neuer Trading Bots, soll außerdem eine Möglichkeit 
+		zum Entfernen von Trading Bots gegeben sein. \\
+\end{enumerate}
+
+Da der Trading Bot für die oben genannten Anforderungen sowohl Marktdaten als auch Trading Strategie zur Auswertung benötigt, muss eine reibungslose Zusammenarbeit mit den anderen Systemkomponenten gewährleistet sein.
+
+%----
+
+\section{Erstellung einer Konsolenanwendung}
+\label{sec:erstellung_cli}
+
+Alle bereits aufgeführten Komponenten und Features sollen Teil einer Konsolenanwendung werden, welche diese dann als System vereint und dem Nutzer zur Interaktion bereitstellt. \\
+
+\underline{Anforderungen an die Konsolenanwendung}
+\begin{enumerate}
+	\item \textbf{Erstellen eines Backtests} \\
+		Die Erstellung eines Backtests soll dem Nutzer so einfach wie möglich
+		gemacht werden. Der Nutzer soll daher eine Konfiguration des Backtests
+		durchlaufen, indem er die verschiedenen Parameter wie Tradingsymbol oder 
+		Strategie, auswählt.
+	\item \textbf{Erstellen eines neuen Trading Bots} \\
+		Die Erstellung eines neuen Trading Bots soll ähnlich ablaufen wie die des
+		Backtests. Auch hier soll der Nutzer eine Konfigurationsauswahl
+		durchlaufen.
+	\item \textbf{Anzeigen der erstellten Trading Bots} \\
+		Sind erstmal ein paar Trading Bots erstellt, ist es natürlich von Vorteil
+		sich diese Anzeigen zu lassen. Daher soll die Möglichkeit gegeben sein,
+		alle vom System verwalteten Trading Bots aufzulisten und deren aktuellen
+		Status anzuzeigen.
+	\item \textbf{Beenden des Programms} \\
+		Ein beenden des Programms von der Konsolenanwendung aus soll ebenfalls
+		bereitgestellt werden.
+	\item \textbf{Einfache und intuitive Bedienung} \\
+		Einer der wichtigsten Aspekte einer Benutzeroberfläche ist deren
+		Bedienbarkeit. Kein Nutzer möchte sich bei der Nutzung eines Programms
+		"verloren" fühlen und sich andauern fragen wie etwas funktioniert. Die
+		Konsolenanwendung muss daher so gestaltet werden, dass sich auch Nutzer
+		ohne Entwicklungshintergrund zurechtfinden.
+	\item \textbf{Übersichtliches und konsistentes Designkonzept} \\
+		Die Übersichtlichkeit und damit verbundene Konsistenz eines Designs 
+		innerhalb der Anwendung sind entscheidende Faktoren im Bereich 
+		Benutzerfreundlichkeit und sollten daher durchaus berücksichtigt werden.
+\end{enumerate}
+
+%----
+
+\section{Zusammenfassung}
+\label{sec:zsmf_komponenten}
+
+Die nachfolgende Abbildung (Abb. \ref{fig:7}) dient der Veranschaulichung der zu entwickelnden Komponenten und deren Abhängigkeiten untereinander.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[height=0.45\textheight]{img/components.png}
+  \caption{Veranschaulichung der grundlegenden Komponenten}
+  \label{fig:7}
+\end{figure}
+
+\underline{Erklärung der Abhängigkeiten:}
+\begin{itemize}
+	\item Sowohl Trading Bot als auch der Backtest sollen die Schnittstelle der
+		\ac{api} verwenden, um von dort aus die nötigen Marktdaten zu beziehen.
+	\item Zusätzlich sollen Trading Bot und Backtest die im System
+		zu implementierenden Trading Strategien nutzen, um damit deren gesammelten 
+		Marktdaten auszuwerten.
+	\item Technische Indikatoren sind Bestandteil jeder Trading Strategie und
+		sollen der Analyse von Marktdaten dienen.
+	\item Instanzen eines Trading Bots sollen von einem Verwaltungssytem gehalten,
+		gestartet und gestoppt werden.
+\end{itemize}
+
+%---------------------------------------------------
 \chapter{Lösungskonzept}
 \label{cha:loesungskonzept}
 
