@@ -226,8 +226,10 @@ entgegen und stellt somit eine der wichtigsten Komponenten des Systems
 dar.
 
 \textbf{4. Entwurf und Verwaltung eines Trading Bots} \\
-Zu einem richtigen Trading System gehört die Möglichkeit, das System selbständig
-Echzeitdaten auswerten und automatisiert Einkäufe und Verkäufe tätigen zu lassen. Da dies den Umfang dieser Arbeit jedoch übersteigt, soll innerhalb dieses Projekts nur der Grundstein dieses Features gelegt werden.
+Echzeitdaten auswerten und automatisiert Einkäufe und Verkäufe
+tätigen zu lassen. Da dies den Umfang dieser Arbeit jedoch
+übersteigt, soll innerhalb dieses Projekts nur der Grundstein dieses
+Features gelegt werden.
 
 \textbf{5. Erstellung einer Konsolenanwendung} \\
 Alle Features des zu entwickelnden Systems, sollen dem Nutzer als Teil
@@ -382,7 +384,8 @@ im Kopf zu behalten, dass jede Kerze immer nur eine Aussage über den
 Kursverlauf ihres Zeitintervalls darstellt. (vgl.
 \cite{candles_explained})
  
-Fügt man alle Candles zu einem Candlestick Chart zusammen erhält man ein Diagramm wie in Abbildung \ref{fig:2} dargestellt. \\
+Fügt man alle Candles zu einem Candlestick Chart zusammen erhält man
+ein Diagramm wie in Abbildung \ref{fig:2} dargestellt. \\
 
 \begin{figure}[H]
   \centering
@@ -844,9 +847,27 @@ möglich.
 \section{Algorithmische Handelsstrategien und technische Indikatoren}
 \label{sec:strategie_und_indikatoren}
 
-Die richtige Trading Strategie entscheidet über Gewinn und Verlust während technische Indikatoren die Werkzeuge jeder algorithmischen Strategie sind. Somit stellen beide also eine enorm wichtige Komponente des Systems dar. Wie bereits angedeutet, soll der Fokus jedoch weniger auf der Findung und Konzeption neuer Strategien und Indikatoren liegen, sondern darauf, wie diese möglichst einfach und modular in das System eingebunden werden können. Ein Blick ins World Wide Web genügt, um zu wissen, dass dort hunderte Kaufstrategien und Indikatoren auf eine Implementierung in Code warten. Welche Strategie davon nun die Beste ist, wird der Backtest früher oder später herausfinden. Das ist jedoch nicht Teil dieser Arbeit.
+Die richtige Trading Strategie entscheidet über Gewinn und Verlust
+während technische Indikatoren die Werkzeuge jeder algorithmischen
+Strategie sind. Somit stellen beide also eine enorm wichtige
+Komponente des Systems dar. Wie bereits angedeutet, soll der Fokus
+jedoch weniger auf der Findung und Konzeption neuer Strategien und
+Indikatoren liegen, sondern darauf, wie diese möglichst einfach und
+modular in das System eingebunden werden können. Ein Blick ins World
+Wide Web genügt, um zu wissen, dass dort hunderte Kaufstrategien und
+Indikatoren auf eine Implementierung in Code warten. Welche Strategie
+davon nun die Beste ist, wird der Backtest früher oder später
+herausfinden. Das ist jedoch nicht Teil dieser Arbeit.
 
-Teil dieser Arbeit ist es aber, das System auf die parallele Nutzung vieler Strategien und Indikatoren vorzubereiten, bzw. das System so zu entwerfen, dass diese nach belieben ein- und ausgehängt werden können. Das bedeutet, dass der Backtest beispielsweise in der Lage sein soll, jede beliebige implementierte Strategie für seinen Test zu Nutzen. Entscheidet man sich dazu, eine neue Strategie zu implementieren, soll die Strategie (inklusive ihren Indikatoren) ins System eingebunden werden können, ohne dabei die anderen Komponenten des Systems zu verändern - also nahtlos. \\
+Teil dieser Arbeit ist es aber, das System auf die parallele Nutzung
+vieler Strategien und Indikatoren vorzubereiten, bzw. das System so zu
+entwerfen, dass diese nach belieben ein- und ausgehängt werden
+können. Das bedeutet, dass der Backtest beispielsweise in der Lage
+sein soll, jede beliebige implementierte Strategie für seinen Test zu
+Nutzen. Entscheidet man sich dazu, eine neue Strategie zu
+implementieren, soll die Strategie (inklusive ihren Indikatoren) ins
+System eingebunden werden können, ohne dabei die anderen Komponenten
+des Systems zu verändern - also nahtlos. \\
 
 \underline{Anforderungen an die technischen Indikatoren:}
 \begin{enumerate}
@@ -897,7 +918,13 @@ Teil dieser Arbeit ist es aber, das System auf die parallele Nutzung vieler Stra
 \section{Backtesting von Trading Strategien}
 \label{sec:backtesting}
 
-Der Backtest ist die wohl wichtigste Komponente des zu entwickelnden Systems. Durch den Backtest soll der Nutzer in der Lage sein, eine beliebige, im System implementierte, Trading Strategie auszuwählen und auf Trading Symbole wie Bitcoin/Euro oder Ethereum/Euro laufen zu lassen. Da der Backtest für seinen Rückvergleich sowohl die Trading Strategie als auch die vergangenen Marktdaten benötigt, erfordert er das Zusammenspiel der anderen Komponenten mit sich selbt. \\
+Der Backtest ist die wohl wichtigste Komponente des zu entwickelnden
+Systems. Durch den Backtest soll der Nutzer in der Lage sein, eine
+beliebige, im System implementierte, Trading Strategie auszuwählen
+und auf Trading Symbole wie Bitcoin/Euro oder Ethereum/Euro laufen zu
+lassen. Da der Backtest für seinen Rückvergleich sowohl die Trading
+Strategie als auch die vergangenen Marktdaten benötigt, erfordert er
+das Zusammenspiel der anderen Komponenten mit sich selbt. \\
 
 \underline{Anforderungen an den Backtest:}
 \begin{enumerate}
@@ -937,7 +964,13 @@ Der Backtest ist die wohl wichtigste Komponente des zu entwickelnden Systems. Du
 \section{Entwurf und Verwaltung eines Trading Bots}
 \label{sec:trading_bot}
 
-Da innerhalb dieser Arbeit nur das Fundament für die Erstellung und Verwaltung von Trading Bots gelegt werden soll, wird der Trading Bot nicht in der Lage sein, eigenständig Einkäufe und Verkäufe zu tätigen. Vielmehr soll ein Konzept erarbeitet werden, das die Erstellung und Nutzung dieser Trading Bots in das System integriert. Die zukünftige Implementierung des Features für reale Käufe und Verkäufe soll dann auf diesem Konzept aufbauen. \\
+Da innerhalb dieser Arbeit nur das Fundament für die Erstellung und
+Verwaltung von Trading Bots gelegt werden soll, wird der Trading Bot
+nicht in der Lage sein, eigenständig Einkäufe und Verkäufe zu
+tätigen. Vielmehr soll ein Konzept erarbeitet werden, das die
+Erstellung und Nutzung dieser Trading Bots in das System integriert.
+Die zukünftige Implementierung des Features für reale Käufe und
+Verkäufe soll dann auf diesem Konzept aufbauen. \\
 
 \underline{Anforderungen an den Trading Bot}
 \begin{enumerate}
@@ -965,14 +998,19 @@ Da innerhalb dieser Arbeit nur das Fundament für die Erstellung und Verwaltung 
 		zum Entfernen von Trading Bots gegeben sein. \\
 \end{enumerate}
 
-Da der Trading Bot für die oben genannten Anforderungen sowohl Marktdaten als auch Trading Strategie zur Auswertung benötigt, muss eine reibungslose Zusammenarbeit mit den anderen Systemkomponenten gewährleistet sein.
+Da der Trading Bot für die oben genannten Anforderungen sowohl
+Marktdaten als auch Trading Strategie zur Auswertung benötigt, muss
+eine reibungslose Zusammenarbeit mit den anderen Systemkomponenten
+gewährleistet sein.
 
 %----
 
 \section{Erstellung einer Konsolenanwendung}
 \label{sec:erstellung_cli}
 
-Alle bereits aufgeführten Komponenten und Features sollen Teil einer Konsolenanwendung werden, welche diese dann als System vereint und dem Nutzer zur Interaktion bereitstellt. \\
+Alle bereits aufgeführten Komponenten und Features sollen Teil einer
+Konsolenanwendung werden, welche diese dann als System vereint und dem
+Nutzer zur Interaktion bereitstellt. \\
 
 \underline{Anforderungen an die Konsolenanwendung}
 \begin{enumerate}
@@ -1010,7 +1048,9 @@ Alle bereits aufgeführten Komponenten und Features sollen Teil einer Konsolenan
 \section{Zusammenfassung}
 \label{sec:zsmf_komponenten}
 
-Die nachfolgende Abbildung (Abb. \ref{fig:7}) dient der Veranschaulichung der zu entwickelnden Komponenten und deren Abhängigkeiten untereinander.
+Die nachfolgende Abbildung (Abb. \ref{fig:7}) dient der
+Veranschaulichung der zu entwickelnden Komponenten und deren
+Abhängigkeiten untereinander.
 
 \begin{figure}[H]
   \centering
