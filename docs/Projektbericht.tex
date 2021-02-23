@@ -242,7 +242,24 @@ und klar definiertes Zusammenspiel zu ermöglichen.
 \section{Ziel der Arbeit}
 \label{sec:ziel}
 
-Wie sich aus den vorherigen Abschnitten bereits erkennen lässt, stellt das Ziel dieser Arbeit den Entwurf und die Implementierung eines algorithmischen Handelssystems für Kryptowährungen dar. Dabei soll es dem System möglich sein, Marktdaten über Kryptowährungen zu sammeln und automatisiert auszuwerten. Des weiteren soll das System über eine Teststrategie sowie den dazugehörigen technischen Indikatoren enthalten, welche durch einen, ebenfalls im System implementierten, Backtest ausgewertet werden kann. Dabei soll es dem System möglich sein, ausgewählte Markdaten und Backtest-Ergebnisse zu visualisieren und anschaulich darzustellen. Unter anderem soll das System einen Prototyp eines Trading-Bots enthalten, welcher mit zukünftigen Erweiterungen in der Lage sein soll, echte Handelsaktionen durchzuführen. Diese Handelsaktionen werden innerhalb dieser Arbeit jedoch \underline{nicht} implementiert, d.h. das System ist innerhalb diesen Projekts nicht in der Lage, eigenständig reale Käufe und Verkäufe zu tätigten. Die zuvor genannten Funktionen sollen dem Nutzer letztendlich durch eine Konsolenanwendung bereitgestellt werden.
+Wie sich aus den vorherigen Abschnitten bereits erkennen lässt,
+stellt das Ziel dieser Arbeit den Entwurf und die Implementierung
+eines algorithmischen Handelssystems für Kryptowährungen dar. Dabei
+soll es dem System möglich sein, Marktdaten über Kryptowährungen zu
+sammeln und automatisiert auszuwerten. Des weiteren soll das System
+über eine Teststrategie sowie den dazugehörigen technischen
+Indikatoren enthalten, welche durch einen, ebenfalls im System
+implementierten, Backtest ausgewertet werden kann. Dabei soll es dem
+System möglich sein, ausgewählte Markdaten und Backtest-Ergebnisse
+zu visualisieren und anschaulich darzustellen. Unter anderem soll das
+System einen Prototyp eines Trading-Bots enthalten, welcher mit
+zukünftigen Erweiterungen in der Lage sein soll, echte
+Handelsaktionen durchzuführen. Diese Handelsaktionen werden innerhalb
+dieser Arbeit jedoch \underline{nicht} implementiert, d.h. das System
+ist innerhalb diesen Projekts nicht in der Lage, eigenständig reale
+Käufe und Verkäufe zu tätigten. Die zuvor genannten Funktionen
+sollen dem Nutzer letztendlich durch eine Konsolenanwendung
+bereitgestellt werden.
 
 \section{Vorgehen}
 \label{sec:vorgehen}
@@ -272,21 +289,55 @@ hierfür findet sich in Abbildung \ref{fig:1}.
 \section{Trading}
 \label{sec:trading}
 
-Das Wort "Trading", zu Deutsch: Handel, stammt aus dem Englischen und beschreibt den Kauf und Verkauf von Finanzprodukten an einer Börse. Menschen, die dieser Beschäftigung nachgehen, werden daher auch als Trader bezeichnet. Ein durchgeführter Handel heißt dementsprechend also Trade. (vgl. \cite{trading_1})
+Das Wort "Trading", zu Deutsch: Handel, stammt aus dem Englischen und
+beschreibt den Kauf und Verkauf von Finanzprodukten an einer Börse.
+Menschen, die dieser Beschäftigung nachgehen, werden daher auch als
+Trader bezeichnet. Ein durchgeführter Handel heißt dementsprechend
+also Trade. (vgl. \cite{trading_1})
 
-Trading bedeutet, die Schwankungen der Finanzmärkte mithilfe von Trades für die eigenen Zwecke zu nutzen. Das heißt kaufen, verkaufen und dabei Gewinne einstreichen - oder den Verlust verkraften. Durch das Internet und benutzerfreundliche Trading-Anbieter ist es auch für Hobby-Anleger möglich, Finanzinstrumente wie Wertpapiere, Währungen, Rohstoff-Zertifikate oder Ähnlichem zu handeln. Beim Trading handelt es sich grundsätzlich um Spekulation. Wo ein Trader sein Geld investiert, ist meist von untergeordneter Wichtigkeit. Beispielsweise geht es nicht darum, Anteile eines Unternehmens zu kaufen, um langfristig an dessen Entwicklung teilzuhaben. Das Ziel eines Traders ist es, durch einen Kursanstieg im Zeitraum des Besitzes eins Finanzinstruments Gewinn zu erzielen. Das bedeutet, ein Trader kauft beispielsweise eine Aktie, hofft auf einen Kursanstieg und verkauft sie dann wieder. Die anschließende Wertdifferenz abzüglich der Transaktionskosten stellt den Gewinn des Traders dar. (vgl. \cite{trading_2})
+Trading bedeutet, die Schwankungen der Finanzmärkte mithilfe von
+Trades für die eigenen Zwecke zu nutzen. Das heißt kaufen, verkaufen
+und dabei Gewinne einstreichen - oder den Verlust verkraften. Durch
+das Internet und benutzerfreundliche Trading-Anbieter ist es auch für
+Hobby-Anleger möglich, Finanzinstrumente wie Wertpapiere, Währungen,
+Rohstoff-Zertifikate oder Ähnlichem zu handeln. Beim Trading handelt
+es sich grundsätzlich um Spekulation. Wo ein Trader sein Geld
+investiert, ist meist von untergeordneter Wichtigkeit. Beispielsweise
+geht es nicht darum, Anteile eines Unternehmens zu kaufen, um
+langfristig an dessen Entwicklung teilzuhaben. Das Ziel eines Traders
+ist es, durch einen Kursanstieg im Zeitraum des Besitzes eins
+Finanzinstruments Gewinn zu erzielen. Das bedeutet, ein Trader kauft
+beispielsweise eine Aktie, hofft auf einen Kursanstieg und verkauft
+sie dann wieder. Die anschließende Wertdifferenz abzüglich der
+Transaktionskosten stellt den Gewinn des Traders dar. (vgl.
+\cite{trading_2})
 
 \subsection{Algorithmischer Handel}
 \label{sub:algorithmischer_handel}
 
-Algorithmischer beschreibt den automatischen Handel von Finanzinstrumenten durch Computerprogramme. Dabei folgt das Computerprogramm einem vordefiniertem Satz von Anweisungen (Algorithmus), um einen Trade zu platzieren. Die Trades können theoretisch Gewinne mit einer Geschwindigkeit und Häufigkeit generieren, die für einen menschlichen Trader unmöglich sind. (vgl. \cite{algorithmic_trading})
+Algorithmischer beschreibt den automatischen Handel von
+Finanzinstrumenten durch Computerprogramme. Dabei folgt das
+Computerprogramm einem vordefiniertem Satz von Anweisungen
+(Algorithmus), um einen Trade zu platzieren. Die Trades können
+theoretisch Gewinne mit einer Geschwindigkeit und Häufigkeit
+generieren, die für einen menschlichen Trader unmöglich sind. (vgl.
+\cite{algorithmic_trading})
 
-Die definierten Sätze von Anweisungen basieren auf Timing, Preis, Menge oder einem beliebigen mathematischen Modell. Abgesehen von den Gewinnmöglichkeiten für den Trader, macht der algorithmische Handel die Märkte liquider und den Handel systematischer, da der Einfluss menschlicher Emotionen auf die Handelsaktivität ausgeschlossen wird. (vgl. \cite{algorithmic_trading})
+Die definierten Sätze von Anweisungen basieren auf Timing, Preis,
+Menge oder einem beliebigen mathematischen Modell. Abgesehen von den
+Gewinnmöglichkeiten für den Trader, macht der algorithmische Handel
+die Märkte liquider und den Handel systematischer, da der Einfluss
+menschlicher Emotionen auf die Handelsaktivität ausgeschlossen wird.
+(vgl. \cite{algorithmic_trading})
 
 \subsection{Candlestick Charts}
 \label{sub:candlestick_charts}
 
-Ein Candlestick Chart ist ein Finanzdiagramm, mit dem sich die Kursbewegungen eines Wertpapiers oder Ähnlichem darstellen lassen. Es besteht aus einer Aneinanderreihung von sogenannten \textbf{Candles} (Kerzen), welche für die verschiedenste Zeiteinheiten verwendet werden können und vier zentrale Informationswerte enthalten:
+Ein Candlestick Chart ist ein Finanzdiagramm, mit dem sich die
+Kursbewegungen eines Wertpapiers oder Ähnlichem darstellen lassen. Es
+besteht aus einer Aneinanderreihung von sogenannten \textbf{Candles}
+(Kerzen), welche für die verschiedenste Zeiteinheiten verwendet
+werden können und vier zentrale Informationswerte enthalten:
 
 \begin{itemize}
 	\item Eröffnungskurs (Open)
@@ -297,7 +348,11 @@ Ein Candlestick Chart ist ein Finanzdiagramm, mit dem sich die Kursbewegungen ei
 
 (vgl. \cite{candlestick_basics})
 
-Die Candles haben gegenüber den früher gängigeren Balkencharts den Vorteil, optisch anschaulicher zu sein, ohne dabei gleich kompliziert zu werden. Grundsätzlich wird dabei zwischen zwei verschiedenen Kerzen unterschieden, welche in der nachfolgenden Abbildung (\ref{fig:1}) dargestellt werden. \\
+Die Candles haben gegenüber den früher gängigeren Balkencharts den
+Vorteil, optisch anschaulicher zu sein, ohne dabei gleich kompliziert
+zu werden. Grundsätzlich wird dabei zwischen zwei verschiedenen
+Kerzen unterschieden, welche in der nachfolgenden Abbildung
+(\ref{fig:1}) dargestellt werden. \\
 
 \begin{figure}[H]
   \centering
@@ -306,9 +361,21 @@ Die Candles haben gegenüber den früher gängigeren Balkencharts den Vorteil, o
   \label{fig:1}
 \end{figure}
 
-Jede Kerze kann dabei für jede beliebige Zeitspanne stehen. Für einen Tag, eine Woche, einen Monat, oder auch für kurzfristigere Zeitebenen auf Minutenbasis. Die Aussagen der Kerzen sind dabei jedoch immer dieselben.
+Jede Kerze kann dabei für jede beliebige Zeitspanne stehen. Für
+einen Tag, eine Woche, einen Monat, oder auch für kurzfristigere
+Zeitebenen auf Minutenbasis. Die Aussagen der Kerzen sind dabei jedoch
+immer dieselben.
 
-Die Farbe der Candles lässt dabei sofort erkennen, ob es sich um eine bullische, oder eine bärische Kerze handelt. Die \textbf{bullische Kerze} symbolisiert ein Zeitintervall, welches positiv verlief, weil der Schlusskurs über dem Eröffnungskurs des Intervalls lag. Analog dazu bedeutet die \textbf{bärische Kerze}, dass der Kursverlauf während des Zeitintervalls der Kerze negativ verlief, weil der Schlusskurs unter dem Eröffnungskurs lag. Wichtig ist es dabei, sich im Kopf zu behalten, dass jede Kerze immer nur eine Aussage über den Kursverlauf ihres Zeitintervalls darstellt. (vgl. \cite{candles_explained})
+Die Farbe der Candles lässt dabei sofort erkennen, ob es sich um eine
+bullische, oder eine bärische Kerze handelt. Die \textbf{bullische
+Kerze} symbolisiert ein Zeitintervall, welches positiv verlief, weil
+der Schlusskurs über dem Eröffnungskurs des Intervalls lag. Analog
+dazu bedeutet die \textbf{bärische Kerze}, dass der Kursverlauf
+während des Zeitintervalls der Kerze negativ verlief, weil der
+Schlusskurs unter dem Eröffnungskurs lag. Wichtig ist es dabei, sich
+im Kopf zu behalten, dass jede Kerze immer nur eine Aussage über den
+Kursverlauf ihres Zeitintervalls darstellt. (vgl.
+\cite{candles_explained})
  
 Fügt man alle Candles zu einem Candlestick Chart zusammen erhält man ein Diagramm wie in Abbildung \ref{fig:2} dargestellt. \\
 
@@ -322,19 +389,32 @@ Fügt man alle Candles zu einem Candlestick Chart zusammen erhält man ein Diagr
 \subsection{Technische Indikatoren}
 \label{sub:technische_Indikatoren}
 
-Technische Indikatoren sind Chart-Analyse-Tools, die Tradern helfen können, Preisbewegungen besser zu verstehen und darauf zu reagieren. Es gibt eine riesige Auswahl an technischen Analysewerkzeugen, die Trends analysieren, Preisdurchschnitte liefern, die Volatilität (Schwankung) messen und mehr. (vgl. \cite{technical_indicators})
+Technische Indikatoren sind Chart-Analyse-Tools, die Tradern helfen
+können, Preisbewegungen besser zu verstehen und darauf zu reagieren.
+Es gibt eine riesige Auswahl an technischen Analysewerkzeugen, die
+Trends analysieren, Preisdurchschnitte liefern, die Volatilität
+(Schwankung) messen und mehr. (vgl. \cite{technical_indicators})
 
-Ein sehr beliebter technischer Indikator ist der \textbf{Moving Average}, zu Deutsch: gleitender Mittelwert, welcher benutzt wird, um den durchschnittlichen Schlusskurs des Marktes über einen bestimmten Zeitraum darzustellen. Trader machen oft Gebrauch von Moving Averages, da sie ein guter Hinweis auf die aktuelle Marktdynamik sein können. (vgl. \cite{moving_average})
+Ein sehr beliebter technischer Indikator ist der \textbf{Moving
+Average}, zu Deutsch: gleitender Mittelwert, welcher benutzt wird, um
+den durchschnittlichen Schlusskurs des Marktes über einen bestimmten
+Zeitraum darzustellen. Trader machen oft Gebrauch von Moving Averages,
+da sie ein guter Hinweis auf die aktuelle Marktdynamik sein können.
+(vgl. \cite{moving_average})
 
 \textbf{Wie wird ein Moving Average berechnet?} \\
-Eine der gängigsten Moving Averages ist der einfache gleitende Mittelwert bzw. \ac{sma}, welche einfach der Durschnitt aller Datenpunkte in der Serie geteilt durch die Anzahl der Punkte\cite{moving_average}.
+Eine der gängigsten Moving Averages ist der einfache gleitende
+Mittelwert bzw. \ac{sma}, welche einfach der Durschnitt aller
+Datenpunkte in der Serie geteilt durch die Anzahl der
+Punkte\cite{moving_average}.
 
 A = $ \{ $ {a$_{1}$, a$_{2}$, ..., a$_{n}$} $ \} $ \\
 n = Number of time periods / price elements
 
 SMA = $\frac{a_1 \ + \ a_2 \ + \ ... \ + \ a_n}{n}$
 
-Betrachtet man zum Beispiel eine 5-Tage-SMA auf einem Tages-Chart von EUR/USD und die Schlusskurse über die letzten 5 Tage sind wie folgt.
+Betrachtet man zum Beispiel eine 5-Tage-SMA auf einem Tages-Chart von
+EUR/USD und die Schlusskurse über die letzten 5 Tage sind wie folgt.
 
 Tag 1: 1.321 \\
 Tag 2: 1.301 \\
@@ -344,7 +424,8 @@ Tag 5: 1.326
 
 SMA = (1.321 + 1.301 + 1.325 + 1.327 + 1.326)/5 = 1.32
 
-Veranschaulichen lässt sich dieser Indikator gut in einem Candlestick Chart, wie in Abbildung \ref{fig:3} dargestellt.
+Veranschaulichen lässt sich dieser Indikator gut in einem Candlestick
+Chart, wie in Abbildung \ref{fig:3} dargestellt.
 
 \begin{figure}[H]
   \centering
@@ -356,12 +437,32 @@ Veranschaulichen lässt sich dieser Indikator gut in einem Candlestick Chart, wi
 \subsection{Trading Strategien}
 \label{sub:trading_strategien}
 
-Eine Trading Strategie ist eine Methode zum Kaufen und Verkaufen auf Märkten, die auf vordefinierten Regeln basiert, die zum Treffen von Handelsentscheidungen verwendet werden\cite{trading_strategy}.
+Eine Trading Strategie ist eine Methode zum Kaufen und Verkaufen auf
+Märkten, die auf vordefinierten Regeln basiert, die zum Treffen von
+Handelsentscheidungen verwendet werden\cite{trading_strategy}.
 
-Es gibt viele Arten von Handelsstrategien, aber sie basieren größtenteils entweder auf technischen Daten oder auf Fundamentaldaten. Letzteres beschreibt langfristige, grundlegende Informationen über die realen Produktionsmöglichkeiten, die Strukturen der Wirtschaft sowie den Vermögensstatus der Wirtschaftseinheiten, welche in dieser Arbeit jedoch nicht näher betrachtet werden\cite{fundamentaldaten}. Die Gemeinsamkeit ist, dass sich beide auf quantifizierbare Informationen stützen, die auf ihre Genauigkeit hin rückgetestet werden können.
-Technische Handelsstrategien verlassen sich auf technische Indikatoren, um Handelssignale zu generieren. Technische Trader glauben, dass alle Informationen über ein bestimmtes Wertpapier o.Ä. in seinem Preis enthalten sind und dass er sich in Trends bewegt. (vgl. \cite{trading_strategy}) 
+Es gibt viele Arten von Handelsstrategien, aber sie basieren
+größtenteils entweder auf technischen Daten oder auf
+Fundamentaldaten. Letzteres beschreibt langfristige, grundlegende
+Informationen über die realen Produktionsmöglichkeiten, die
+Strukturen der Wirtschaft sowie den Vermögensstatus der
+Wirtschaftseinheiten, welche in dieser Arbeit jedoch nicht näher
+betrachtet werden\cite{fundamentaldaten}. Die Gemeinsamkeit ist, dass
+sich beide auf quantifizierbare Informationen stützen, die auf ihre
+Genauigkeit hin rückgetestet werden können.
+Technische Handelsstrategien verlassen sich auf technische
+Indikatoren, um Handelssignale zu generieren. Technische Trader
+glauben, dass alle Informationen über ein bestimmtes Wertpapier o.Ä.
+in seinem Preis enthalten sind und dass er sich in Trends bewegt.
+(vgl. \cite{trading_strategy}) 
 
-Eine einfache Trading Strategie kann zum Beispiel eine \textbf{Moving-Average-Strategy} sein, bei welcher ein Kaufsignal erzeugt wird, sobald der aktuelle Preis einen gewissen Wert unter dem der Moving Average liegt. Betrachtet man im Hinblick auf diese Strategie noch einmal Abbildung \ref{fig:3}, lassen sich einige Stellen im Chart erkennen, bei denen diese Strategie wohl Kaufsignale erzeugen würde.
+Eine einfache Trading Strategie kann zum Beispiel eine
+\textbf{Moving-Average-Strategy} sein, bei welcher ein Kaufsignal
+erzeugt wird, sobald der aktuelle Preis einen gewissen Wert unter dem
+der Moving Average liegt. Betrachtet man im Hinblick auf diese
+Strategie noch einmal Abbildung \ref{fig:3}, lassen sich einige
+Stellen im Chart erkennen, bei denen diese Strategie wohl Kaufsignale
+erzeugen würde.
 
 \subsection{Order Types}
 \label{sub:order_types}
@@ -371,19 +472,56 @@ Eine einfache Trading Strategie kann zum Beispiel eine \textbf{Moving-Average-St
 \section{Kryptowährungen}
 \label{sec:kryptowährungen}
 
-Eine Kryptowährung ist eine digitale oder virtuelle Währung, die durch Kryptographie gesichert ist, was es nahezu unmöglich macht, sie zu fälschen oder doppelt auszugeben. Viele Kryptowährungen sind dezentralisierte Netzwerke, die auf der Blockchain-Technologie basieren - einem verteilten Hauptbuch, das von einem verteilten Netzwerk von Computern erzwungen wird. Ein entscheidendes Merkmal von Kryptowährungen ist, dass sie im Allgemeinen nicht von einer zentralen Behörde ausgegeben werden, was sie theoretisch immun gegen staatliche Eingriffe oder Manipulationen macht.
+Eine Kryptowährung ist eine digitale oder virtuelle Währung, die
+durch Kryptographie gesichert ist, was es nahezu unmöglich macht, sie
+zu fälschen oder doppelt auszugeben. Viele Kryptowährungen sind
+dezentralisierte Netzwerke, die auf der Blockchain-Technologie
+basieren - einem verteilten Hauptbuch, das von einem verteilten
+Netzwerk von Computern erzwungen wird. Ein entscheidendes Merkmal von
+Kryptowährungen ist, dass sie im Allgemeinen nicht von einer
+zentralen Behörde ausgegeben werden, was sie theoretisch immun gegen
+staatliche Eingriffe oder Manipulationen macht.
 
-Die erste Blockchain-basierte Kryptowährung war Bitcoin, die immernoch die beliebteste und wertvollste ist. Heute gibt es tausende von alternativen Kryptowährungen mit verschiedenen Funktionen und Spezifikationen. Einige davon sind Klone oder Abspaltungen von Bicoin, während andere neue Währungen sind, die von Grund auf neu entwickelt wurden. (vgl. \cite{cryptocurrency_explained})
+Die erste Blockchain-basierte Kryptowährung war Bitcoin, die
+immernoch die beliebteste und wertvollste ist. Heute gibt es tausende
+von alternativen Kryptowährungen mit verschiedenen Funktionen und
+Spezifikationen. Einige davon sind Klone oder Abspaltungen von Bicoin,
+während andere neue Währungen sind, die von Grund auf neu entwickelt
+wurden. (vgl. \cite{cryptocurrency_explained})
 
 \subsection{Die Blockchain}
 \label{sub:blockchain}
 
-Trivial ausgedrückt ist eine Blockchain nichts anderes als eine verteilte, öffentliche Datenbank\cite{blockchain_definition}, wessen Funktionsprinzip die meisten Kryptowährungen zugrunde liegen\cite{blockchain_1}.
-Um das Prinzip einer Blockchain verstehen zu können, hilft der Vergleich mit einem Gruppenchat:
+Trivial ausgedrückt ist eine Blockchain nichts anderes als eine
+verteilte, öffentliche Datenbank\cite{blockchain_definition}, wessen
+Funktionsprinzip die meisten Kryptowährungen zugrunde
+liegen\cite{blockchain_1}.
+Um das Prinzip einer Blockchain verstehen zu können, hilft der
+Vergleich mit einem Gruppenchat:
 
-Ben, Lisa und Mia haben sich um 14 Uhr im Park verabredet. Diese Information ist nach dem Absenden auf allen Smartphones im Chatverlauf gespeichert. Mia überlegt es sich anders und möchte sich erst um 16 Uhr treffen. Diese Entscheidung kann sie aber nicht alleine fällen. Sie kann auch nicht einfach die Uhrzeit im Chatverlauf nachträglich ändern. Mia muss also entweder gemeinsam mit den anderen von vorne planen, oder sie steht um 16 Uhr alleine im Park. Niemand kann nachträglich etwas verändern. Dieses Prinzip ist der Kern einer Blockchain, denn auch hier werden Informationen in einem "Verlauf" gespeichert. Informationen sind hierbei hauptsächlich Transaktionsinformationen von Nutzern die diese getätigt haben.
+Ben, Lisa und Mia haben sich um 14 Uhr im Park verabredet. Diese
+Information ist nach dem Absenden auf allen Smartphones im Chatverlauf
+gespeichert. Mia überlegt es sich anders und möchte sich erst um 16
+Uhr treffen. Diese Entscheidung kann sie aber nicht alleine fällen.
+Sie kann auch nicht einfach die Uhrzeit im Chatverlauf nachträglich
+ändern. Mia muss also entweder gemeinsam mit den anderen von vorne
+planen, oder sie steht um 16 Uhr alleine im Park. Niemand kann
+nachträglich etwas verändern. Dieses Prinzip ist der Kern einer
+Blockchain, denn auch hier werden Informationen in einem "Verlauf"
+gespeichert. Informationen sind hierbei hauptsächlich
+Transaktionsinformationen von Nutzern die diese getätigt haben.
 
-Jede Information bildet einen Block, für welche ein Hash - vergleichbar mit einem digitalen Fingerabdruck - berechnet wird. Zusätzlich enthält dieser Hash, den Hash des vorherigen Blocks. So werden die Blöcke über die Hashes, wie in Abbildung \ref{fig:4} veranschaulicht, zu einer Kette verbunden. Ähnlich wie bei einem Chatverlauf können die Informationen nicht verändert werden. Verändert sich nämlich die Information, verändert sich auch der Hash und die Kette würde auseinander brechen. Genau wie Mia und ihre Freunde mit der Planung von vorne beginnen müssten, müssten die Hashes aller folgenden Blöcke neu berechnet werden. (vgl. \cite{blockchain})
+Jede Information bildet einen Block, für welche ein Hash -
+vergleichbar mit einem digitalen Fingerabdruck - berechnet wird.
+Zusätzlich enthält dieser Hash, den Hash des vorherigen Blocks. So
+werden die Blöcke über die Hashes, wie in Abbildung \ref{fig:4}
+veranschaulicht, zu einer Kette verbunden. Ähnlich wie bei einem
+Chatverlauf können die Informationen nicht verändert werden.
+Verändert sich nämlich die Information, verändert sich auch der
+Hash und die Kette würde auseinander brechen. Genau wie Mia und ihre
+Freunde mit der Planung von vorne beginnen müssten, müssten die
+Hashes aller folgenden Blöcke neu berechnet werden. (vgl.
+\cite{blockchain})
 
 \begin{figure}[H]
   \centering
@@ -392,46 +530,125 @@ Jede Information bildet einen Block, für welche ein Hash - vergleichbar mit ein
   \label{fig:4}
 \end{figure} 
 
-Die Blockchain wird über ein dezentrales Netzwerk verwaltet, dem jeder beitreten kann. Jedes Mitglied hat eine vollständige Kopie der kompletten Blockchain auf dem Computer, welche von diesem auch geprüft wird. Ein neuer Block wird erst hinzugefügt, wenn ihn jeder im Netzwerk verifiziert hat. Jeder kontrolliert sozusagen jeden, was die Blockchain damit sehr sicher macht. Wichtig ist dabei aber nicht der Mensch vor dem Computer, oder eine dritte Instanz wie beispielsweise ein Notar. Die Kontrolle, und somit das Vertrauen, werden von der Blockchain technisch hergestellt. (vgl. \cite{blockchain})
+Die Blockchain wird über ein dezentrales Netzwerk verwaltet, dem
+jeder beitreten kann. Jedes Mitglied hat eine vollständige Kopie der
+kompletten Blockchain auf dem Computer, welche von diesem auch
+geprüft wird. Ein neuer Block wird erst hinzugefügt, wenn ihn jeder
+im Netzwerk verifiziert hat. Jeder kontrolliert sozusagen jeden, was
+die Blockchain damit sehr sicher macht. Wichtig ist dabei aber nicht
+der Mensch vor dem Computer, oder eine dritte Instanz wie
+beispielsweise ein Notar. Die Kontrolle, und somit das Vertrauen,
+werden von der Blockchain technisch hergestellt. (vgl.
+\cite{blockchain})
 
 \subsection{Mining}
 \label{sub:mining}
 
-Wie das Geld herkömmlicher Währungen wie beispielsweise Euro oder Dollar entsteht, ist kein Geheimnis. Das Bargeld entsteht unter staatlicher Regie. Das Recht zur Prägung von Münzen liegt direkt beim Staat, während die staatliche Bundesbank Scheine herstellt. Beides müssen die privaten Geschäftsbanken bei der Bundesbank kaufen. (vgl. \cite{herstellung_fiat_waehrung}). Doch wie funktioniert dies bei Kryptowährungen? 
+Wie das Geld herkömmlicher Währungen wie beispielsweise Euro oder
+Dollar entsteht, ist kein Geheimnis. Das Bargeld entsteht unter
+staatlicher Regie. Das Recht zur Prägung von Münzen liegt direkt
+beim Staat, während die staatliche Bundesbank Scheine herstellt.
+Beides müssen die privaten Geschäftsbanken bei der Bundesbank
+kaufen. (vgl. \cite{herstellung_fiat_waehrung}). Doch wie funktioniert
+dies bei Kryptowährungen?  
 
-Instanzen einer Kryptowährung werden bei einem Prozess erzeugt, der \textbf{Mining}, zu Deutsch: Bergbau, genannt wird. Diese Analogie ist eigentlich recht passend, da neue Coins nur gefunden werden können, wenn ein bestimmter Arbeitsaufwand betrieben wird.
+Instanzen einer Kryptowährung werden bei einem Prozess erzeugt, der
+\textbf{Mining}, zu Deutsch: Bergbau, genannt wird. Diese Analogie ist
+eigentlich recht passend, da neue Coins nur gefunden werden können,
+wenn ein bestimmter Arbeitsaufwand betrieben wird.
 
-Der vorrangige Sinn des Minings ist jedoch nicht die Erschaffung von Coins, welcher eher als Nebeneffekt zu verstehen ist. Der Sinn des Mining ist vor allem das Verifizieren und Durchführen von Transaktionen sowie die Überprüfung, ob sich alle Teilnehmer des Netzwerks an dessen Regeln halten. Der Prozess des Minings wird dabei von Minern - also Computern mit Rechenleistung - durchgeführt. Wie bereits in Unterkapitel \ref{sub:blockchain} beschrieben, enthalten die Blöcke gewisse Transaktionsinformationen. Zustäzlich zu diesen Transaktionsinformationen besitzt jeder Block eine \textbf{Coinbase Transaktion}, welche neue Coins enthält, die dann als "Belohnung" für das Sichern des Netzwerkes an die Miner ausgezahlt werden. 
+Der vorrangige Sinn des Minings ist jedoch nicht die Erschaffung von
+Coins, welcher eher als Nebeneffekt zu verstehen ist. Der Sinn des
+Mining ist vor allem das Verifizieren und Durchführen von
+Transaktionen sowie die Überprüfung, ob sich alle Teilnehmer des
+Netzwerks an dessen Regeln halten. Der Prozess des Minings wird dabei
+von Minern - also Computern mit Rechenleistung - durchgeführt. Wie
+bereits in Unterkapitel \ref{sub:blockchain} beschrieben, enthalten
+die Blöcke gewisse Transaktionsinformationen. Zustäzlich zu diesen
+Transaktionsinformationen besitzt jeder Block eine \textbf{Coinbase
+Transaktion}, welche neue Coins enthält, die dann als "Belohnung"
+für das Sichern des Netzwerkes an die Miner ausgezahlt werden.  
 
-Ein Miner versucht im Endeffekt also, Transaktionen zu einem Block zu verbinden. Hat er diese Transaktionsinformationen zu einem passenden Block verbunden, wird er der Blockchain hinzugefügt und der Miner für seine Arbeistleistung bezahlt. Veranschaulichen lässt sich dieser Prozess durch die Analogie eines Puzzles.  Hierbei versucht der Miner, das Bild des Puzzles (Blockchain) zu bilden, indem er Puzzlestücke (Blöcke) zusammenfügt. Wer das passende Puzzlestück findet, erhält die Belohnung. (vgl. \cite{mining})
+Ein Miner versucht im Endeffekt also, Transaktionen zu einem Block zu
+verbinden. Hat er diese Transaktionsinformationen zu einem passenden
+Block verbunden, wird er der Blockchain hinzugefügt und der Miner
+für seine Arbeistleistung bezahlt. Veranschaulichen lässt sich
+dieser Prozess durch die Analogie eines Puzzles.  Hierbei versucht der
+Miner, das Bild des Puzzles (Blockchain) zu bilden, indem er
+Puzzlestücke (Blöcke) zusammenfügt. Wer das passende Puzzlestück
+findet, erhält die Belohnung. (vgl. \cite{mining})
 
 
 \subsection{Handel von Kryptowährungen}
 \label{sub:handel_von_kryptowährungen}
 
-Kryptowährungen werden in sogenannten \textbf{Wallets} gespeichert. Das sind digitale Geldbörsen, die auf den unterschiedlichsten digitalen Geräten wie beispielsweise einem Computer, Smartphone oder USB-Stick liegen können. Anders als beim klassischen Geldsystem, wo das Geld bei einer Bank und innerhalb eines Girokontos verwaltet wird, gehören diese Wallets nur dem Besitzer, was bedeutet, dass niemand diese Geldbörsen sperren kann. Auch viele andere Einschränkungen normaler Wärhungen kennt eine Kryptowährung nicht. So gibt es beispielsweise keine Überweisungslimits, maximale Transaktionshöhen oder geografische Einschränkungen. Überweisungen können problemlos von jedem Ort der Welt an jeden Ort der Welt gesendet werden, solange Sender und Empfänger Internetzugang haben und ein Wallet besitzen. (vgl. \cite{bitcoins_erklärung})
+Kryptowährungen werden in sogenannten \textbf{Wallets} gespeichert.
+Das sind digitale Geldbörsen, die auf den unterschiedlichsten
+digitalen Geräten wie beispielsweise einem Computer, Smartphone oder
+USB-Stick liegen können. Anders als beim klassischen Geldsystem, wo
+das Geld bei einer Bank und innerhalb eines Girokontos verwaltet wird,
+gehören diese Wallets nur dem Besitzer, was bedeutet, dass niemand
+diese Geldbörsen sperren kann. Auch viele andere Einschränkungen
+normaler Wärhungen kennt eine Kryptowährung nicht. So gibt es
+beispielsweise keine Überweisungslimits, maximale Transaktionshöhen
+oder geografische Einschränkungen. Überweisungen können problemlos
+von jedem Ort der Welt an jeden Ort der Welt gesendet werden, solange
+Sender und Empfänger Internetzugang haben und ein Wallet besitzen.
+(vgl. \cite{bitcoins_erklärung})
 
-Wer sich nun dazu entschlossen hat mit Kryptowährungen zu handeln, hat generell zwei Möglichkeiten:
+Wer sich nun dazu entschlossen hat mit Kryptowährungen zu handeln,
+hat generell zwei Möglichkeiten:
 
 \textbf{1. Bitcoins kaufen} \\
-Der direkte Weg wäre Coins zu kaufen und diese solange zu halten, bis der erwünschte Kursanstieg erreicht wurde, um sie dann wieder zu verkaufen. Dazu wird jedoch, wie oben beschrieben, ein Wallet benötigt. Die Coins werden dann auf Exchange Börsen oder Krypto-Marktplätzen im Internet gekauft und an das eigene Wallet geschickt. 
+Der direkte Weg wäre Coins zu kaufen und diese solange zu halten, bis
+der erwünschte Kursanstieg erreicht wurde, um sie dann wieder zu
+verkaufen. Dazu wird jedoch, wie oben beschrieben, ein Wallet
+benötigt. Die Coins werden dann auf Exchange Börsen oder
+Krypto-Marktplätzen im Internet gekauft und an das eigene Wallet
+geschickt.  
 
 \textbf{2. Trading über CFDs} \\
-Alternativ besteht die Möglichkeit des Crypto Trading per \ac{cfd}. Hierbei spekulieren Anleger lediglich auf den Anstieg bzw. den Fall des Bitcoin Kurses. Dabei können Basiswerte festegelegt werden, zu denen die CFDs gekauft bzw. verkauft werden sollen. Steigt der Bitcoin im Wert um 10\%, dann steigt auch der Wert der erworbenen CFDs um 10\%. (vgl. \cite{crypto_trading})
+Alternativ besteht die Möglichkeit des Crypto Trading per \ac{cfd}.
+Hierbei spekulieren Anleger lediglich auf den Anstieg bzw. den Fall
+des Bitcoin Kurses. Dabei können Basiswerte festegelegt werden, zu
+denen die CFDs gekauft bzw. verkauft werden sollen. Steigt der Bitcoin
+im Wert um 10\%, dann steigt auch der Wert der erworbenen CFDs um
+10\%. (vgl. \cite{crypto_trading})
 
 %----
 
 \section{Application Programming Interface}
 \label{sec:api}
 
-Ein Application Programming Interface, bzw. Programmierschnittstelle, ist ein Programmteil, der von einem Softwaresystem anderen Programmen zur Anbindung an das System zur Verfügung gestellt wird. Die Programmanbindung findet dabei auf Quelltext-Ebene statt. (vgl. \cite{api_definition})
+Ein Application Programming Interface, bzw. Programmierschnittstelle,
+ist ein Programmteil, der von einem Softwaresystem anderen Programmen
+zur Anbindung an das System zur Verfügung gestellt wird. Die
+Programmanbindung findet dabei auf Quelltext-Ebene statt. (vgl.
+\cite{api_definition})
 
-Veranschaulichen lässt sich dies durch die Analogie mit einem Restaurant: \\
-Ein Restaurant bildet ein System. Kunden wollen dieses System nutzen, indem sie mithilfe einer Essenskarte Bestellungen aufgeben. Dabei ist die Küche der Teil des Systems, der die Bestellungen der Gäste zubereitet. Was fehlt, ist das entscheidende Bindeglied, um die Bestellung der Kunden an die Küche zu übermitteln und ihnen ihr Essen an den Tisch zu liefern. An dieser Stelle kommt der Kellner ins Spiel. Der Kellner ist der Bote, bzw. \ac{api}, der die Anfrage der Kunden entgegennimmt und der Küche - bzw. dem System - mitteilt, was zu tun ist. Dann liefert der Kellner die Antwort an den Kunden zurück. In diesem Fall ist es das Essen. (vgl. \cite{api_example})  
+Ein Restaurant bildet ein System. Kunden wollen dieses System nutzen,
+indem sie mithilfe einer Essenskarte Bestellungen aufgeben. Dabei ist
+die Küche der Teil des Systems, der die Bestellungen der Gäste
+zubereitet. Was fehlt, ist das entscheidende Bindeglied, um die
+Bestellung der Kunden an die Küche zu übermitteln und ihnen ihr
+Essen an den Tisch zu liefern. An dieser Stelle kommt der Kellner ins
+Spiel. Der Kellner ist der Bote, bzw. \ac{api}, der die Anfrage der
+Kunden entgegennimmt und der Küche - bzw. dem System - mitteilt, was
+zu tun ist. Dann liefert der Kellner die Antwort an den Kunden
+zurück. In diesem Fall ist es das Essen. (vgl. \cite{api_example})    
 
 \subsection{REST API}
 \label{sub:rest_api}
-REST steht für Representational State Transfer und beschreibt ein Paradigma (grunsätzliche Denkweise) für die Softwarearchitektur von verteilten Systemen, insbesondere für Webservices. \ac{rest} ist eine Abstraktion der Struktur und des Verhaltens des World Wide Web und hat das Ziel, einen Architekturstil zu schaffen, der die Anforderungen des moderen Web besser darstellt. Der Zweck von \ac{rest} liegt schwerpunktmäßig auf der Kommunikation zwischen Client und Server in Netzwerken. Eine \ac{rest} \ac{api} ist demnach also eine Programmierschnittstelle die diesem Paradigma folgt. (vgl. \cite{rest})
+REST steht für Representational State Transfer und beschreibt ein
+Paradigma (grunsätzliche Denkweise) für die Softwarearchitektur von
+verteilten Systemen, insbesondere für Webservices. \ac{rest} ist eine
+Abstraktion der Struktur und des Verhaltens des World Wide Web und hat
+das Ziel, einen Architekturstil zu schaffen, der die Anforderungen des
+moderen Web besser darstellt. Der Zweck von \ac{rest} liegt
+schwerpunktmäßig auf der Kommunikation zwischen Client und Server in
+Netzwerken. Eine \ac{rest} \ac{api} ist demnach also eine
+Programmierschnittstelle die diesem Paradigma folgt. (vgl.
+\cite{rest})
 
 Die Funktionsweise wird in Abbildung \ref{fig:5} ersichtlich.
 
@@ -442,24 +659,37 @@ Die Funktionsweise wird in Abbildung \ref{fig:5} ersichtlich.
   \label{fig:5}
 \end{figure}
 
-Die \ac{api} kommuniziert mit dem Server über das sogenannte \ac{http} - ein Protokoll zur Übertragung von Daten über ein Rechnernetz. Es wird hauptsächlich eingesetzt, um Websiten aus dem World Wide Web in einen Webbrowser zu laden\cite{http_definition}. Mittels \ac{http} Request, werden also Informationen vom Server angefordert, wodurch der Server wiederum eine \ac{http} Response erzeugt, die der Client dann erhält.
+Die \ac{api} kommuniziert mit dem Server über das sogenannte
+\ac{http} - ein Protokoll zur Übertragung von Daten über ein
+Rechnernetz. Es wird hauptsächlich eingesetzt, um Websiten aus dem
+World Wide Web in einen Webbrowser zu laden\cite{http_definition}.
+Mittels \ac{http} Request, werden also Informationen vom Server
+angefordert, wodurch der Server wiederum eine \ac{http} Response
+erzeugt, die der Client dann erhält.
 
 \section{Python}
 \label{sec:python}
 
-Technisch gesehen ist Python eine interpretierte, objektorientierte High-Level-Programmiersprache mit dynamischer Semantik. Ihre auf hoher Ebene eingebauten
-Datenstrukturen, kombiniert mit dynamischer Typisierung und dynamischer Bindung, machen sie sehr attraktiv für die schnelle Anwendungsentwicklung sowie
-für den Einsatz als Skript-Sprache, um bestehende Komponenten miteinander zu
-verbinden. Die einfach, leicht zu erlernende Syntax von Python betont die Lesbarkeit und reduziert somit die Kosten für die Programmwartung. Python unterstützt
-Module und Pakete, was die Modularität der Programme und die Wiederverwendung
-von Code fördert. Der Python-Interpreter und die umfangreiche Standardbibliothek
-sind in Quell- oder Binärform für alle wichtigen Plattformen kostenlos erhältlich
-und können frei verteilt werden. (vgl. \cite{python_definition})
+Technisch gesehen ist Python eine interpretierte, objektorientierte
+High-Level-Programmiersprache mit dynamischer Semantik. Ihre auf hoher
+Ebene eingebauten Datenstrukturen, kombiniert mit dynamischer
+Typisierung und dynamischer Bindung, machen sie sehr attraktiv für
+die schnelle Anwendungsentwicklung sowie für den Einsatz als
+Skript-Sprache, um bestehende Komponenten miteinander zu verbinden.
+Die einfach, leicht zu erlernende Syntax von Python betont die
+Lesbarkeit und reduziert somit die Kosten für die Programmwartung.
+Python unterstützt Module und Pakete, was die Modularität der
+Programme und die Wiederverwendung von Code fördert. Der
+Python-Interpreter und die umfangreiche Standardbibliothek sind in
+Quell- oder Binärform für alle wichtigen Plattformen kostenlos
+erhältlich und können frei verteilt werden. 
+(vgl.\cite{python_definition})
 
-Ein Python-Programm wird vom Python-Interpreter ausgeführt. Dieser stellt dabei
-eine umfangreiche Standardbibliothek bereit, die vom Programm verwendet werden
-kann. Außerdem erlaubt es die Python API einem externen C-Programm, den
-Interpreter zu verwenden oder zu erweitern. Dargestellt in Abbildung \ref{fig:5}.
+Ein Python-Programm wird vom Python-Interpreter ausgeführt. Dieser
+stellt dabei eine umfangreiche Standardbibliothek bereit, die vom
+Programm verwendet werden kann. Außerdem erlaubt es die Python API
+einem externen C-Programm, den Interpreter zu verwenden oder zu
+erweitern. Dargestellt in Abbildung \ref{fig:5}.
 
 \begin{figure}[H]
   \centering
@@ -491,19 +721,38 @@ Interpreter zu verwenden oder zu erweitern. Dargestellt in Abbildung \ref{fig:5}
 \chapter{Problemanalyse}
 \label{cha:problemanalyse}
 
-Wie bereits in Kapitel \ref{sec:problemstellung} grob beschrieben, befasst sich das Projekt und die Arbeit in erster Linie damit, ein algorithmisches Handelssystem zu entwerfen. Um dieses Problem angehen zu können, muss es vorab in mehrere Teilprobleme gebrochen werden, welche wiederum in noch kleinere Teilprobleme zerlegt werden. So wird klar, wie an das Problem herangegangen werden muss, welche Komponenten zu entwickeln sind und welche Abhängigkeiten zwischen diesen bestehen. 
+Wie bereits in Kapitel \ref{sec:problemstellung} grob beschrieben,
+befasst sich das Projekt und die Arbeit in erster Linie damit, ein
+algorithmisches Handelssystem zu entwerfen. Um dieses Problem angehen
+zu können, muss es vorab in mehrere Teilprobleme gebrochen werden,
+welche wiederum in noch kleinere Teilprobleme zerlegt werden. So wird
+klar, wie an das Problem herangegangen werden muss, welche Komponenten
+zu entwickeln sind und welche Abhängigkeiten zwischen diesen
+bestehen.
 
 %----
 
 \section{Implementierung einer Schnittstelle für Handelsplattformen}
 \label{sec:schnittstelle_handelsplatform}
 
-Wer Kryptowährungen handeln will, benötigt dazu eine Plattform, auf der Einkäufe und Verkäufe getätigt werden. Hat man sich dazu entschlossen am Handel von Kryptowährungen teilzunehmen, erstellt man sich dazu ein Konto bei einem der hunderten Crypto-Trading-Anbieter. Einmal getan, loggt man sich auf der Homepage oder der App des Anbieters ein und ist für den Handel von Kryptowährungen bereit. Im Vergleich zum Handeln von Hand, benötigt das Trading-System jedoch eine \ac{api}, an die es anknüpfen kann, um mögliche Aktionen der Plattform tätigen zu können. Einige der Anbieter für Crypto-Trading stellen kostenlose \ac{api}s für die Nutzung mittels Code bereit.
+Wer Kryptowährungen handeln will, benötigt dazu eine Plattform, auf
+der Einkäufe und Verkäufe getätigt werden. Hat man sich dazu
+entschlossen am Handel von Kryptowährungen teilzunehmen, erstellt man
+sich dazu ein Konto bei einem der hunderten Crypto-Trading-Anbieter.
+Einmal getan, loggt man sich auf der Homepage oder der App des
+Anbieters ein und ist für den Handel von Kryptowährungen bereit. Im
+Vergleich zum Handeln von Hand, benötigt das Trading-System jedoch
+eine \ac{api}, an die es anknüpfen kann, um mögliche Aktionen der
+Plattform tätigen zu können. Einige der Anbieter für Crypto-Trading
+stellen kostenlose \ac{api}s für die Nutzung mittels Code bereit.
 
 \subsection{Auswahl einer Handelsplattform}
 \label{sub:auswahl_plattform}
 
-Um sich für eine geeignete Plattform entscheiden zu können, bedarf es mehr als die Bereitstellung einer funktionstüchtigen \ac{api}. Nach welchen Kriterien sollte eine Handelsplattform also ausgewählt werden? \\
+Um sich für eine geeignete Plattform entscheiden zu können, bedarf
+es mehr als die Bereitstellung einer funktionstüchtigen \ac{api}.
+Nach welchen Kriterien sollte eine Handelsplattform also ausgewählt
+werden? \\
 
 \textbf{Anforderungen an die Plattform}
 \begin{enumerate}
@@ -569,14 +818,23 @@ Um sich für eine geeignete Plattform entscheiden zu können, bedarf es mehr als
 \subsection{Schnittstelle der API}
 \label{sub:schnittstelle_der_api}
 
-Eine von einer Plattform bereitgestellte \ac{api} reicht natürlich nicht aus, um loslegen zu können. Vorerst muss sie sorgfältig in das System eingebunden werden, das sie nutzen möchte. Dazu muss eine weitere Schnittstelle entwickelt werden - sozusagen eine Schnittstelle der Schnittstelle, um die Nutzung der \ac{api} einfacher zu gestalten. Die Schwierigkeit liegt darin, die Schnittstelle möglichst generisch und unkompliziert zu entwerfen. Es kann nämlich durchaus vorkommen, dass sich eine andere Plattform als besser erweist als die Bisherige, oder eine \ac{api} nicht länger unterstützt wird. Somit ist es überaus wichtig, sicherzustellen, dass beim Austausch einer \ac{api} so wenige andere Systemkomponenten beeinträchtigt werden wie möglich.
+Eine von einer Plattform bereitgestellte \ac{api} reicht natürlich
+nicht aus, um loslegen zu können. Vorerst muss sie sorgfältig in das
+System eingebunden werden, das sie nutzen möchte. Dazu muss eine
+weitere Schnittstelle entwickelt werden - sozusagen eine Schnittstelle
+der Schnittstelle, um die Nutzung der \ac{api} einfacher zu gestalten.
+Die Schwierigkeit liegt darin, die Schnittstelle möglichst generisch
+und unkompliziert zu entwerfen. Es kann nämlich durchaus vorkommen,
+dass sich eine andere Plattform als besser erweist als die Bisherige,
+oder eine \ac{api} nicht länger unterstützt wird. Somit ist es
+überaus wichtig, sicherzustellen, dass beim Austausch einer \ac{api}
+so wenige andere Systemkomponenten beeinträchtigt werden wie
+möglich.
 
 %----
 
 \section{Algorithmische Handelsstrategien und technische Indikatoren}
 \label{sec:strategie_und_indikatoren}
-
-
 
 
 
