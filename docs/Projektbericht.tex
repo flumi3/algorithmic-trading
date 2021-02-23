@@ -2,6 +2,7 @@
 \bibliography{latexlit}
 
 \usepackage{float}
+\usepackage{url}
 
 % ----------------------------------------------------------------------
 
@@ -83,6 +84,7 @@ Dabei beschäftigt sich diese Arbeit im grundlegenden mit folgenden Konzepten:
 	\item Algorithmische Handelsstrategien und technische Indikatoren
 	\item Implementierung einer Schnittstelle für Handelsplattformen
 	\item Backtesting von Handelsstrategien
+	\item Entwurf und Verwaltung eines Trading Bots
 	\item Erstellung einer Konsolenanwendung
 	\item Verknüpfung dieser Elemente innerhalb eines modularen Systems
 \end{enumerate}
@@ -119,6 +121,8 @@ Verbindung mit einigen wenigen HTML Elementen.
 \acro{cfd}[CFD]{Contract for Difference}
 \acro{rest}[REST]{Representational State Transfer}
 \acro{http}[HTTP]{Hypertext Transfer Protocol}
+\acro{pandas}[Pandas]{Python Data Analysis Library}
+\acro{url}[URL]{Uniform Resource Locator} 
 \end{acronym}
 %---
 
@@ -201,7 +205,7 @@ neuer Strategien und Indikatoren liegen, sondern darauf, wie diese
 möglichst einfach und modular in das System eingebunden werden
 können.
 
-\textbf{2. Implementierung einer Schnittstelle für Handelsplattformen} \\
+\textbf{2. Entwurf einer Schnittstelle für Handelsplattformen} \\
 Der Handel von Kryptowährungen mittels eines algorithmischen Systems
 erfordert, genauso wie beim Handeln von Hand, eine Plattform, auf der
 die Ein- und Verkäufe getätigt werden. Im Vergleich zum Handeln von
@@ -359,7 +363,7 @@ Die Candles haben gegenüber den früher gängigeren Balkencharts den
 Vorteil, optisch anschaulicher zu sein, ohne dabei gleich kompliziert
 zu werden. Grundsätzlich wird dabei zwischen zwei verschiedenen
 Kerzen unterschieden, welche in der nachfolgenden Abbildung
-(\ref{fig:1}) dargestellt werden. \\
+(Abb. \ref{fig:1}) dargestellt werden. \\
 
 \begin{figure}[H]
   \centering
@@ -673,7 +677,11 @@ Rechnernetz. Es wird hauptsächlich eingesetzt, um Websiten aus dem
 World Wide Web in einen Webbrowser zu laden\cite{http_definition}.
 Mittels \ac{http} Request, werden also Informationen vom Server
 angefordert, wodurch der Server wiederum eine \ac{http} Response
-erzeugt, die der Client dann erhält.
+erzeugt, die der Client dann erhält. Um eine Request an die
+\ac{api} zu senden, werden \ac{url} benutzt - wie man sie aus der 
+Verwendung eines Browsers kennt. Je nachdem, welche \ac{url} kontaktiert
+wird, führt die \ac{api} unterschiedliche Aktionen aus, die 
+unterschiedliche Antworten liefern.
 
 \section{Python}
 \label{sec:python}
@@ -697,7 +705,7 @@ Ein Python-Programm wird vom Python-Interpreter ausgeführt. Dieser
 stellt dabei eine umfangreiche Standardbibliothek bereit, die vom
 Programm verwendet werden kann. Außerdem erlaubt es die Python API
 einem externen C-Programm, den Interpreter zu verwenden oder zu
-erweitern. Dargestellt in Abbildung \ref{fig:5}.
+erweitern. Dargestellt in Abbildung \ref{fig:6}.
 
 \begin{figure}[H]
   \centering
@@ -708,6 +716,18 @@ erweitern. Dargestellt in Abbildung \ref{fig:5}.
 
 \subsection{Pandas DataFrame}
 \label{sub:dataframe}
+
+\ac{pandas} ist ein beliebtes Python-Paket, das schnelle, flexible und ausdrucksstarke Datenstrukturen bereitstellt, um die Arbeit mit strukturierten (tabellarischen, mehrdimensionalen, potenziell heterogenen) Daten einfach und intuitiv zu gestalten. Es zielt darauf ab, ein grundlegender High-Level-Baustein für die praktische, reale Datenanalyse in Python zu sein. (vgl. \cite{pandas_definition})
+
+Eine der wichtigsten, von pandas bereitgestellten, Datenstrukturen ist der \textbf{DataFrame}. Ein DataFrame ist eine zweidimensionale größenveränderliche, tabellarische Datenstruktur mit beschrifteten Achsen. Das bedeutet, die Daten sind tabellarisch in Zeilen und Spalten ausgerichtet, wie in Abbildung \ref{fig:8} dargestellt. (vgl. \cite{dataframe_example})
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[height=0.37\textheight]{img/dataframe_example.png}
+  \caption{Beispiel eines DataFrame\cite{dataframe_example}}
+  \label{fig:8}
+\end{figure}
+ 
 
 \subsection{Typing}
 \label{sub:typing}
@@ -743,7 +763,7 @@ bestehen.
 
 %----
 
-\section{Implementierung einer Schnittstelle für Handelsplattformen}
+\section{Konzeption einer Schnittstelle für Handelsplattformen}
 \label{sec:schnittstelle_handelsplatform}
 
 Wer Kryptowährungen handeln will, benötigt dazu eine Plattform, auf
@@ -1076,6 +1096,28 @@ Abhängigkeiten untereinander.
 \chapter{Lösungskonzept}
 \label{cha:loesungskonzept}
 
+%----
+
+\section{Konzeption einer Schnittstelle für Handelsplattformen}
+\label{sec:konzeption_einer_schnittstelle_für_handelsplattformen}
+
+Bevor mit der Konzeption einer Schnittstelle für eine Handelsplattform begonnen werden kann, muss sich für eine der vielen Plattformen entschieden werden. Diese Entscheidung fiel auf die Verwendung der Crypto-Trading-Plattform \textbf{Binance}. Die Plattform bietet den Handel von hunderten, verschiedenen Kryptowährungen an, welche auch gegen Fiatgeld gehandelt werden können. Zum Zeitpunkt dieser Arbeit berechnet Binance eine durchschnittliche Gebühr von etwa 0,1\% auf jeden Trade, den ein Benutzer tätigt. Obwohl die Plattform keine genauen Angaben darüber bereitstellt, wie die Gelder gesichtert werden, wird Binance für eine sichere Plattform gehalten. Zwei-Faktor-Authentifizierung wird unterstützt. (vgl. \cite{binance})
+
+Die von Binance bereitgestellte \ac{rest} \ac{api} ist, der Menge der im Internet bereitgestellten Lernressourcen nach, eine der verbreitetsten \ac{api}s unter algorithmischen Tradern. Zu ihr gibt es eine Vielzahl an Tutorials und eine ausgesprochen gute Dokumentation, welche auf GitHub unter folgendem Link zur Verfügung steht: \url{https://github.com/binance/binance-spot-api-docs/blob/master/rest-api.md}
+
+\subsection{Konzeption}
+\label{sub:konzeption}
+
+Wie bereits angedeutet erfolgt die Kommunikation mit Binance über eine \ac{rest} \ac{api}. Das bedeutet, um an die Daten der Plattform zu kommen, müssen \ac{url}s erzeugt werden, mit deren Hilfe die sogenannten \textbf{Endpoints} kontaktiert werden. Jeder Endpoint erwartet eine unterschiedliche Menge an Parametern, die ebenso per \ac{url} übergeben werden müssen.
+
+Die Aufgabe der Schnittstelle ist es dabei, den oben genannten Prozess innerhalb ihrer Methoden zu verstecken und wiederverwendbar zu machen. Das bedeutet, dass die anderen Komponenten des Systems nicht wissen müssen, wie die verschiedenen Endpunkte zu kontaktieren sind und wie sie deren Antworten verarbeiten müssen.
+
+
+
+
+
+
+
 Auf der Basis der im vorangegangenen Kapitel erstellten Problemanalyse 
 und der im Grundlagenkapitel aufgearbeiteten theoretischen Kenntnisse 
 wird ein Lösungskonzept erarbeitet.
@@ -1084,7 +1126,7 @@ Bei Software-Projekten entspricht dieses Kapitel typischerweise der
 Analyse \& Design-Phase des \ac{rup}. Typische Ergebnisse dieser Phase sind 
 Klassendiagramme etc.
 
-%---
+%---------------------------------------------------
 \chapter{Implementierung}
 \label{cha:implementierung}
 
@@ -1128,7 +1170,8 @@ Manchmal hilft auch eine kleine Tabelle:
 \end{table}
 
 Details siehe Tabelle~\ref{tab:my-table}.
-%---
+
+%---------------------------------------------------
 \chapter{Inbetriebnahme}
 \label{cha:inbetriebnahme}
 
@@ -1141,7 +1184,7 @@ Programmodules dargestellt.
 Bei der Software-Erstellung entspricht dieses Kapitel der 
 Auslieferungsphase (Deployment) im \ac{rup}.
 
-%---
+%---------------------------------------------------
 \chapter{Evaluierung}
 
 Aufgabe des Kapitels Evaluierung ist es, in wie weit die Ziele der 
@@ -1151,7 +1194,7 @@ sein, das bestimmte Ziele nicht erreicht werden konnten, wobei die
 Ursachen hierfür auch außerhalb des Verantwortungsbereichs des 
 Praktikanten liegen können.
 
-%---
+%---------------------------------------------------
 \chapter{Zusammenfassung und Ausblick}
 \label{cha:zusammenfassung}
 
