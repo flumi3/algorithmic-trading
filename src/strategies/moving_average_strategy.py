@@ -9,17 +9,18 @@ from market_data import MarketData
 from signals import BuySignal, SellSignal
 from uuid import UUID
 from indicators import SmoothedMovingAverage, Indicator
+from strategies.strategy import Strategy
 
 logger: Logger = logging.getLogger("__main__")
 
 
-class MovingAverageStrategy:
+class MovingAverageStrategy(Strategy):
 
     def __init__(self):
         self.name: str = "Moving Average Strategy"
         self.profit_target: float = 1.05
-        self.indicators: List[Indicator] = list()  # Necessary for backtest plotting
         self.sma_to_price_difference: float = 1.03  # The difference between price and sma -> if met create buy signal
+        self.indicators: List[Indicator] = list()  # Necessary for backtest plotting
 
     def check_buy_condition(self, market_data_df: DataFrame) -> Union[BuySignal, bool]:
         """
@@ -69,8 +70,8 @@ class MovingAverageStrategy:
         Adds all indicators that are needed for this strategy to the market data.
 
         Parameters:
-            price_data: The data frame containing the data (e.g. candlestick data)
-            column_name: The name of the data frame column on which we will calculate the indicator
+            - price_data: The data frame containing the data (e.g. candlestick data)
+            - column_name: The name of the data frame column on which we will calculate the indicator
 
         Return:
             A data frame containing the price data and all indicators added by this strategy
@@ -84,10 +85,10 @@ class MovingAverageStrategy:
         Adds the indicator SmoothedMovingAverage to the price data df.
 
         Parameters:
-            price_data: The data frame containing the price data to which we want to add the sma
-            indicator_name: The name of the indicator
-            column_name: The name of the column on which on which we want to calculate the data on
-            period: time period the sma will follow
+            - price_data: The data frame containing the price data to which we want to add the sma
+            - indicator_name: The name of the indicator
+            - column_name: The name of the column on which on which we want to calculate the data on
+            - period: time period the sma will follow
         """
         sma: SmoothedMovingAverage = SmoothedMovingAverage(indicator_name, period)  # Create new indicator
         df: DataFrame = sma.add_data(price_data, column_name)  # Add indicator data to the candlestick data
