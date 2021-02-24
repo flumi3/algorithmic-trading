@@ -33,22 +33,29 @@ class BotRunner:
     def delete_bot(self, bot_id: int) -> None:
         logger.info(f"Removing bot '<name>' with ID {bot_id}...")
         # TODO
+        self.bots.pop(bot_id)
 
     def start_bot(self, bot_id: int) -> None:
         logger.info(f"Starting bot '<name>' with ID {bot_id}...")
         # TODO: wahrscheinlich einen prozess starten und dann in diesem prozess einen while loop wo jede minute
         #  überprüft wird ob der bot etwas kaufen oder verkaufen kann
         bot: Bot = self.bots.get(bot_id)
-        bot.status = bot.STATUS_RUNNING
+        bot.status = Bot.STATUS_RUNNING
 
     def start_all_bots(self) -> None:
         logger.info(f"Starting all bots...")
         # TODO
+        for bot in self.bots:
+            bot.status = Bot.STATUS_RUNNING
 
     def stop_bot(self, bot_id: int) -> None:
         logger.info(f"Stopping bot '<name>' with ID {bot_id}...")
         # TODO
+        bot: Bot = self.bots.get(bot_id)
+        bot.status = Bot.STATUS_PAUSED
 
     def stop_all_bots(self) -> None:
         logger.info(f"Stopping all bots...")
         # TODO
+        for bot in self.bots:
+            bot.status = Bot.STATUS_PAUSED
