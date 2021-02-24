@@ -58,7 +58,7 @@ class Bot:
 
     def update_price_data(self) -> None:
         """Adds the current price information to the market data and removes the oldest price information"""
-        logger.info(f"Updating price data...")
+        logger.info(f"Updating price data of bot '{self.name}'...")
         current_time: datetime = self.api.get_server_time()
         current_price: float = self.api.get_current_price(self.symbol)  # Get current price
         self.market_data.add_entry(current_time, current_price)

@@ -52,6 +52,41 @@ class Backtest:
         self.sell_signals: OrderedDict[UUID, SellSignal] = self.strategy.calc_sell_signals(self.candlestick_df,
                                                                                            self.buy_signals)
 
+    def run(self) -> None:
+        logger.info("Running backtest...")
+
+        for buy_signal_id, buy_signal in self.buy_signals.items():
+            # Loop through all coins that we have not sold yet and check if we can sell them
+            for signal_id in self.kept_coins.copy():  # Copy necessary because we modify the real list whilst iterating
+                sell_signal: SellSignal = self.sell_signals.get(signal_id)  # Get corresponding sell signal
+                if sell_signal:
+                    # Check whether the sell signal occurred before the current buy signal
+                    if sell_signal.time <= buy_signal.time:
+                        self.sell(signal_id, sell_signal)
+                else:
+                    logger.debug(f"No existing sell signal for buy signal with ID: {signal_id}")
+
+            # Check whether we have the capital to buy
+            buying_price: float = buy_signal.price * self.buy_quantity  # Without transaction fee
+            if self.capital >= buying_price:
+                self.buy(buy_signal_id, buy_signal)
+            else:
+                logger.debug("Buy signal ignored! Not enough capital.")
+
+        # Check sell options for all coins we have not sold yet
+        for signal_id in self.kept_coins.copy():
+            sell_signal: SellSignal = self.sell_signals.get(signal_id)
+            if sell_signal:
+                self.sell(signal_id, sell_signal)
+
+        self.create_folder_structure()
+        cs_figure: Figure = self.create_candlestick_figure()
+        capital_figure: Figure = self.create_capital_figure()
+        html_figures: str = self.figures_to_html([cs_figure, capital_figure])
+        html_stats: str = self.stats_to_html()
+        self.create_html_dashboard(html_figures, html_stats)
+        self.print_stats()
+
     def create_candlestick_figure(self) -> Figure:
         """Creates a candlestick figure that visualizes the market data of the backtest including the signals"""
         df = self.candlestick_df  # Access candlestick frame which gets hold by the market data object
@@ -173,41 +208,6 @@ class Backtest:
         )
         figure: Figure = Figure(capital_line, layout=layout)
         return figure
-
-    def run(self) -> None:
-        logger.info("Running backtest...")
-
-        for buy_signal_id, buy_signal in self.buy_signals.items():
-            # Loop through all coins that we have not sold yet and check if we can sell them
-            for signal_id in self.kept_coins.copy():  # Copy necessary because we modify the real list whilst iterating
-                sell_signal: SellSignal = self.sell_signals.get(signal_id)  # Get corresponding sell signal
-                if sell_signal:
-                    # Check whether the sell signal occurred before the current buy signal
-                    if sell_signal.time <= buy_signal.time:
-                        self.sell(signal_id, sell_signal)
-                else:
-                    logger.debug(f"No existing sell signal for buy signal with ID: {signal_id}")
-
-            # Check whether we have the capital to buy
-            buying_price: float = buy_signal.price * self.buy_quantity  # Without transaction fee
-            if self.capital >= buying_price:
-                self.buy(buy_signal_id, buy_signal)
-            else:
-                logger.debug("Buy signal ignored! Not enough capital.")
-
-        # Check sell options for all coins we have not sold yet
-        for signal_id in self.kept_coins.copy():
-            sell_signal: SellSignal = self.sell_signals.get(signal_id)
-            if sell_signal:
-                self.sell(signal_id, sell_signal)
-
-        self.create_folder_structure()
-        cs_figure: Figure = self.create_candlestick_figure()
-        capital_figure: Figure = self.create_capital_figure()
-        html_figures: str = self.figures_to_html([cs_figure, capital_figure])
-        html_stats: str = self.stats_to_html()
-        self.create_html_dashboard(html_figures, html_stats)
-        self.print_stats()
 
     def buy(self, signal_id: UUID, signal: BuySignal) -> None:
         logger.debug(f"Buy signal accepted! Price: {signal.price}")

@@ -11,14 +11,17 @@ logger: Logger = logging.getLogger("__main__")
 class Indicator:
     def __init__(self, name: str) -> None:
         self.name: str = name
-    
+
+    def add_data(self, data: DataFrame, column_name: str):
+        raise Exception("Missing implementation: Please override this method in the subclass")
+
 
 # Subclass
 class SmoothedMovingAverage(Indicator):
 
     def __init__(self, name: str, period: int) -> None:
         logger.info(f"Creating new indicator {name}...")
-        Indicator.__init__(self, name)  # Init parent class
+        super().__init__(name)  # Init parent class
         self.period: int = period
 
     def add_data(self, data: DataFrame, column_name: str) -> DataFrame:

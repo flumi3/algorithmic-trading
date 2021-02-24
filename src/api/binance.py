@@ -24,6 +24,7 @@ class Binance:
     SIDE_BUY: str = "BUY"
     SIDE_SELL: str = "SELL"
 
+    # TODO: Decide if we need it or not
     # Order types
     ORDER_TYPE_LIMIT = "LIMIT"
     ORDER_TYPE_MARKET = "MARKET"
