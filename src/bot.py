@@ -8,7 +8,7 @@ from pandas import DataFrame
 from prompt_toolkit import prompt
 from api.binance import Binance
 from cli.validators import YesNoValidator
-from signals import BuySignal, SellSignal
+from buy_signal import BuySignal
 from market_data import MarketData
 from strategies.moving_average_strategy import MovingAverageStrategy
 from transactions import BuyTransaction, SellTransaction
@@ -81,27 +81,8 @@ class Bot:
                 if user_input == "y":
                     self.buy(buy_signal)
 
-    def evaluate_sell(self) -> None:
-        signals: List[BuySignal] = list(self.not_sold_yet.values())  # Extract signals from the dict
-        sell_signals: List[SellSignal] = self.strategy.check_sell_condition(self.market_data, signals)
-        if sell_signals:
-            for signal in sell_signals:
-                self.sell(signal)
+    def buy(self, buy_signal: BuySignal):
+        logger.info(f"Buying coin for {buy_signal.price}€...")
 
-    def buy(self, buy_signal: BuySignal) -> None:
-        trans_price: float = self.buy_quantity * buy_signal.price
-        buy_transaction: BuyTransaction = BuyTransaction(buy_signal.signal_id, self.symbol, trans_price,
-                                                         self.buy_quantity, buy_signal.time, True)
-        self.buy_transactions.append(buy_transaction)
-        self.not_sold_yet[buy_signal.signal_id] = buy_signal
-
-    def sell(self, sell_signal: SellSignal):
-        # Get corresponding buy transaction
-        for buy_transaction in self.buy_transactions:
-            if buy_transaction.transaction_id == sell_signal.signal_id:
-                sell_transaction: SellTransaction = SellTransaction(sell_signal.signal_id, self.symbol,
-                                                                    buy_transaction.quantity,
-                                                                    buy_transaction.quantity * sell_signal.price,
-                                                                    sell_signal.time, True)
-                self.sell_transactions.append(sell_transaction)
-                self.not_sold_yet.pop(sell_signal.signal_id)
+    def sell(self):
+        logger.info("Selling coin...")

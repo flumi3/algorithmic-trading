@@ -2,11 +2,10 @@ import logging
 
 from datetime import datetime
 from typing import List, Union
-from pandas import DataFrame
+from pandas import DataFrame, Series
 from collections import OrderedDict
 from logging import Logger
-from market_data import MarketData
-from signals import BuySignal, SellSignal
+from buy_signal import BuySignal
 from uuid import UUID
 from indicators import SmoothedMovingAverage, Indicator
 from strategies.strategy import Strategy
@@ -16,52 +15,31 @@ logger: Logger = logging.getLogger("__main__")
 
 class MovingAverageStrategy(Strategy):
 
+    INDICATOR_NAME_SLOW_SMA = "slow_sma"
+
     def __init__(self):
         self.name: str = "Moving Average Strategy"
         self.profit_target: float = 1.05
+        self.stop_loss_target: float = 0.85
         self.sma_to_price_difference: float = 1.03  # The difference between price and sma -> if met create buy signal
         self.indicators: List[Indicator] = list()  # Necessary for backtest plotting
 
-    def check_buy_condition(self, market_data_df: DataFrame) -> Union[BuySignal, bool]:
+    def check_buy_condition(self, price: float, time: datetime, row: Series = None) -> Union[BuySignal, bool]:
         """
-        Checks if the latest price data meets the conditions of our strategy.
+        Checks whether the latest price data meets the conditions of our strategy.
 
         Parameters:
-            market_data_df: Data frame of our market data object containing the current price data
-
+            - price: (Decimal) Price for which we want to check the buy condition
+            - time: (datetime) Time of the given price
+            - row: Data frame row holding all the additional values like indicators
         Returns:
             Either a buy signal if the strategy condition was met, or False if not
         """
-        # Get the newest entry
-        latest_entry: DataFrame = market_data_df.iloc[-1]
-        price: float = latest_entry["price"]
-        sma: float = latest_entry["sma"]
+        sma: float = getattr(row, self.INDICATOR_NAME_SLOW_SMA)
 
         # Check if we meet our strategy condition
         if sma > self.sma_to_price_difference * price:
-            return BuySignal(price, latest_entry["time"])
-        else:
-            return False
-
-    def check_sell_condition(self, market_data: MarketData, not_sold_buys: List[BuySignal]
-                             ) -> Union[List[SellSignal], bool]:
-        """
-        Checks whether the current price meets any target goals of the coins that have not been sold yet.
-
-        Parameters:
-            - market_data: The market data on which we will evaluate
-            - not_sold_buys: The buy signals that have not had a corresponding sell signal yet
-
-        Returns:
-            Either a list of sell signals or False if none got created
-        """
-        sell_signals: List[SellSignal] = list()
-        time, price = market_data.get_latest_entry()
-        for buy_signal in not_sold_buys:
-            if price >= buy_signal.price * self.profit_target:
-                sell_signals.append(SellSignal(buy_signal.signal_id, price, time))
-        if sell_signals:
-            return sell_signals
+            return BuySignal(price, time)
         else:
             return False
 
@@ -118,33 +96,3 @@ class MovingAverageStrategy(Strategy):
                 buy_signals[signal.signal_id] = signal
 
         return buy_signals
-
-    def calc_sell_signals(self, candlestick_df: DataFrame, buy_signals: OrderedDict) -> OrderedDict:
-        """
-        Calculates sell signals for a backtest, based on buy signals (profit target) that got calculated before.
-
-        Parameters:
-            candlestick_df: The data frame containing the historical price data in form of klines/candles
-            buy_signals: The buy signals that we have calculated before
-
-        Returns:
-            A ordered dict containing all sell signals ordered buy the time of insert
-        """
-        logger.info("Calculating sell signals...")
-
-        df: DataFrame = candlestick_df
-        sell_signals: OrderedDict[UUID, SellSignal] = OrderedDict()
-
-        for signal_id, signal in buy_signals.items():
-            selling_price: float = signal.price * self.profit_target
-            time: datetime = signal.time
-
-            # Query all candles that are older than the buying time and also meet our desired selling price
-            sell_entries: DataFrame = df.loc[(df["time"] >= time) & (df["high"] >= selling_price)]
-            if not sell_entries.empty:
-                sell_entry: DataFrame = sell_entries.iloc[0]  # Get the first of those entries
-                time = sell_entry["time"]  # Time of sell
-                signal: SellSignal = SellSignal(signal_id, selling_price, time)  # Create sell signal
-                sell_signals[signal.signal_id] = signal
-
-        return sell_signals

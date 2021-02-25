@@ -1,8 +1,9 @@
 from abc import ABC, abstractmethod
+from datetime import datetime
 from typing import List, OrderedDict
 from pandas import DataFrame
 from market_data import MarketData
-from signals import BuySignal
+from buy_signal import BuySignal
 
 EXCEPTION_MESSAGE: str = "Missing implementation: Please override this method in the subclass"
 
@@ -10,11 +11,7 @@ EXCEPTION_MESSAGE: str = "Missing implementation: Please override this method in
 class Strategy(ABC):
 
     @abstractmethod
-    def check_buy_condition(self, market_data_df: DataFrame):
-        raise NotImplementedError
-
-    @abstractmethod
-    def check_sell_condition(self, market_data: MarketData, not_sold_buys: List[BuySignal]):
+    def check_buy_condition(self, price: float, time: datetime, row=None):
         raise NotImplementedError
 
     @abstractmethod
@@ -23,8 +20,4 @@ class Strategy(ABC):
 
     @abstractmethod
     def calc_buy_signals(self, candlestick_df: DataFrame):
-        raise NotImplementedError
-
-    @abstractmethod
-    def calc_sell_signals(self, candlestick_df: DataFrame, buy_signals: OrderedDict):
         raise NotImplementedError
