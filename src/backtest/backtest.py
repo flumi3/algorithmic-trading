@@ -9,7 +9,7 @@ from typing import List, Tuple, Union, Dict
 from collections import OrderedDict
 from api.binance import Binance
 from indicators import SmoothedMovingAverage
-from signals import BuySignal, SellSignal
+from buy_signal import BuySignal
 from uuid import UUID
 from pandas import DataFrame
 from strategies.moving_average_strategy import MovingAverageStrategy
@@ -36,48 +36,54 @@ class Backtest:
         self.transaction_costs: float = 0  # Sum of the money that got lost in transaction fees
         self.coins_bought: float = 0
         self.coins_sold: float = 0
+        self.coins_in_possession: float = 0
         # Other
         self.capital: float = capital
+        self.buy_signals: OrderedDict[UUID, BuySignal] = OrderedDict()
         self.buy_transactions: OrderedDict[UUID, BuyTransaction] = OrderedDict()
         self.sell_transactions: OrderedDict[UUID, SellTransaction] = OrderedDict()
-        self.kept_coins: List[UUID] = list()  # List of id's from buy signals that have not been sold yet
-        self.capital_over_time: List[Dict[str, float]] = list()  # Represents our capital over the time
+        self.kept_coins: List[UUID] = list()  # List of coins that we have not sold yet
+        self.capital_over_time: List[Dict[str, Union[UUID, float]]] = list()  # Represents our capital over the time
+        self.candlestick_df: DataFrame = DataFrame()
         self.dashboard_dir: str = os.path.join(get_project_root(), "dashboards/" + self.strategy.name.replace(" ", "_")
                                                + "/" + self.symbol)
-        # Init some necessary properties to run the backtest
-        self.candlestick_df: DataFrame = self.api.get_candlestick_data(symbol=self.symbol, limit=self.kline_limit)
-        self.strategy.add_indicators(self.candlestick_df, column_name="close")
-        self.capital_over_time.append({"time": self.candlestick_df["time"][0], "capital": self.capital})
-        self.buy_signals: OrderedDict[UUID, BuySignal] = self.strategy.calc_buy_signals(self.candlestick_df)
-        self.sell_signals: OrderedDict[UUID, SellSignal] = self.strategy.calc_sell_signals(self.candlestick_df,
-                                                                                           self.buy_signals)
 
     def run(self) -> None:
         logger.info("Running backtest...")
 
-        for buy_signal_id, buy_signal in self.buy_signals.items():
-            # Loop through all coins that we have not sold yet and check if we can sell them
-            for signal_id in self.kept_coins.copy():  # Copy necessary because we modify the real list whilst iterating
-                sell_signal: SellSignal = self.sell_signals.get(signal_id)  # Get corresponding sell signal
-                if sell_signal:
-                    # Check whether the sell signal occurred before the current buy signal
-                    if sell_signal.time <= buy_signal.time:
-                        self.sell(signal_id, sell_signal)
-                else:
-                    logger.debug(f"No existing sell signal for buy signal with ID: {signal_id}")
+        # Init some necessary properties to run the backtest
+        self.candlestick_df: DataFrame = self.api.get_candlestick_data(symbol=self.symbol, limit=self.kline_limit)
+        self.strategy.add_indicators(self.candlestick_df, column_name="close")
+        self.capital_over_time.append({"time": self.candlestick_df["time"][0], "capital": self.capital})
 
-            # Check whether we have the capital to buy
-            buying_price: float = buy_signal.price * self.buy_quantity  # Without transaction fee
-            if self.capital >= buying_price:
-                self.buy(buy_signal_id, buy_signal)
-            else:
-                logger.debug("Buy signal ignored! Not enough capital.")
+        profit_target_price: float = -1  # Price of our profit goal
+        stop_loss_price: float = -1  # Price of our stop loss
+        for index, row in self.candlestick_df.iterrows():
+            # Check whether we can buy
+            close_price: float = getattr(row, "close")
+            time: datetime = getattr(row, "time")
+            buy_signal: Union[BuySignal, bool] = self.strategy.check_buy_condition(close_price, time, row)
+            if buy_signal:
+                self.buy_signals[buy_signal.signal_id] = buy_signal
+                if self.capital >= close_price:
+                    self.buy(buy_signal)
+                    if profit_target_price == -1 and stop_loss_price == -1:
+                        profit_target_price = close_price * self.strategy.profit_target
+                        stop_loss_price = close_price * self.strategy.stop_loss_target
 
-        # Check sell options for all coins we have not sold yet
-        for signal_id in self.kept_coins.copy():
-            sell_signal: SellSignal = self.sell_signals.get(signal_id)
-            if sell_signal:
-                self.sell(signal_id, sell_signal)
+            # Check whether we can sell
+            for coin_id in self.kept_coins.copy():  # Copy because we modify the dict while iterating
+                low_price: float = getattr(row, "low")  # For selling, we inspect the lowest price within the candle
+                if low_price <= stop_loss_price:
+                    # If price hits the stop loss -> sell
+                    self.sell(stop_loss_price, time)
+                    # Reset profit target price and stop loss price because we have sold all coins
+                    profit_target_price = -1
+                    stop_loss_price = -1
+                elif close_price >= profit_target_price != -1:
+                    # If price surpassed our profit target, set new profit and stop loss target
+                    profit_target_price = close_price * self.strategy.profit_target
+                    stop_loss_price = close_price * self.strategy.stop_loss_target
 
         self.create_folder_structure()
         cs_figure: Figure = self.create_candlestick_figure()
@@ -118,8 +124,19 @@ class Backtest:
 
         # Plot buy signals if we have some
         if self.buy_signals:
-            # Lists for values of the accepted buy signals and also the ignored buy signals
-            accepted_times, accepted_prices, ignored_times, ignored_prices = self.get_signal_values(self.buy_signals)
+            # Create lists that hold the values of accepted and ignored signals
+            accepted_times: List[datetime] = list()
+            accepted_prices: List[float] = list()
+            ignored_times: List[datetime] = list()
+            ignored_prices: List[float] = list()
+            # Loop through all of them and sort them into the right lists
+            for signal_id, signal in self.buy_signals.items():
+                if signal.accepted:
+                    accepted_times.append(signal.time)
+                    accepted_prices.append(signal.price)
+                else:
+                    ignored_times.append(signal.time)
+                    ignored_prices.append(signal.price)
 
             # Create plot for the accepted signals
             accepted_buy_signals: Scatter = Scatter(
@@ -140,29 +157,21 @@ class Backtest:
             data.append(accepted_buy_signals)
             data.append(ignored_buy_signals)
 
-        # Plot sell signals if we have some
-        if self.sell_signals:
-            # Lists for values of the accepted sell signals and also the ignored sell signals
-            accepted_times, accepted_prices, ignored_times, ignored_prices = self.get_signal_values(self.sell_signals)
-
-            # Create plot for the accepted sell signals
-            accepted_sell_signals: Scatter = Scatter(
-                x=accepted_times,
-                y=accepted_prices,
-                name="Accepted Sell Signals",
-                mode="markers",
-                line=dict(color="rgba(0, 0, 255, 1)")  # Blue
-            )
-            # Create plot for the ignored sell signals
-            ignored_sell_signals: Scatter = Scatter(
-                x=ignored_times,
-                y=ignored_prices,
-                name="Ignored Sell Signals",
+        # Plot points where we sold coins
+        if self.sell_transactions:
+            times: List[datetime] = list()
+            prices: List[float] = list()
+            for trans_id, trans in self.sell_transactions.items():
+                times.append(trans.time)
+                prices.append(trans.quantity / self.buy_quantity)
+            sells: Scatter = Scatter(
+                x=times,
+                y=prices,
+                name="Sell Orders",
                 mode="markers",
                 line=dict(color="rgba(139, 69, 19, 1)")  # Brown
             )
-            data.append(accepted_sell_signals)
-            data.append(ignored_sell_signals)
+            data.append(sells)
 
         # Customize style and display
         layout: Layout = Layout(
@@ -209,38 +218,37 @@ class Backtest:
         figure: Figure = Figure(capital_line, layout=layout)
         return figure
 
-    def buy(self, signal_id: UUID, signal: BuySignal) -> None:
+    def buy(self, signal: BuySignal) -> None:
         logger.debug(f"Buy signal accepted! Price: {signal.price}")
         signal.accepted = True  # Change signal status as accepted
         price: float = signal.price * self.buy_quantity
         buy_quantity: float = self.buy_quantity - (self.buy_quantity * self.api.trading_fee)  # 0.1% transaction fee
-        transaction: BuyTransaction = BuyTransaction(signal_id, self.symbol, price, buy_quantity, signal.time,
-                                                     test=True)
+        transaction: BuyTransaction = BuyTransaction(signal.signal_id, self.symbol, price, buy_quantity, signal.time)
         self.update_stats(True, transaction)
-
+        self.kept_coins.append(signal.signal_id)
+        self.coins_in_possession += buy_quantity
         # Add time of buy and capital to the list of capital over time
         self.capital_over_time.append({"time": signal.time, "capital": self.capital})
 
-    def sell(self, signal_id: UUID, signal: SellSignal) -> None:
-        logger.debug(f"Sell signal accepted! Price: {signal.price}")
-        signal.accepted = True  # Change signal status to accepted
-        buy_transaction: BuyTransaction = self.buy_transactions.get(signal_id)  # Get the corresponding buy transaction
-
-        # We bought 1 BTC for which we actually got 0.999 BTC because of the trading fee
-        # At the time, 1 BTC costs xxx €. Now we want to sell those 0.999 BTC that we bought, so we would earn
-        # 0.999 BTC * xxx € - transaction fee
-        buy_quantity: float = buy_transaction.quantity  # We bought 0.999 BTC
-        transaction_cost: float = buy_quantity * signal.price * self.api.trading_fee  # Costs of the fee
-        quantity: float = buy_quantity * signal.price - transaction_cost
-        sell_transaction: SellTransaction = SellTransaction(signal_id, self.symbol, buy_quantity, quantity, signal.time,
-                                                            test=True)
-        self.update_stats(False, sell_transaction, transaction_cost)
-
-        # Add time of sell and new capital to the list of capital over time
-        self.capital_over_time.append({"time": signal.time, "capital": self.capital})
+    def sell(self, price: float, time: datetime) -> None:
+        for coin_id in self.kept_coins.copy():
+            logger.debug(f"Selling coin '{coin_id}' for {price}")
+            buy_transaction: BuyTransaction = self.buy_transactions.get(coin_id)  # Get corresponding buy transaction
+            # We bought 1 BTC for which we actually got 0.999 BTC because of the trading fee
+            # At the time, 1 BTC costs xxx €. Now we want to sell those 0.999 BTC that we bought, so we would earn
+            # 0.999 BTC * xxx € - transaction fee
+            buy_quantity: float = buy_transaction.quantity  # We bought 0.999 BTC
+            transaction_cost: float = buy_quantity * price * self.api.trading_fee  # Costs of the fee
+            sell_price: float = buy_quantity * price - transaction_cost  # Price we get in Euros
+            sell_transaction: SellTransaction = SellTransaction(coin_id, self.symbol, buy_quantity, sell_price, time)
+            self.update_stats(False, sell_transaction, transaction_cost)
+            self.kept_coins.remove(coin_id)
+            self.coins_in_possession -= buy_quantity
+            # Add time of sell and new capital to the list of capital over time
+            self.capital_over_time.append({"time": time, "capital": self.capital})
 
     def print_stats(self) -> None:
-        current_price: float = round(self.api.get_current_price(symbol=self.symbol), 2)
+        current_price: float = self.api.get_current_price(self.symbol)
         print("")
         print(Color.OKCYAN + "========== BACKTEST ==========" + Color.ENDC)
         print("")
@@ -272,33 +280,28 @@ class Backtest:
         print(f"Money spent: {round(self.money_spent, 2)}€")
         print(f"Money earned: {round(self.money_earned, 2)}€")
         print(f"Money spent on transaction fees: {round(self.transaction_costs, 2)}€")
-        print(f"Profit: {round(self.money_earned - self.money_spent, 2)}€")
+        profit: float = self.money_earned - self.money_spent
+        print(f"Profit: {round(profit, 2)}€")
         print("")
 
         # Buy stats
+        average_buying_price, average_selling_price = self.__get_average_transaction_prices()
         print(f"Buy signals created: {len(self.buy_signals)}")
         print(f"Buy signals accepted: {len(self.buy_transactions)}")
         print(f"Buy signals ignored: {len(self.buy_signals) - len(self.buy_transactions)}")
-        print(f"Coins bought: {round(self.coins_bought, 4)}")
+        print(f"Coins bought: {round(self.coins_bought, 5)}")
 
-        if len(self.buy_transactions) != 0:
-            avg_buying_price: float = round(self.money_spent / len(self.buy_transactions))
-        else:
-            avg_buying_price = 0.0
-        print(f"Average buying price {avg_buying_price}€")
+        print(f"Average buying price {average_buying_price}€")
         print("")
 
         # Sell stats
-        print(f"Sell signals created: {len(self.sell_signals)}")
-        print(f"Sell signals accepted: {len(self.sell_transactions)}")
-        print(f"Sell signals ignored: {len(self.sell_signals) - len(self.sell_transactions)}")
         print(f"Coins sold: {round(self.coins_sold, 5)}")
+        print(f"Average selling price: {round(average_selling_price, 2)}€")
+        print(f"Coins not sold: {round(self.coins_in_possession, 5)}")
         print("")
+        turnover: float = self.coins_in_possession * current_price * (1 - self.api.trading_fee)
+        print(f"Profit when selling all coins now: {round(turnover + profit, 2)}€")
 
-        # Coins still in our possession
-        print(Color.UNDERLINE + "Coins not sold:" + Color.ENDC)
-        for signal_id in self.kept_coins:
-            print(f"ID: {signal_id} \t Current price: {current_price}€")
         print("")
         print(Color.OKCYAN + "==============================" + Color.ENDC)
         print("")
@@ -312,7 +315,6 @@ class Backtest:
             self.coins_bought += transaction.quantity
             self.transaction_costs += transaction.price * self.api.trading_fee
             self.money_spent += transaction.price
-            self.kept_coins.append(transaction.transaction_id)  # Add signal id to list of coins in our possession
             self.buy_transactions[transaction.transaction_id] = transaction  # Add to dict of buy transactions
         else:
             assert type(transaction) == SellTransaction
@@ -320,7 +322,6 @@ class Backtest:
             self.coins_sold += transaction.price  # We sold xxx coins
             self.transaction_costs += transaction_cost
             self.money_earned += transaction.quantity
-            self.kept_coins.remove(transaction.transaction_id)  # Remove signal id from list of coins in our possession
             self.sell_transactions[transaction.transaction_id] = transaction  # Add to dict of sell transactions
 
     def create_folder_structure(self):
@@ -333,10 +334,7 @@ class Backtest:
         Path(self.dashboard_dir).mkdir(parents=True, exist_ok=True)
 
     def stats_to_html(self) -> str:
-        if len(self.buy_transactions) != 0:
-            average_buying_price_var: float = round(self.money_spent / len(self.buy_transactions))
-        else:
-            average_buying_price_var = 0.0
+        average_buying_price_var, average_selling_price_var = self.__get_average_transaction_prices()
         symbol_var = self.symbol
         api_var = self.api.base
         strategy_var = self.strategy.name
@@ -351,13 +349,11 @@ class Backtest:
         buy_signals_created_var = len(self.buy_signals)
         buy_signals_accepted_var = len(self.buy_transactions)
         buy_signals_ignored_var = len(self.buy_signals) - len(self.buy_transactions)
-        coins_bought_var = round(self.coins_bought, 4)
-        sell_signals_created_var = len(self.sell_signals)
-        sell_signals_accepted_var = len(self.sell_transactions)
-        sell_signals_ignored_var = len(self.sell_signals) - len(self.sell_transactions)
+        coins_bought_var = round(self.coins_bought, 5)
         coins_sold_var = round(self.coins_sold, 5)
-        coins_not_sold_var = len(self.kept_coins)
-        current_price_var = round(self.api.get_current_price(symbol=self.symbol), 2)
+        coins_not_sold_var = round(self.coins_in_possession, 5)
+        turnover: float = self.coins_in_possession * self.api.get_current_price(self.symbol) * (1 - self.api.trading_fee)
+        profit_sell_all_var = round(profit_var + turnover, 2)
 
         # Get html code skeleton from file
         path: str = os.path.join(get_project_root(), "src/backtest/backtest_stats.html")
@@ -399,26 +395,13 @@ class Backtest:
             dashboard.write(html_stats)  # add backtest stats
             dashboard.write("</body></html>" + "\n")
 
-    @staticmethod
-    def get_signal_values(signals: dict) -> Tuple[List[datetime], List[float], List[datetime], List[float]]:
-        """
-        Sorts time and price properties of buy and sell signals into different lists. This is used in order to plot
-        accepted signals in different colors than ignored signals
-        """
-        # Create lists that hold the values of accepted and ignored signals
-        accepted_times: List[datetime] = list()
-        accepted_prices: List[float] = list()
-        ignored_times: List[datetime] = list()
-        ignored_prices: List[float] = list()
-
-        # Loop through all of them and sort them into the right lists
-        for signal_id, signal in signals.items():
-            if signal.accepted:
-                accepted_times.append(signal.time)
-                accepted_prices.append(signal.price)
-            else:
-                ignored_times.append(signal.time)
-                ignored_prices.append(signal.price)
-
-        # Return all four lists as a tuple
-        return accepted_times, accepted_prices, ignored_times, ignored_prices
+    def __get_average_transaction_prices(self) -> Tuple[float, float]:
+        if self.buy_transactions:
+            average_buying_price: float = round(self.money_spent / len(self.buy_transactions), 2)
+        else:
+            average_buying_price = 0.0
+        if self.sell_transactions:
+            average_selling_price: float = round(self.money_earned / len(self.sell_transactions), 2)
+        else:
+            average_selling_price = 0.0
+        return average_buying_price, average_selling_price
