@@ -1101,22 +1101,57 @@ Abhängigkeiten untereinander.
 \section{Konzeption einer Schnittstelle für Handelsplattformen}
 \label{sec:konzeption_einer_schnittstelle_für_handelsplattformen}
 
+\subsection{Auswahl einer Handelsplattform}
+\label{sub:auswahl_einer_handelsplattform}
+
 Bevor mit der Konzeption einer Schnittstelle für eine Handelsplattform begonnen werden kann, muss sich für eine der vielen Plattformen entschieden werden. Diese Entscheidung fiel auf die Verwendung der Crypto-Trading-Plattform \textbf{Binance}. Die Plattform bietet den Handel von hunderten, verschiedenen Kryptowährungen an, welche auch gegen Fiatgeld gehandelt werden können. Zum Zeitpunkt dieser Arbeit berechnet Binance eine durchschnittliche Gebühr von etwa 0,1\% auf jeden Trade, den ein Benutzer tätigt. Obwohl die Plattform keine genauen Angaben darüber bereitstellt, wie die Gelder gesichtert werden, wird Binance für eine sichere Plattform gehalten. Zwei-Faktor-Authentifizierung wird unterstützt. (vgl. \cite{binance})
 
 Die von Binance bereitgestellte \ac{rest} \ac{api} ist, der Menge der im Internet bereitgestellten Lernressourcen nach, eine der verbreitetsten \ac{api}s unter algorithmischen Tradern. Zu ihr gibt es eine Vielzahl an Tutorials und eine ausgesprochen gute Dokumentation, welche auf GitHub unter folgendem Link zur Verfügung steht: \url{https://github.com/binance/binance-spot-api-docs/blob/master/rest-api.md}
 
-\subsection{Konzeption}
-\label{sub:konzeption}
+\subsection{Die Schnittstelle}
+\label{sub:schnittstelle}
 
 Wie bereits angedeutet erfolgt die Kommunikation mit Binance über eine \ac{rest} \ac{api}. Das bedeutet, um an die Daten der Plattform zu kommen, müssen \ac{url}s erzeugt werden, mit deren Hilfe die sogenannten \textbf{Endpoints} kontaktiert werden. Jeder Endpoint erwartet eine unterschiedliche Menge an Parametern, die ebenso per \ac{url} übergeben werden müssen.
 
-Die Aufgabe der Schnittstelle ist es dabei, den oben genannten Prozess innerhalb ihrer Methoden zu verstecken und wiederverwendbar zu machen. Das bedeutet, dass die anderen Komponenten des Systems nicht wissen müssen, wie die verschiedenen Endpunkte zu kontaktieren sind und wie sie deren Antworten verarbeiten müssen.
+Die Aufgabe der Schnittstelle ist es dabei, den oben genannten Prozess innerhalb ihrer Methoden zu verstecken und wiederverwendbar zu machen. Das bedeutet, dass die anderen Komponenten des Systems nicht wissen müssen, wie die verschiedenen Endpunkte zu kontaktieren sind und wie sie deren Antworten verarbeiten müssen. Dargestellt wird dieses Konzept in Abbildung \ref{fig:9}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[height=0.34\textheight]{img/binance_interface_konzept.png}
+  \caption{Konzept der REST API Schnittstelle}
+  \label{fig:9}
+\end{figure}
+
+\textbf{Beispiel 1:} \\
+Der Backtest benötigt eine Menge an Candlestick Daten, an welche er theoretisch über die von Binance bereitgestellte \ac{rest} \ac{api} kommt. Dennoch tätigt der Backtest den \ac{api}-Call nicht selbst, sondern lässt dies das Binance Interface für sich erledigen. Das bedeutet, der Backtest benötigt keinerlei Informationen darüber, wie er die \ac{api} für die benötigten Daten kontaktieren muss, sondern erhält sie einfach über die Binance Schnittstelle.
+
+\textbf{Beispiel 2:} \\
+Nun benötigt auch ein Trading Bot eine Menge an Candlestick Daten um seinen Echtzeit-Datensatz an Marktdaten zu initialisieren. Auch er muss nicht wissen, wie er an die Daten kommt, sondern lässt sie sich, ebenso wie der Backtest, von der Schnittstelle geben. Somit werden Arbeitsschritte voneinander getrennt und ebenso Code-Redundanz vermieden.
+
+%----
+
+\section{Technische Indikatoren}
+\label{sec:technische_Indikatoren}
+
+Der technische Indikator dient der Strategie zur Analyse der Marktdaten. Damit diese der Strategie jedoch zur Verfügung stehen, muss die Möglichkeit bestehen, die Indikatordaten eines jeden Indikators auf gegebene Marktdaten zu berechnen und sie anschließend an diese anzuhängen. Somit genügt ein einfacher Erweiterungsprozess der Marktdaten um die vom Indikator berechneten Daten, um die Datengrundlage einer jeden Trading Strategie zu bilden. Daraus ergibt sich folgender Entwurf (Abbildung \ref{fig:10})
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[height=0.34\textheight]{uml/indicators_uml.png}
+  \caption{Einfache Darstellung der Indikatoren durch ein Klassendiagramm}
+  \label{fig:10}
+\end{figure}
+
+Jeder Indikator-Instanz wird ein Name übergeben, welcher durch die Zuweisung an das Attribut \textit{name} der eindeutigen Identifikation eines Indikators dient. Zusätzlich sind alle Indikatoren dazu verpflichtet, eine Methode \textit{add\_data(market\_data)} zu implementieren, welche die indikatorspezifischen Daten an die übergebenen Marktdaten anhängt und zurückgegeben.
+
+%----
+
+\section{Algorithmische Trading Strategien}
+\label{sec:algorithmische_trading_strategien}
 
 
 
-
-
-
+%----
 
 Auf der Basis der im vorangegangenen Kapitel erstellten Problemanalyse 
 und der im Grundlagenkapitel aufgearbeiteten theoretischen Kenntnisse 
