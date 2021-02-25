@@ -148,6 +148,10 @@ docs/*.lof
 docs/*.lot
 docs/*.log
 docs/*.lol
+docs/*.ilg
+docs/*.ind
+docs/*.bak
+docs/*.sav
 
 # Other
 dashboards
