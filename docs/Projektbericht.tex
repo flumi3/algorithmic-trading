@@ -323,6 +323,19 @@ sie dann wieder. Die anschließende Wertdifferenz abzüglich der
 Transaktionskosten stellt den Gewinn des Traders dar. (vgl.
 \cite{trading_2})
 
+\subsection{Order Types}
+\label{sub:Order Types}
+
+Mit der verbreitung der digitalen Technologie und des Internets entscheiden sich viele Anleger dafür, Aktien selbst online zu kaufen und zu verkaufen, anstatt Beratern hohe Provisionen für die Ausführung von Geschäften zu zahlen. Beim Platzieren eines Auftrags bzw. Order stehen dem Trader mehrere verschiedene Order-Types zur Verfügung.
+
+\textbf{Market Orders} \\
+Eine Market Order ist die grundlegendste Art des Handels. Es ist ein Auftrag zum sofortigem Kauf oder Verkauf zum aktuellen Kurs. Kauft man eine Aktie, zahlt man in der Regel einen Preis zum oder in der Nähe des veröffentlichten Briefkurses. Wenn eine Aktie verkauf werden soll, erhält man einen Preis zum oder in der Nähe des eingestellten Geldkurses.
+
+\textbf{Stop-Loss Order} \\
+Eine Stop-Loss Order ist eine der nützlichsten davon. Diese Order unterscheidet sich von anderen Orders, denn im Gegensatz zu Markt Orders, die aktiv sind, sobald sie eingegeben werden, bleibt diese Order ruhend, bis ein bestimmter Preis überschritten wird. Erst dann wird sie als Market Order aktiviert.
+
+Wenn zum Beispiel eine Stop-Loss Order auf die XYZ-Aktien bei 45€ pro Aktie platziert würde, wäre die Order inaktiv, bis der Preis 45€ erreicht oder unterschritten hat. Die Order würde dann in eine Market Order umgewandelt und die Aktien würden zum besten verfügbaren Preis verkauft werden. Man sollte diese Art von Order in Betracht ziehen, wenn man keine Zeit hat, den Markt ständig zu beobachten, aber Schutz vor einer großen Abwärtsbewegung benötigt. (vgl. \cite{order_types})
+
 \subsection{Algorithmischer Handel}
 \label{sub:algorithmischer_handel}
 
@@ -474,10 +487,7 @@ erzeugt wird, sobald der aktuelle Preis einen gewissen Wert unter dem
 der Moving Average liegt. Betrachtet man im Hinblick auf diese
 Strategie noch einmal Abbildung \ref{fig:3}, lassen sich einige
 Stellen im Chart erkennen, bei denen diese Strategie wohl Kaufsignale
-erzeugen würde.
-
-\subsection{Order Types}
-\label{sub:order_types}
+erzeugen würde. 
 
 %----
 
@@ -910,27 +920,18 @@ des Systems zu verändern - also nahtlos. \\
 		Verkaufsentscheidungen zu treffen. Jede Strategie sollte daher in der
 		Lage sein, die benötigten Indikator-Instanzen selbst zu erzeugen und
 		deren Daten anschließend an die Marktdaten anhängen zu lassen.
-	\item \textbf{Berechnen von Kaufsignalen} \\
-		Um einen Backtest ausführen zu können, muss die Strategie Kaufsignale 
-		für historische Marktdaten erzeugen. Sozusagen soll die Strategie also 
-		berechnen können, zu welchen Zeitpunkten sie
-		einen Kauf für sinnvoll gehalten hätte.
-	\item \textbf{Berechnen von Verkaufssignalen} \\
-		Ebenso wie beim Berechnen der Kaufsignale, sollte die Strategie auch
-		im Stande sein, die selben historischen Markdaten zu nutzen, um
-		geeignete Verkaufspunkte für die zuvor berechneten Kaufpunkte zu finden.
 	\item \textbf{Überprüfen der Buy Condition} \\
 		Die Buy Condition bezeichnet die Bedingung des Kaufes - also die
 		Bedingung, die erfüllt sein muss, damit die Strategie einen Kauf für
 		sinnvoll hält. Für die zukünftige Nutzung des Systems, soll die 
-		Strategie die also die Möglichkeit besitzen, Echtzeitdaten zu überprüfen 
+		Strategie also die Möglichkeit besitzen, Echtzeitdaten zu überprüfen 
 		und für diese zu Entscheiden, ob ein Kauf platziert werden soll oder 
-		nicht. 
-	\item \textbf{Überprüfen der Sell Condition} \\
-		Analog zu Buy Condition, besitzt die Strategie eine Sell Condition,
-		welche festlegt, wann ein bereit gekaufte Instanz einer Kryptowährung
-		verkauft werden soll. So soll auch hierbei gegeben sein, dass diese
-		Bedingung für gegebene Echtzeitdaten überprüft werden soll.
+		nicht.
+	\item \textbf{Erzeugung von Kaufsignalen} \\
+		Ist die Buy Condition einer Strategie erfüllt, muss dem System ein Kauf
+		signalisiert werden. Dies soll durch die Erzeugung von sogenannten Buy
+		Signals erreicht werden, die dem System die zum Kauf benötigten 
+		Informationen bereitstellen, womit dann ein Kauf platziert werden soll.
 \end{enumerate}
 
 %----
@@ -1098,8 +1099,8 @@ Abhängigkeiten untereinander.
 
 %----
 
-\section{Konzeption einer Schnittstelle für Handelsplattformen}
-\label{sec:konzeption_einer_schnittstelle_für_handelsplattformen}
+\section{Schnittstelle für Handelsplattformen}
+\label{sec:schnittstelle_für_handelsplattformen}
 
 \subsection{Auswahl einer Handelsplattform}
 \label{sub:auswahl_einer_handelsplattform}
@@ -1108,8 +1109,8 @@ Bevor mit der Konzeption einer Schnittstelle für eine Handelsplattform begonnen
 
 Die von Binance bereitgestellte \ac{rest} \ac{api} ist, der Menge der im Internet bereitgestellten Lernressourcen nach, eine der verbreitetsten \ac{api}s unter algorithmischen Tradern. Zu ihr gibt es eine Vielzahl an Tutorials und eine ausgesprochen gute Dokumentation, welche auf GitHub unter folgendem Link zur Verfügung steht: \url{https://github.com/binance/binance-spot-api-docs/blob/master/rest-api.md}
 
-\subsection{Die Schnittstelle}
-\label{sub:schnittstelle}
+\subsection{Entwurf einer Schnittstelle}
+\label{sub:entwurf_einer_schnittstelle}
 
 Wie bereits angedeutet erfolgt die Kommunikation mit Binance über eine \ac{rest} \ac{api}. Das bedeutet, um an die Daten der Plattform zu kommen, müssen \ac{url}s erzeugt werden, mit deren Hilfe die sogenannten \textbf{Endpoints} kontaktiert werden. Jeder Endpoint erwartet eine unterschiedliche Menge an Parametern, die ebenso per \ac{url} übergeben werden müssen.
 
@@ -1128,6 +1129,8 @@ Der Backtest benötigt eine Menge an Candlestick Daten, an welche er theoretisch
 \textbf{Beispiel 2:} \\
 Nun benötigt auch ein Trading Bot eine Menge an Candlestick Daten um seinen Echtzeit-Datensatz an Marktdaten zu initialisieren. Auch er muss nicht wissen, wie er an die Daten kommt, sondern lässt sie sich, ebenso wie der Backtest, von der Schnittstelle geben. Somit werden Arbeitsschritte voneinander getrennt und ebenso Code-Redundanz vermieden.
 
+Um eine einfache Weiterverarbeitung der Candlestick Daten zu gewährleisten, sollen die Daten in die, im Kapitel \ref{sub:dataframe} beschriebene, Datenstruktur \textbf{DataFrame} eingepflegt werden und an die anderen Komponenten zurückgegeben werden.
+
 %----
 
 \section{Technische Indikatoren}
@@ -1144,26 +1147,177 @@ Der technische Indikator dient der Strategie zur Analyse der Marktdaten. Damit d
 
 Jeder Indikator-Instanz wird ein Name übergeben, welcher durch die Zuweisung an das Attribut \textit{name} der eindeutigen Identifikation eines Indikators dient. Zusätzlich sind alle Indikatoren dazu verpflichtet, eine Methode \textit{add\_data(market\_data)} zu implementieren, welche die indikatorspezifischen Daten an die übergebenen Marktdaten anhängt und zurückgegeben.
 
+Im Rahmen dieser Arbeit wird soll nur ein Indikator implementiert und verwendet werden - der \textbf{Simple Moving Average}, welcher bereits im Grundlagenkapitel \ref{sub:technische_Indikatoren} beschrieben wurde.
+
 %----
 
 \section{Algorithmische Trading Strategien}
 \label{sec:algorithmische_trading_strategien}
 
+Eine gute Trading Strategie ist beim algorithmischen Traden der Schlüssel zum Erfolg, denn sie entscheidet darüber, ob ein Kauf platziert werden soll oder nicht. Wie sinnvoll dieser Kauf ist, obliegt der Entscheidung des Traders, welcher die Strategie implementiert. Damit im weiteren Verlauf des Projekts weitere, vermutlich bessere Strategien eingebunden werden können, ist der Entwurf eines guten Konzepts dafür von großer Wichtigkeit.
 
+\subsection{Einbindung von Trading Strategien}
+\label{sub:einbindung_von_trading_strategien}
+
+Da jede Strategie eine gewisse Anzahl an bereitgestellten Funktionen bieten muss, macht die Nutzung eines Interfaces auch hier Sinn. Daraus folgt ein, zu den Indikatoren ähnlicher Entwurf, dargestellt in Abbildung \ref{fig:11}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[height=0.45\textheight]{uml/strategy_uml.png}
+  \caption{Einfache Darstellung von Strategien durch ein Klassendiagramm}
+  \label{fig:11}
+\end{figure}
+
+Wie aus dem Klassendiagramm ersichtlich wird, benötigt jede Strategie die Instanz-Attribute \textit{name}, \textit{profit\_target} und \textit{stop\_loss\_target}. Letztere Beiden werden zum Setzen von Stop-Loss Preisen im Backtest benötigt - mehr dazu im darauf folgenden Kapitel. Jede Strategie kann eine Vielzahl an verschiedener Indikatoren besitzen, welche die Strategie zur Analyse der Daten herbeizieht (aus Gründen der Übersichtlichkeit hier als leere Klasse dargestellt). Jede neue implementierte Strategie erbt die Eigenschaften des Interface \textit{Strategy} und verpflichtet sich damit, die im Interface definierten Methoden zu implementieren. \textit{check\_buy\_condition()} wird dazu benötigt, die Buy Condition zu überprüfen, welche die Strategie ausmacht. Da jede Strategie selbst entscheiden soll, welche Indikatoren sie zur Analyse der Daten benötigt, soll sie durch die Methode \textit{add\_indicators()} in der Lage sein, diese den Daten selbstständig hinzuzufügen.
+
+Welche Strategie innerhalb dieses Projekts verwendet werden soll, lässt sich durch einen Blick auf das Klassendiagramm in Abbildung \ref{fig:11} vermuten. Ebenso wie der verwendete Indikator, wurde auch die \textbf{Moving Average Strategie} bereits im Grundlagenkapitel \ref{sub:trading_strategien} beschrieben.
 
 %----
 
-Auf der Basis der im vorangegangenen Kapitel erstellten Problemanalyse 
-und der im Grundlagenkapitel aufgearbeiteten theoretischen Kenntnisse 
-wird ein Lösungskonzept erarbeitet.
+\section{Backtest}
+\label{sec:backtest}
 
-Bei Software-Projekten entspricht dieses Kapitel typischerweise der 
-Analyse \& Design-Phase des \ac{rup}. Typische Ergebnisse dieser Phase sind 
-Klassendiagramme etc.
+\subsection{Entwurf eines Backtests}
+\label{sub:entwurf_eines_backtests}
+
+Der Entwurf eines geeigneten Backtest stellt die wohl wichtigste Aufgabe dieses Kapitels dar und sollte gut durchdacht sein. Er steht in direkter Verbindung zu den bereits beschriebenen Klassen \textit{Binance} und \textit{Strategy}. Zusätzlich werden drei neue Klassen benötigt, um den Ablauf des Backtests möglich nah am Ablauf des realen Trading zu halten. In der nachfolgenden Abbildung (Abb. \ref{fig:12}) wird dieses Konzept in vereinfachter Form dargestellt. Das heißt, es wurden im Hinblick auf die Übersichtlichkeit der Darstellung nur die wirklich für den Backtest benötigten Methoden und Attribute dargestellt.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[height=0.48\textheight]{uml/backtest_uml.png}
+  \caption{Vereinfachte Darstellung der Klasse \textit{Backtest} innerhalb eines 		Klassendiagramms}
+  \label{fig:12}
+\end{figure}
+
+Jeder Backtest benötigt eine \ac{api} \textit{Binance}, von der er die benötigten Marktdaten abrufen kann. Diese Marktdaten müssen innerhalb des Backtests mit der Hilfe einer \textit{Strategy} verarbeitet werden. Um einen Kauf zu simulieren, benötigt der Backtest ein \textit{BuySignal} welches ihm signalisiert, dass die Buy Condition der gewählten Strategie getroffen wurde. Die Klassen \textit{BuyTransaction} und \textit{SellTransaction} werden benötigt, um einen Kauf bzw. Verkauf zu simulieren und werden trotz ihrer Ähnlichkeit als zwei getrennte Klassen definiert, da die Nutzung einer einzelnen Transaktionsklasse innerhalb des Backtests schnell zur Verwirrung führen kann.
+
+\subsection{Funktionsweise des Backtest}
+\label{sub:funktionsweise_des_backtest}
+
+Interessant ist vor allem die Methode \textit{run}, da sie für den automatischen Ablauf des Backtests zuständig ist und alle anderen Komponenten des Backtests und der oben definierten Klassen verwendet. Veranschaulicht wurde dieser Ablauf in Abbildung \ref{fig:13}.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[height=1\textheight]{uml/backtest_activity_uml.png}
+  \caption{Aktivitätsdiagramm für den Ablauf eines Backtest}
+  \label{fig:13}
+\end{figure}
+
+\textbf{get\_candlestick\_data()} \\
+Zu beginn des eigentlichen Backtest wird die Schnittstelle \textit{Binance} dazu beauftragt Candlestick Daten von der \ac{rest} \ac{api} zu sammeln und in einem DataFrame zurück zu liefern. Dieser soll nun Candle für Candle analysiert werden.
+
+\textbf{check\_buy\_condition()} \\
+Für jede Candle lassen wir die gewählte Strategie ihre Buy Condition überprüfen. Erhält der Backtest ein \textit{BuySignal} für die aktuelle Candle, wird überprüft, ob überhaupt genügend Kapital vorhanden ist, um einen Kauf zu platzieren.
+
+\textbf{buy()} \\
+Ist das für den Kauf benötigte Kapital vorhanden, platzieren wir einen Kauf. Innerhalb dessen soll die entsprechende \textit{BuyTransaction} generiert und dem Backtest hinzugefügt werden. Nun sollte überprüft werden, ob der Preis das festgelegte \textit{stop\_loss\_target} erreicht hat, welches ein Verkaufen von allen besessenen Coins bedeutet.
+
+\textbf{sell()} \\
+Analog für jede \textit{BuyTransaction} soll nun eine \textit{SellTransaction} generiert werden, welche einen symbolischen Kauf darstellt. Somit werden bei erreichen des Stop-Loss Target alle bisher gehaltenen Coins verkauft.
+
+\textbf{set higher profit target / set higher stop loss target} \\
+Da wir einen Coin möglichst so lange halten möchten wie er profitabel ist, überprüft der Backtest nun, ob der Preis der aktuellen Candle das festgelegte \textit{profit\_target} überschritten hat. Ist dies der Fall, legen wir höhere Werte für beide Variablen fest.
+
+\textbf{create\_dashboard()} \\
+Wurden alle Candles und damit die gesamten Marktdaten untersucht, wird ein Dashboard generiert, welches dem Nutzer eine Visualisierung der Marktdaten bietet. 
+
+\textbf{print\_stats()} \\
+Während des gesamten Backtest werden verschiedene Daten zur Erhebung einer Statistik gesammelt, die dem Nutzer zeigt, wie erfolgreich der Backtest für eine gewählte Strategie und das gewählte Symbol ist.
+
+%----
+
+\section{Entwurf und Verwaltung eines Trading Bot}
+\label{sec:schnittstelle_für_handelsplattformen}
+
+Wie bereits erwähnt, wird im Rahmen dieser Arbeit kein funktionstüchtiger Trading Bot entworfen, sondern lediglich dessen Fundament und Integration im Trading System - dargestellt in Abbildung \ref{fig:14}.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[height=0.65\textheight]{uml/bot_uml.png}
+  \caption{Konzept eines Trading Bot und dessen Verwaltung als UML Diagramm}
+  \label{fig:14}
+\end{figure}
+
+Ähnlich wie auch der Backtest, nutzt der Trading Bot nahezu alle anderen Komponenten des Systems. Die Schnittstelle \textit{Binance} versorgt ihn mit Marktdaten, während die Strategie zur Auswertung dieser dient. Wird ein BuySignal erzeugt, entscheidet das Kapital über einen Kauf bzw. die Erstellung einer BuyTransaction. Analog dazu entscheidet das Stop-Loss Target der Strategie über einen Kauf bzw. die Erstellung einer SellTransaction.
+
+Bisher unbekannt sind die Klassen \textit{BotRunner} und \textit{MarketData}. Die MarketData Klasse bildet ein Objekt aus Marktdaten, welches unter ständiger Verwaltung und Modifikation des Bots steht, da es eine feste Größe an beinhaltenden Daten hat und durchgehend aktuell gehalten werden muss.
+
+Der BotRunner dient der Verwaltung aller Bots. Nach Erzeugung eines jeden Bots durch den Nutzer, wird dieser dem BotRunner hinzugefügt. Der BotRunner soll in der Lage sein, entweder alle oder einen einzelnen Bot zu starten oder zu stoppen. Somit bildet er zusammen mit der Konsolenanwendung die "höchste" \ Komponente des Systems.
+
+%----
+
+\section{Entwurf einer Konsolenanwendung}
+\label{sec:entwurf_einer_konsolenanwendung}
+
+\subsection{User Interface}
+\label{sub:user_interface}
+
+Das User Interface ist das, was der User sieht, wenn er die Konsolenanwendung startet. Durch dieses ist er in der Lage, mit dem System zu interagieren und bestimmte Aktionen ausführen zu lassen. Das User Interface sollte sich möglichst intuitiv gestaltet werden um dem Nutzer eine einfache Nutzung zu bieten. Daher sollte auch das Designkonzept konsistent angewendet worden. Aus den bereits ermittelten Anforderungen ergibt sich das nachfolgende Designkonzept (Abb. \ref{fig:15}).
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[height=0.43\textheight]{img/cli_mockup.png}
+  \caption{User Interface der Konsolenanwendung}
+  \label{fig:15}
+\end{figure}
+
+Bei jeder Aktion die der Nutzer tätigen kann, soll ein dementsprechender Header angezeigt werden, der die gewählte Aktion beschreibt. So soll beim Starten der Anwendung beispielsweise ein Willkommens-Banner angezeigt werden, während beim Erstellen eines neuen Backtest der entsprechende Backtest-Header gezeigt werden soll.
+
+Die Interaktion mit dem User soll hauptsächlich durch die Auswahl von Optionen geschehen. Dadurch wird der User bei den verschiedenen Aktion an die Hand genommen und ihm immer alle möglichen Aktionen aufgezeigt. Startet er z.B. die Anwendung, soll der Nutzer gefragt werden, was er tun möchte. Zur Auswahl stehen die zur Verfügung stehenden Features, aus denen er wählen kann, indem er die korrespondierende Zahl eingibt.
+
+\subsection{Zusammenspiel mit anderen Komponenten}
+\label{sub:zusammenspiel_mit_anderen_komponenten}
+
+%----
+
+Über das User Interface steuert der Nutzer alle großen Komponenten des Systems, welche durch den BotRunner, unter dem Dach der Konsolenanwendung, miteinander vereint werden (dargestellt in Abbildung \ref{fig:15}). Backtest und Bot werden beide vom \textit{CommandLineInterface} erstellt und im Falle des \textit{Bot} and den \textit{BotRunner} zur Verwaltung weitergereicht.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[height=0.42\textheight]{uml/cli_uml.png}
+  \caption{Die Konsolenanwendung dargestellt als Klassendiagramm}
+  \label{fig:15}
+\end{figure}
 
 %---------------------------------------------------
 \chapter{Implementierung}
 \label{cha:implementierung}
+
+%----
+
+\section{Binance Schnittstelle}
+\label{sec:entwurf_einer_konsolenanwendung}
+
+%----
+
+\section{Simple Moving Average Indikator}
+\label{sec:entwurf_einer_konsolenanwendung}
+
+%----
+
+\section{Moving Average Strategy}
+\label{sec:entwurf_einer_konsolenanwendung}
+
+%----
+
+\section{Backtest}
+\label{sec:entwurf_einer_konsolenanwendung}
+
+%----
+
+\section{Trading Bot}
+\label{sec:entwurf_einer_konsolenanwendung}
+
+%----
+
+\section{Bot Runner}
+\label{sec:entwurf_einer_konsolenanwendung}
+
+%----
+
+\section{Konsolenanwendung}
+\label{sec:entwurf_einer_konsolenanwendung}
+
 
 In diesem Kapitel wird die konkrete Implementierung des im Kapitel
 \ref{cha:loesungskonzept} entwickelten Lösungskonzepts beschrieben.
