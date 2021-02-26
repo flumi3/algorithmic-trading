@@ -3,10 +3,8 @@ import logging
 from datetime import datetime
 from typing import List, Union
 from pandas import DataFrame, Series
-from collections import OrderedDict
 from logging import Logger
 from buy_signal import BuySignal
-from uuid import UUID
 from indicators import SmoothedMovingAverage, Indicator
 from strategies.strategy import Strategy
 
@@ -55,10 +53,10 @@ class MovingAverageStrategy(Strategy):
             A data frame containing the price data and all indicators added by this strategy
         """
         self.indicators = list()  # Reset list of added indicators
-        price_data: DataFrame = self.add_sma(price_data, "slow_sma", column_name, 50)
+        price_data: DataFrame = self.__add_sma(price_data, "slow_sma", column_name, 50)
         return price_data
 
-    def add_sma(self, price_data: DataFrame, indicator_name: str, column_name: str, period: int) -> DataFrame:
+    def __add_sma(self, price_data: DataFrame, indicator_name: str, column_name: str, period: int) -> DataFrame:
         """
         Adds the indicator SmoothedMovingAverage to the price data df.
 
@@ -72,27 +70,3 @@ class MovingAverageStrategy(Strategy):
         df: DataFrame = sma.add_data(price_data, column_name)  # Add indicator data to the candlestick data
         self.indicators.append(sma)
         return df
-
-    def calc_buy_signals(self, candlestick_df: DataFrame) -> OrderedDict:
-        """
-        Calculates buy signals for a backtest.
-
-        Parameters:
-            candlestick_df: The data frame containing the historical price data in form of klines/candlesticks
-
-        Returns:
-            A ordered dict containing all buy signals ordered by the time of insert
-        """
-        logger.info("Calculating buy signals...")
-
-        df: DataFrame = candlestick_df
-        buy_signals: OrderedDict[UUID, BuySignal] = OrderedDict()
-
-        for i in range(1, len(df["close"])):
-            if df["slow_sma"][i] > (self.sma_to_price_difference * df["low"][i]):
-                time: datetime = df["time"][i]  # time of buy
-                price: float = df["low"][i]
-                signal: BuySignal = BuySignal(price, time)  # Append buy signal to list of buy signals
-                buy_signals[signal.signal_id] = signal
-
-        return buy_signals

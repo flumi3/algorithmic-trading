@@ -33,14 +33,14 @@ class Bot:
         self.capital: float = starting_capital
         self.buy_quantity: float = buy_quantity
         self.description: str = description
-        self.market_data: MarketData = self.get_init_data()  # Create market data with historical price data
+        self.market_data: MarketData = self.__get_init_data()  # Create market data with historical price data
         self.buy_signals: List[BuySignal] = list()
         self.buy_transactions: List[BuyTransaction] = list()
         self.sell_transactions: List[SellTransaction] = list()
         self.not_sold_yet: Dict[UUID, BuySignal] = dict()
         self.status = self.STATUS_INIT
 
-    def get_init_data(self) -> MarketData:
+    def __get_init_data(self) -> MarketData:
         logger.info(f"Collecting initial market data for bot '{self.name}'...")
 
         # Calculate limit: 2 months * 30 days * 24 hours * 60 minutes = 86.400 candles
@@ -56,14 +56,14 @@ class Bot:
         market_data: MarketData = MarketData(self.symbol, times, prices)
         return market_data
 
-    def update_price_data(self) -> None:
+    def __update_price_data(self) -> None:
         """Adds the current price information to the market data and removes the oldest price information"""
         logger.info(f"Updating price data of bot '{self.name}'...")
         current_time: datetime = self.api.get_server_time()
         current_price: float = self.api.get_current_price(self.symbol)  # Get current price
         self.market_data.add_entry(current_time, current_price)
 
-    def evaluate_buy(self) -> None:
+    def __evaluate_buy(self) -> None:
         # Create data frame from market data
         market_data_df: DataFrame = self.market_data.create_dataframe()
 
@@ -79,10 +79,13 @@ class Bot:
                 print(f"Price: {self.buy_quantity * buy_signal.price}\n")
                 user_input: str = prompt("Accept buy signal? [y/n] ", validator=YesNoValidator())
                 if user_input == "y":
-                    self.buy(buy_signal)
+                    self.__buy(buy_signal)
 
-    def buy(self, buy_signal: BuySignal):
+    def __buy(self, buy_signal: BuySignal):
         logger.info(f"Buying coin for {buy_signal.price}€...")
 
-    def sell(self):
+    def __sell(self):
         logger.info("Selling coin...")
+
+    def run(self):
+        pass

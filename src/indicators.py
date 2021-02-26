@@ -16,7 +16,7 @@ class Indicator(ABC):
     @abstractmethod
     def add_data(self, data: DataFrame, column_name: str):
         # Needs to be overridden in every subclass
-        raise NotImplementedError
+        raise NotImplementedError("Missing implementation: Please override this method in the subclass")
 
 
 # Subclass
