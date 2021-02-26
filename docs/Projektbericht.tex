@@ -3,6 +3,7 @@
 
 \usepackage{float}
 \usepackage{url}
+\usepackage{listings}
 
 % ----------------------------------------------------------------------
 
@@ -123,6 +124,7 @@ Verbindung mit einigen wenigen HTML Elementen.
 \acro{http}[HTTP]{Hypertext Transfer Protocol}
 \acro{pandas}[Pandas]{Python Data Analysis Library}
 \acro{url}[URL]{Uniform Resource Locator} 
+\acro{json}[JSON]{JavaScript Object Notation}
 \end{acronym}
 %---
 
@@ -1283,40 +1285,296 @@ Die Interaktion mit dem User soll hauptsächlich durch die Auswahl von Optionen 
 \chapter{Implementierung}
 \label{cha:implementierung}
 
+bla bla bla was über python implementierung sagen als einleitung
+
 %----
 
 \section{Binance Schnittstelle}
-\label{sec:entwurf_einer_konsolenanwendung}
+\label{sec:binance_schnittstelle}
+
+Die Schnittstelle der Binance \ac{api} wurde innerhalb einer Python File mit dem Namen \textit{binance.py} implementiert. Hier wurde zunächst eine Klasse \textit{Binance} definiert:
+
+\lstset{language=Python}
+\lstset{frame=lines}
+\lstset{caption={Binance Klassendefinition}}
+\lstset{label={lst:binance_constructor}}
+\lstset{basicstyle=\footnotesize}
+\textbf{binance.py}
+\begin{lstlisting}
+class Binance:
+	# Symbols
+    SYMBOL_BITCOIN_EURO = "BTCEUR"
+    SYMBOL_ETHEREUM_EURO = "ETHEUR"
+    SYMBOL_LITECOIN_EURO = "LTCEUR"
+
+	# Endpoints
+    ENDPOINT_KLINES = "/api/v3/klines"
+    ENDPOINT_PRICE = "/api/v3/ticker/price"
+    ENDPOINT_TIME = "/api/v3/time"
+    ENDPOINT_TEST_ORDER = "/api/v3/order/test"
+    ENDPOINT_EXCHANGE_INFO = "/api/v3/exchangeInfo"
+	
+	# Constructor
+	def __init__(self):
+		self.base = "https://api.binance.com"
+		self.trading_fee = Binance.TRADING_FEE
+\end{lstlisting}
+
+Bevor die Klasse durch den Konstruktor instanziiert werden kann, werden mehrere Klassenvariablen definiert: \\
+\begin{itemize}
+	\item \textbf{Symbols (Zeile 3-5):} \\
+		Zunächst werden die für diese Arbeit verfügbaren Trading Symbole
+		festgelegt. Jedes Symbol stellt die zwei Währungen dar, zwischen denen
+		gehandelt werden soll.
+	\item \textbf{Endpoints (Zeile 8-12):} \\
+		Als nächstes werden die verschiedenen Endpunkte der \ac{rest} \ac{api}
+		definiert, welche benötigt werden um die gewollten Informationen
+		anzufragen.
+	\item \textbf{Konstruktor (Zeile 15-17):} \\
+		Anschließend wird ein Konstruktor implementiert, welcher die Klasse 
+		instanziiert. Dort werden die beiden Instanzvariablen \textit{base} 
+		(\ac{url} der \ac{rest} \ac{api}) und \textit{trading\_fee} (Prozentsatz 
+		der Trading-Gebühren) festgelegt. 	
+
+\end{itemize}
+\subsection{API Anfragen}
+\label{sub:api_anfragen}
+
+Bevor die Beschaffung der Marktdaten betrachtet werden kann, muss verstanden werden, wie eine Anfrage an die \ac{api} der Trading-Plattform Binance gehandhabt wird.
+
+\lstset{language=Python}
+\lstset{frame=lines}
+\lstset{caption={Binance API Calls}}
+\lstset{label={lst:api_calls}}
+\lstset{basicstyle=\footnotesize}
+\textbf{binance.py}
+\begin{lstlisting}
+def http_request(self, endpoint, params=None):
+	# Create URL
+	url: str = self.base + endpoint
+	if params:
+		for i in range(len(params)):
+			if i == 0:
+				# First param has to connect with a question mark to the url
+				url = url + "?" + params[i]
+			else:
+				# Other params connect with a ampersand
+				url = url + "&" + params[i]
+\end{lstlisting}
+
+Eine \ac{url} wird erzeugt, indem man die \textit{base} mit dem jeweiligen \textit{endpoint} verbindet. Jede \ac{url} kann das Verhalten der \ac{api} durch eine Mitgabe an Parametern modifizieren. Parameter werden, wie der Endpoint, beim Aufruf der Methode an Übergeben. Bei den Parametern geschieht dies über den optionalen Übergabewert \textit{params}. 
+
+Ob Parameter übergeben werden oder nicht, wird in Zeile 4 abgefragt. Wenn ja, muss der erste Parameter mit einem \textbf{?} an die \ac{url} gehängt werden, während alle weiteren Parameter mit einem \textbf{\&} hinzugefügt werden. So entsteht beispielsweise folgedende \ac{url}: https://api.binance.com/api/v3/ticker/price?symbol=LTCEUR
+
+\lstset{language=Python}
+\lstset{frame=lines}
+\lstset{caption={Binance API Calls Fortsetzung}}
+\lstset{label={lst:code_direct}}
+\lstset{basicstyle=\footnotesize}
+\textbf{binance.py}
+\begin{lstlisting}
+# Call url to get excepted response
+try:
+	response: Response = requests.get(url)
+except requests.exceptions.ConnectionError as e:
+	logger.error(f"ConnectionError: {e}")
+	return False
+
+# Check response
+try:
+	response.raise_for_status()
+except requests.exceptions.HTTPError as e:
+	logger.error(f"HTTP error: {e}")
+	return False
+
+# Decode data
+try:
+	data = response.json()
+except JSONDecodeError as e:
+	logger.error(f"Could not decode data from {url}: {e}")
+	return False
+else:
+	return data
+\end{lstlisting}
+
+Nachdem die \ac{url} des gewollten Endpoints erzeugt wurde, werden die Daten nun abgefragt, überprüft und verarbeitet:
+\begin{itemize}
+	\item \textbf{API Aufruf (Zeile 2-6):}
+		Um das Arbeiten mit \ac{http} Anfragen möglichst einfach zu gestalten
+		wird das Package \textit{requests} verwendet. Es wird eine GET Anfrage mit
+		der erzeugten URL gestartet, durch welche die API eine HTTP-Response
+		erzeugt, welche im besten Fall die gefragten Daten beinhalten.
+		Sollte während der Anfrage ein Verbindungsfehler auftreten, wird dieser
+		Abgefangen und auf dem Terminal ausgegeben. Anschließend gibt die Methode
+		\textit{False} zurück, um dem Aufrufer zu signalisieren, dass etwas falsch
+		gelaufen ist.
+	\item \textbf{Verarbeiten der HTTP Response (Zeile 9-13):} \\
+		Trat kein Verbindungsfehler auf, untersuchen wir die HTTP Request nun auf
+		seinen Status-Code. Dieser gibt Auskunft darüber, ob alles geklappt hat,
+		oder Fehler aufgetreten sind. Wird ein fehlerhafter Status-Code entdeckt,
+		wird ein Fehler erzeugt, welcher in gleicher Manier abgefangen wird wie
+		zuvor der Verbindungfehler.
+	\item \textbf{Dekodieren der Daten (Zeile 16-22):} \\
+		Da die Daten einem textbasiertem Format namens \ac{json} von der API an 
+		den Aufrufer zurückgegeben werden, müssen diese vor Verwendung noch 
+		dekodiert werden. Dabei werden die in der Response enthaltenen Daten
+		durch das Package \textit{json} automatisch dekodiert. Tritt dabei ein
+		Fehler auf, wird der Fehler wie bereits bekannt abgefangen und 
+		\textit{False} zurückgegeben. Läuft alles wie es soll, werden die Daten
+		in einer geeigneten Datenstruktur zurückgegeben.
+\end{itemize}
+
+\subsection{Sammeln von Candlestick Daten}
+\label{sub:sammeln_von_candlestick_daten}
+
+Eine der wichtigsten Funktionen der Binance Schnittstelle ist das Sammeln von Candlestick Daten, welche sowohl im Backtest als auch beim Initialisieren des Trading Bots benötigt werden.
+
+Um dieser Anforderung Genüge zu tun, wurde eine Klassenmethode \textit{get\_candlestick\_data()} implementiert, welche eine festgelegte Menge an Candles für ein bestimmtes Trading Symbol von der \ac{api} anfordert und verarbeitet.
+
+\lstset{language=Python}
+\lstset{frame=lines}
+\lstset{caption={Sammeln von Candlestick Daten}}
+\lstset{label={lst:candlestick_data}}
+\lstset{basicstyle=\footnotesize}
+\textbf{binance.py}
+\begin{lstlisting}
+def get_candlestick_data(self, symbol, interval="1h", end_time=None, limit=1000):
+	# Get data
+	params = [
+		"symbol=" + symbol,
+		"interval=" + interval,
+		"limit=" + str(limit)
+	]
+	if end_time:
+		params.append("endTime=" + str(end_time))
+	data = self.http_request(endpoint=self.ENDPOINT_KLINES, params=params)
+	if not data:
+		logger.error("Missing candlestick data")
+		return False
+\end{lstlisting}
+
+Erklärung der Übergabeparameter:
+\begin{itemize}
+	\item \textbf{symbol:} \\
+		Das Symbol bzw. die Währungen, für welche die Candlestick Daten angefragt
+		werden.
+	\item \textbf{intverval="1h":} \\
+		Dieser optionale Parameter legt das Zeitintervall fest, welches die 
+		angefragten Kerzen haben sollen. Diese gibt es beispielsweise in Minuten, 
+		Stunden, Tagen und noch mehr. Wird kein Wert für den Parameter übergeben, 
+		wird ein Standardwert von einer Stunde pro Intervall festgelegt.
+	\item \textbf{end\_time=None:} \\
+		Ein ebenfalls optionaler Parameter, welcher eine Zeit festlegt, von
+		welchem aus die Daten (rückwärtsgehend) geholt werden soll. Wird kein
+		Wert übergeben, werden einfach die neuesten Kerzen geholt.
+	\item \textbf{limit=1000:} \\
+		Das Limit legt fest, wie viele Kerzen abgefragt werden sollen. Dieses wird
+		von Binance festgelegt und beträgt standardmäßig 500, maximal jedoch 1000.
+\end{itemize}
+
+In Zeile 2-10 werden die für die Candlestick Daten benötigten Parameter festgelegt, woraufhin anschließend die Daten geholt werden. Gab es während des Datenbeschaffungsprozess ein Problem, erhalten wir den boolschen Wert \textit{false}. Daher überprüfen wir in Zeile 11, ob beim Beschaffen der Daten alles geklappt hat. Sollte dies nicht der Fall sein, wird der Fehler auch in dieser Methode geloggt und \textit{False} zurückgegeben. Erhalten wir jedoch die gewollten Daten, liegen diese nun in folgendem Format vor: \\
+
+\lstset{language=Python}
+\lstset{frame=lines}
+\lstset{caption={Darstellung von Candlestick Daten}}
+\lstset{label={lst:Daten der Kerzen in "Rohform"}}
+\lstset{basicstyle=\footnotesize}
+\begin{lstlisting}
+[
+  [
+    1499040000000,      // Open time
+    "0.01634790",       // Open
+    "0.80000000",       // High
+    "0.01575800",       // Low
+    "0.01577100",       // Close
+    "148976.11427815",  // Volume
+    1499644799999,      // Close time
+    "2434.19055334",    // Quote asset volume
+    308,                // Number of trades
+    "1756.87402397",    // Taker buy base asset volume
+    "28.46694368",      // Taker buy quote asset volume
+    "17928899.62484339" // Ignore.
+  ],
+  [
+  	...
+  	...
+  	...
+  ],
+  ...
+]
+\end{lstlisting}
+
+Die hier abgebildete Datenstruktur \textit{list} enthält alle Candles in Form von weiteren Lists. Sozusagen ein zweidimensionales Array. Innerhalb jeder Candle befinden sich die oben erkennbaren Daten wie \textit{Open time} und \textit{Open}. Diese sollen nun für eine bessere Weiterverarbeitung in die Datenstruktur DataFrame eingepflegt werden: \\
+
+\lstset{language=Python}
+\lstset{frame=lines}
+\lstset{caption={Sammeln von Candlestick Daten Fortsetzung}}
+\lstset{label={lst:Daten der Kerzen in "Rohform"}}
+\lstset{basicstyle=\footnotesize}
+\begin{lstlisting}
+df = DataFrame(data)
+df = df.drop(range(6, 12), axis=1)
+col_names = ["time", "open", "high", "low", "close", "volume"]
+df.columns = col_names
+
+# Transform values from strings to floats
+for col in col_names:
+	df[col] = df[col].astype(float)
+return df
+\end{lstlisting}
+
+Erklärung des restlichen Code:
+\begin{itemize}
+	\item \textbf{Erstellen eines DataFrame (Zeile 1-4:} \\
+		Das DataFrame Objekt wird erzeugt, indem man ihm die Candlestick Daten in
+		der bereits vorliegenden Form einer Liste/Array übergibt. Anschließend
+		werden die letzten sechs Spalten (beginnend bei "Close time")entfernt, da
+		diese für die hier vorliegenden Zwecke nicht benötigt werden.
+	\item \textbf{Transformieren der Textwerte in Gleitkommawerte (Zeile 7-8):} \\
+		Um die in den Kerzen enthaltenen Werte Zahlenwerte für arithmetische
+		Dinge nutzen zu können, müssen sie vorerst in Gleitkommawerte umgewandelt
+		werden.	Anschließend wird der DataFrame an den Aufrufer der Methode
+		zurückgegeben.	
+\end{itemize}
+
+Jede Zeile des DataFrame stellt nun eine Kerze, inklusive ihren korrespondierenden Daten dar. Abbildung \ref{fig:16} zeigt einen solchen DataFrame und mehrere dieser Kerzen.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[height=0.5\textheight]{img/candlestick_df.png}
+  \caption{Candlestick Daten innerhalb eines DataFrame}
+  \label{fig:16}
+\end{figure}
 
 %----
 
 \section{Simple Moving Average Indikator}
-\label{sec:entwurf_einer_konsolenanwendung}
+\label{sec:simple_moving_average_indikator}
 
 %----
 
-\section{Moving Average Strategy}
-\label{sec:entwurf_einer_konsolenanwendung}
+\section{Moving Average Strategie}
+\label{sec:moving_average_strategie}
 
 %----
 
 \section{Backtest}
-\label{sec:entwurf_einer_konsolenanwendung}
+\label{sec:backtest}
 
 %----
 
 \section{Trading Bot}
-\label{sec:entwurf_einer_konsolenanwendung}
+\label{sec:trading_bot}
 
 %----
 
 \section{Bot Runner}
-\label{sec:entwurf_einer_konsolenanwendung}
+\label{sec:bot_runner}
 
 %----
 
 \section{Konsolenanwendung}
-\label{sec:entwurf_einer_konsolenanwendung}
+\label{sec:konsolenanwendung}
 
 
 In diesem Kapitel wird die konkrete Implementierung des im Kapitel
@@ -1328,20 +1586,6 @@ Bei Software-Projekten besteht dieses Kapitel typischerweise aus den
 Phasen Implementierung \& Test im \ac{rup}.
 
 Zum Beispiel kann man hier auch ein kleines Listing einfügen.
-
-\begin{lstlisting}[language=c,%
-                   caption={Überschrift des Quelltexts}]
-#include<stdio.h>
-
-int main() {
-    // Kommentar
-    int answer = 20 << 1;
-    answer += 2;
-    printf("Hallöchen Welt!\n");
-    printf("Die Antwort ist: %d\n", answer);
-    return 0;
-}
-\end{lstlisting}
 
 Manchmal hilft auch eine kleine Tabelle:
 
