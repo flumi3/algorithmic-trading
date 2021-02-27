@@ -4,6 +4,8 @@
 \usepackage{float}
 \usepackage{url}
 \usepackage{listings}
+\usepackage{algorithm} 
+\usepackage{algpseudocode}
 
 % ----------------------------------------------------------------------
 
@@ -125,6 +127,7 @@ Verbindung mit einigen wenigen HTML Elementen.
 \acro{pandas}[Pandas]{Python Data Analysis Library}
 \acro{url}[URL]{Uniform Resource Locator} 
 \acro{json}[JSON]{JavaScript Object Notation}
+\acro{abc}[ABC]{Abstract Base Class}
 \end{acronym}
 %---
 
@@ -516,7 +519,7 @@ wurden. (vgl. \cite{cryptocurrency_explained})
 \subsection{Die Blockchain}
 \label{sub:blockchain}
 
-Trivial ausgedrückt ist eine Blockchain nichts anderes als eine
+Einfach ausgedrückt ist eine Blockchain nichts anderes als eine
 verteilte, öffentliche Datenbank\cite{blockchain_definition}, wessen
 Funktionsprinzip die meisten Kryptowährungen zugrunde
 liegen\cite{blockchain_1}.
@@ -1147,6 +1150,8 @@ Der technische Indikator dient der Strategie zur Analyse der Marktdaten. Damit d
   \label{fig:10}
 \end{figure}
 
+Durch die Definition eines Interface wird gewährleistet, dass jede neu hinzugefügte Klasse, die von der Klasse \textit{Indicator} erbt, dazu verpflichtet ist, alle innerhalb des Interface definierten Methoden zu überschreiben. Damit wird erreicht, dass jeder Indikator das gleiche Funktionsprinzip hat und ein einheitliches Konzept bei der Implementierung verwendet wird.
+
 Jeder Indikator-Instanz wird ein Name übergeben, welcher durch die Zuweisung an das Attribut \textit{name} der eindeutigen Identifikation eines Indikators dient. Zusätzlich sind alle Indikatoren dazu verpflichtet, eine Methode \textit{add\_data(market\_data)} zu implementieren, welche die indikatorspezifischen Daten an die übergebenen Marktdaten anhängt und zurückgegeben.
 
 Im Rahmen dieser Arbeit wird soll nur ein Indikator implementiert und verwendet werden - der \textbf{Simple Moving Average}, welcher bereits im Grundlagenkapitel \ref{sub:technische_Indikatoren} beschrieben wurde.
@@ -1226,6 +1231,39 @@ Wurden alle Candles und damit die gesamten Marktdaten untersucht, wird ein Dashb
 \textbf{print\_stats()} \\
 Während des gesamten Backtest werden verschiedene Daten zur Erhebung einer Statistik gesammelt, die dem Nutzer zeigt, wie erfolgreich der Backtest für eine gewählte Strategie und das gewählte Symbol ist.
 
+\subsection{Visualisieren des Backtests}
+\label{sub:visualisieren_des_backtests}
+
+Für die Erstellung eines Candlestick Chart o.Ä. gibt es eine Vielzahl von Python Libraries, welche enorme Unterstützung bieten und einem den Großteil der eigentlichen Arbeit abnehmen. Die dabei verwendete Library nennt sich \textit{plotly} und stellt nützliche Methoden für die Visualisierung von Finanzdaten bereit. Die erzeugten Diagramme lassen sich als \ac{html} abspeichern und im Browser öffnen. Da jedoch noch andere Daten mit in das Dashboard einfließen sollen, sollen mehrere \ac{html} Objekte erzeugt und zu einer Datei zusammengefügt werden. Der Ablauf ist dabei wie in Abbildung \ref{fig:18} dargestellt.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[height=0.52\textheight]{img/dashboard_creation.png}
+  \caption{Erstellungsvorgang eines Dashboards}
+  \label{fig:18}
+\end{figure}
+
+\begin{enumerate}
+	\item \textbf{Erstellung eines Candlestick Charts als HTML Objekt:} \\
+		Mithilfe der Library \textit{plotly} wird ein Candestick Diagramm in Form
+		eines HTLM Objekts erzeugt und bis zur Weiterverarbeitung verwahrt.
+	\item \textbf{Erstellung eines Diagramm zur Visualisierung des Kapitals:} \\
+		Innerhalb des Backtests wird bei jedem Kauf und Verkauf eine Veränderung
+		des Kapitals zu diesem genauen Zeitpunkt der Transaktion gespeichert.
+		Somit ist es möglich, das Kapital im zeitlichen Rahmen des Backtests als
+		Liniendiagramm darzustellen. Dieses soll ebenfalls mithilfe von
+		\textit{plotly}, in Form eines HTML Objekts, erzeugt und verwahrt werden.
+	\item \textbf{Umwandlung der Backtest Statistiken in HTML Code:} \\
+		Auch die beim Backtest generierten Statistikdaten sollen in das Dashboard
+		eingebaut werden. Diese müssen mithilfe von Variablen-Substitution in
+		vorbereiteten HTML Code eingefügt werden.
+	\item \textbf{Erzeugen des Dashboards:} \\
+		Sind alle Objekte erzeugt, müssen diese noch zu einem großen Objekt
+		zusammengefügt und zu einer Datei verarbeitet werden. Bei der Speicherung
+		des \ac{html} Dashboards wird gleichzeitig eine geeignete Ordnerstruktur
+		erzeugt.
+\end{enumerate}
+
 %----
 
 \section{Entwurf und Verwaltung eines Trading Bot}
@@ -1292,6 +1330,21 @@ bla bla bla was über python implementierung sagen als einleitung
 \section{Binance Schnittstelle}
 \label{sec:binance_schnittstelle}
 
+\subsection{Vorgehen}
+\label{sub:vorgehen}
+
+Im Prinzip sind alle Datenbeschaffungsfunktionen der Klasse \textit{Binance} Implementierungen ähnlicher Manier. Das bedeutet, jede Methode, deren Aufgabe die Beschaffung eines gewissen Datensatzes, wie beispielsweise Preisdaten oder Symbolinformationen, folgt der gleichen Vorgehensweise und besteht immer aus den folgenden Schritten:
+
+\begin{enumerate}
+	\item Erstellen der URL für den jeweiligen Endpoint der REST API
+	\item Senden einer HTTP Request an die erstellte URL
+	\item Überprüfung der empfangenen HTTP Response
+	\item Überführung der Daten in eine geeignete Form oder Datenstruktur
+\end{enumerate}
+
+\subsection{Klassendefinition}
+\label{sub:klassendefinition}
+
 Die Schnittstelle der Binance \ac{api} wurde innerhalb einer Python File mit dem Namen \textit{binance.py} implementiert. Hier wurde zunächst eine Klasse \textit{Binance} definiert:
 
 \lstset{language=Python}
@@ -1340,7 +1393,7 @@ Bevor die Klasse durch den Konstruktor instanziiert werden kann, werden mehrere 
 \subsection{API Anfragen}
 \label{sub:api_anfragen}
 
-Bevor die Beschaffung der Marktdaten betrachtet werden kann, muss verstanden werden, wie eine Anfrage an die \ac{api} der Trading-Plattform Binance gehandhabt wird.
+Bevor die Beschaffung der Marktdaten o.Ä. betrachtet werden kann, muss verstanden werden, wie eine Anfrage an die \ac{api} der Trading-Plattform Binance gehandhabt wird.
 
 \lstset{language=Python}
 \lstset{frame=lines}
@@ -1476,8 +1529,8 @@ In Zeile 2-10 werden die für die Candlestick Daten benötigten Parameter festge
 
 \lstset{language=Python}
 \lstset{frame=lines}
-\lstset{caption={Darstellung von Candlestick Daten}}
-\lstset{label={lst:Daten der Kerzen in "Rohform"}}
+\lstset{caption={Candlestick Daten in Rohform}}
+\lstset{label={lst:rohe_candlestick_daten}}
 \lstset{basicstyle=\footnotesize}
 \begin{lstlisting}
 [
@@ -1511,6 +1564,7 @@ Die hier abgebildete Datenstruktur \textit{list} enthält alle Candles in Form v
 \lstset{caption={Sammeln von Candlestick Daten Fortsetzung}}
 \lstset{label={lst:Daten der Kerzen in "Rohform"}}
 \lstset{basicstyle=\footnotesize}
+\textbf{binance.py}
 \begin{lstlisting}
 df = DataFrame(data)
 df = df.drop(range(6, 12), axis=1)
@@ -1525,7 +1579,7 @@ return df
 
 Erklärung des restlichen Code:
 \begin{itemize}
-	\item \textbf{Erstellen eines DataFrame (Zeile 1-4:} \\
+	\item \textbf{Erstellen eines DataFrame (Zeile 1-4:)} \\
 		Das DataFrame Objekt wird erzeugt, indem man ihm die Candlestick Daten in
 		der bereits vorliegenden Form einer Liste/Array übergibt. Anschließend
 		werden die letzten sechs Spalten (beginnend bei "Close time")entfernt, da
@@ -1548,23 +1602,494 @@ Jede Zeile des DataFrame stellt nun eine Kerze, inklusive ihren korrespondierend
 
 %----
 
-\section{Simple Moving Average Indikator}
-\label{sec:simple_moving_average_indikator}
+\section{Indikatoren}
+\label{sec:indikatoren}
+
+\subsection{Abstrakte Basisklasse Indicator}
+\label{sub:abstrakte_basisklasse_indikator}
+
+Interfaces werden in Python anders gehandhabt als in den meisten anderen Sprachen und können in ihrer Designkomplexität variieren. Klassische Interfaces, wie man sie aus Sprachen wie Java oder C++ kennt, existieren in Python nicht. Daher wird auf die Verwendung einer Python Library mit dem Namen \ac{abc} verwendet. Durch dies ist man in der Lage, definierte Methoden als \textit{abstract} zu deklarieren, was den gewünschten Effekt eines Interfaces erzielt.
+
+Da die Basisklasse der Indikatoren keine wirkliche Funktionalität enthält, besitzt sie eine simple Implementierung, dargestellt im nachfolgenden Code-Ausschnitt:
+
+\lstset{language=Python}
+\lstset{frame=lines}
+\lstset{caption={Implementierung der abstrakten Basisklasse \textit{Indicator}}}
+\lstset{label={lst:baseclass_indicator}}
+\lstset{basicstyle=\footnotesize}
+\textbf{indicators.py}
+\begin{lstlisting}
+from abc import ABC, abstractmethod
+
+class Indicator(ABC):
+    def __init__(self, name: str) -> None:
+        self.name: str = name
+
+    @abstractmethod
+    def add_data(self, data: DataFrame, column_name: str):
+        # Needs to be overridden in every subclass
+        raise NotImplementedError("Missing implementation: Please override this method in the subclass")
+\end{lstlisting}
+
+Durch das Erben von der Klasse \textit{ABC} in Zeile 3 wird die Verwendung der Library \ac{abc} ersichtlich. Anschließend wird in Zeile 4-5 ein Konstruktor erzeugt, welche einen Indikator mit einem Namen instanziiert.
+
+Der wichtigere Teil befindet sich in Zeile 7-10. Wie bereits in Kapitel \ref{sec:technische_Indikatoren} beschrieben, soll jeder Indikator dazu verpflichtet sein, die Methode \textit{add\_data} zu implementieren. Dies wird erreicht, indem über der Methodendeklaration ein sogenannter Decorator \textit{@abstractmethod} platziert wird (Zeile 7). Um dem Entwickler neuer Indikatoren ein Fehlverhalten im Falle einer Nicht-Implementierung mitzuteilen, erschaffen wir einen \textit{NotImplementedError} in Zeile 10. Wird nun ein neuer Indikator implementiert, die Methode \textit{add\_data} jedoch nicht überschrieben, erhebt das System einen Laufzeitfehler.
+
+\subsection{Simple Moving Average}
+\label{sub:simple_moving_average}
+
+Für viele technische Indikatoren gibt es bereits bereitgestellte Implementierungen, welche durch die Verwendung von Packages in das System integriert werden können. Auch wenn diese als bereits fertige Objekte importiert werden können, soll die klare Struktur der Indikatoren beibehalten werden. Daher wird zunächst die Klasse \textit{SimpleMovingAverage} definiert:
+
+\lstset{language=Python}
+\lstset{frame=lines}
+\lstset{caption={Klassendefinition SimpleMovingAverage}}
+\lstset{label={lst:baseclass_indicator}}
+\lstset{basicstyle=\footnotesize}
+\textbf{indicators.py}
+\begin{lstlisting}
+from pyti.smoothed_moving_average import smoothed_moving_average as sma
+
+class SimpleMovingAverage(Indicator):
+
+    def __init__(self, name, period):
+        super().__init__(name)  # Init parent class
+        self.period: int = period
+\end{lstlisting}
+
+Durch das Erben von der Klasse \textit{Indicator} in Zeile 3, wird die Verwendung der zuvor definierten abstrakten Basisklasse deklariert. Im Konstruktor in Zeile 5-7 wird die Instanzvariable der Basisklasse (name) sowie die Instanzvariable period initialisiert.
+
+Der wichtige Teil passiert jedoch in der Implementierung der nun überschriebenen Methode \textit{add\_data}:
+
+\lstset{language=Python}
+\lstset{frame=lines}
+\lstset{caption={Implementierung der Methode \textit{add\_data}}}
+\lstset{label={lst:baseclass_indicator}}
+\lstset{basicstyle=\footnotesize}
+\textbf{indicators.py}
+\begin{lstlisting}
+def add_data(self, data, column_name):
+	calc_column = data[column_name].tolist()
+	sma = sma(calc_column, self.period)
+	data[self.name] = sma
+	return data
+\end{lstlisting}
+
+Beim Aufruf der Methode werden zwei Übergabeparameter erwartet:
+\begin{itemize}
+	\item \textbf{data}: Der (Candlestick) DataFrame an welchen die Indikatordaten
+		angehängt werden sollen.
+	\item \textbf{colum\_name}: Der Name der Spalte, auf wessen Datengrundlage der
+		Indikator berechnet werden soll.
+\end{itemize}
+
+Zunächst werden die Daten der Spalte, auf wessen Grundlage der Indikator berechnet werden soll, aus dem DataFrame extrahiert und zu einer Liste, bestehend aus diesen Werten, transformiert (Zeile 2). Anschließend wird unter der Verwendung dieser Daten sowie der festgelegten Periode ein SimpleMovingAverage erzeugt (Zeile 3). Am Ende werden die erzeugten Daten an den DataFrame in Form einer neuen Spalte angehängt und zurückgegeben.
+
+Da man sich dieses Prinzip ohne ein wenig Übung im Umgang mit den genannten Datenstrukturen vielleicht schwer vorstellen kann, folgt ein visuelles Beispiel in Abbildung \ref{fig:17}). In diesem Beispiel wird der Simple Moving Average Indikator für gegebene Candlestick Daten berechnet und an diese angehängt.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[height=0.7\textheight]{img/add_indicator_data.png}
+  \caption{Berechnen und Hinzufuegen des SMA Indikator an einen DataFrame}
+  \label{fig:17}
+\end{figure}
 
 %----
 
 \section{Moving Average Strategie}
 \label{sec:moving_average_strategie}
 
+Die eigentliche Implementierung der Moving Average Strategie ist recht simpel. Da die Verwendung einer abstrakten Basisklasse schon im vorangegangenen Kapitel aufgezeigt wurde, wird diese Information hier weggelassen. Zunächst wird die Klasse definiert und ein paar wichtige Instanzvariablen initialisiert:
+
+\lstset{language=Python}
+\lstset{frame=lines}
+\lstset{caption={Klassendefinition der Moving Average Strategy}}
+\lstset{label={lst:}}
+\lstset{basicstyle=\footnotesize}
+\textbf{indicators.py}
+\begin{lstlisting}
+class MovingAverageStrategy(Strategy):
+
+	def __init__(self):
+		self.name = "Moving Average Strategy"
+		self.profit_target = 1.05
+		self.stop_loss_target = 0.85
+		self.sma_to_price_difference = 1.03
+		self.indicators = list()
+\end{lstlisting}
+
+Erklärung der Instanzvariablen:
+\begin{itemize}
+	\item \textbf{name}: Name der Strategie
+	\item \textbf{profit\_target}: Das Profit Ziel liegt bei 5\% Preiszuwachs
+	\item \textbf{stop\_loss\_target}: Das Stop-Loss Target liegt bei 15\% unter
+		dem Kaufpreis. Wird dieser Preis erreicht, wird verkauft.
+	\item \textbf{sma\_to\_price\_difference}: Liegt der Preis 3\% unter dem Wert
+		des Simple Moving Average, soll gekauft werden
+	\item \textbf{indicators}: Liste der von der Strategie verwendeten Indikatoren
+\end{itemize}
+
+Die Methoden der Strategie sind sehr einfach gehalten. Die Überprüfung der Daten zur Bestimmung eines Kaufes oder Nicht-Kaufes wird in gerade einmal 4 Zeilen Code erreicht:
+
+\lstset{language=Python}
+\lstset{frame=lines}
+\lstset{caption={Klassendefinition der Moving Average Strategy}}
+\lstset{label={lst:}}
+\lstset{basicstyle=\footnotesize}
+\textbf{indicators.py}
+\begin{lstlisting}
+    def check_buy_condition(self, price, time, row=None):
+		sma = getattr(row, "slow_sma")
+
+		# Check if we meet our strategy condition
+		if sma > self.sma_to_price_difference * price:
+			return BuySignal(price, time)
+		else:
+			return False
+\end{lstlisting}
+
+In Zeile 5 wird überprüft, ob der Wert des SMA drei Prozent über dem zugehörigen Preis liegt. Ist dies der Fall, wird ein \textit{BuySignal} erzeugt und zurückgegeben, ansonsten \textit{False}.
+
+Das automatische Hinzufügen von Indikatoren läuft ebenfalls sehr simpel ab. Dabei werden die jeweiligen benötigten Indikatoren instanziiert und deren \textit{add\_data()} Funktion verwendet, um dem DataFrame die Indikatordaten hinzuzufügen. Anschließend werden alle Indikatorinstanzen zur Liste der Indikatoren (\textit{indicators}) hinzugefügt.
+
 %----
 
 \section{Backtest}
 \label{sec:backtest}
 
+Dass der Backtest die bisher komplexeste Komponente des Systems ist, spiegelt sich in seiner Implementierung wieder. Implementiert wurde der Backtest innerhalb der Datei \textit{backtest.py} welche mit über 400 Zeilen Code die größte Sourcefile darstellt.
+
+\subsection{Ablauf des Backtests}
+\label{sub:ablauf_des_backtests}
+
+Das Herzstück des Backtests ist seine \textit{run()} Methode. Diese definiert den kompletten Ablauf des Backtests, welcher in Abbildung \ref{fig:13} durch ein Aktivitätenprogramm grob beschrieben wird. Der Übersichtlichkeit zuliebe werden nur Ausschnitte in vereinfachter Form gezeigt:
+
+\lstset{language=Python}
+\lstset{frame=lines}
+\lstset{caption={Vereinfachte Darstellung der Methode \textit{run()}}}
+\lstset{label={lst:}}
+\lstset{basicstyle=\footnotesize}
+\textbf{backtest.py}
+\begin{lstlisting}
+profit_target_price = -1
+stop_loss_price = -1
+for index, candle in candlestick_data_frame.iterrows():
+	# Get close price and time of current candle
+	close_price = getattr(candle, "close")
+	time = getattr(candle, "time")
+	buy_signal = strategy.check_buy_condition(close_price, time, candle)
+	
+	# Check whether we can buy
+	if buy_signal:
+		if capital >= close_price:
+			buy(buy_signal)
+			
+			# We now have coins -> init targets
+			profit_target_price = close_price * strategy.profit_target
+			stop_loss_price = close_price * strategy.stop_loss_target
+			
+	# Check wheter we can sell
+	if kept_coins:
+		low_price: getattr(candle, "low")
+		
+		# Check whether stop-loss price was reached
+		if low_price <= stop_loss_price:
+			sell(stop_loss_price)  # sell all coins for sl price
+			profit_target_price = -1  # reset
+			stop_loss_price = -1  # reset
+			
+		# Check whether we need to set new targets
+		elif close_price >= profit_target_price != -1:
+			profit_target_price = close_price * strategy.profit_target
+			stop_loss_price = close_price * strategy.stop_loss_target
+
+# Create dashboard		
+create_folder_structure()
+create_candlestick_figure()
+figures_to_html()
+stats_to_html()
+create_html_dashboard()
+print_stats()
+\end{lstlisting}
+
+Beim Ablauf des Backtests muss jede einzelne Kerze auf einen Kauf oder Verkauf überprüft werden. Für jede Kerze werden der Close Price und dessen korrespondierende Zeit ermittelt (\textbf{Zeile 5-6}). Diese werden nun der Strategie übergeben, welche überprüft, ob gekauft werden soll oder nicht (\textbf{Zeile 7}). Wurde ein \textit{BuySignal} erzeugt, wird mithilfe von diesem ein Kauf simuliert (\textbf{Zeile 10-12}). Mithilfe des Preises, zu welchem gerade Coins erworben wurden, werden nun das Profitziel und der Stop-Loss gesetzt (\textbf{Zeile 15-16}).
+
+Befinden sich nun Instanzen einer Kryptowährung im Besitz, muss auch für jede Kerze überprüft werden, ob der niedrigste Preis innerhalb ihres Zeitintervalls den definierten Stop-Loss Preis erreicht hat (\textbf{Zeile 19-23}). Ist dies der Fall, werden alle besessenen Coins verkauft und \textit{profit\_target\_price} sowie \textit{stop\_loss\_price} zurückgesetzt (\textbf{Zeile 24-26}).
+
+Am Ende der Schleife wird überprüft, ob der Close Preis der aktuellen Kerze das definierte Profit-Ziel überschritten hat. Ist dies der Fall, werden \textit{profit\_target\_price} sowie \textit{stop\_loss\_price} neu gesetzt, um den möglichen Gewinn eines Kaufes zu maximieren (\textbf{Zeile 30-32}).
+
+Als letztes werden innerhalb des Backtests implementierte Methoden zur Erzeugung eines HTML Dashboards aufgerufen und die im Backtest gesammelten Statistiken auf der Konsole ausgegeben (\textbf{Zeile 35-40}). 
+
+\subsection{Erstellung eines Dashboards}
+\label{sub:erstellung_eines_dashboards}
+
+Unter der Verwendung der Bibliothek \textit{plotly} ergibt sich die Erstellung eines Finanzdiagramms als kein großes Hindernis. Für die Erstellung eines Candlestick Charts gibt es speziell dafür vorgefertigte Klassen, denen die Daten überreicht werden müssen:
+
+\lstset{language=Python}
+\lstset{frame=lines}
+\lstset{caption={Erzeugung eines Candlestick Chart}}
+\lstset{label={lst:}}
+\lstset{basicstyle=\footnotesize}
+\textbf{binance.py}
+\begin{lstlisting}
+def create_candlestick_figure(self):
+	df = self.candlestick_df
+	
+	# Plot candlestick chart
+	candle = Candlestick(
+		x=df["time"],
+		open=df["open"],
+		close=df["close"],
+		high=df["high"],
+		low=df["low"],
+		name="Candlesticks"
+	)
+	data = [candle]
+	
+	# Loop through all indicators of the market data and plot them
+	for indicator in self.strategy.indicators:
+		if type(indicator) == SimpleMovingAverage:
+			sma = Scatter(
+				x=df["time"],
+				y=df[indicator.name],
+				name=indicator.name,
+				line=dict(color="rgba(255, 207, 102, 1)")
+			)
+			data.append(sma)
+			
+	# Customize style and display
+	layout = Layout(
+		xaxis={
+			"title": self.symbol,
+			"rangeslider": {"visible": True},
+			"type": "date"
+		},
+		yaxis={
+			"fixedrange": False,
+			"title": "Price per coin"
+		}
+	)
+	
+	# Create figure and plot it
+	figure = Figure(data=data, layout=layout)
+	return figure
+\end{lstlisting}
+
+Erklärungen zum Code:
+
+\begin{enumerate}
+	\item \textbf{Erzeugen des Candles (Zeile 5-13:} \\
+		Mithilfe der \textit{plotly} Library wird ein Candlestick Objekt erzeugt,
+		dem die jeweiligen Daten, übergeben werden. Anschließend wird das Candle
+		Objekt in eine Liste eingefügt, welche alle Daten des Diagramms enthält.
+	\item \textbf{Erzeugen der Indikatoren (Zeile 16-24):} \\
+		Für jeden Indikator den die gewählte Strategie besitzt, wird ein 
+		sogenannter Scatter-Plot erzeugt, mit welchem sich Linien und Punkte
+		darstellen lassen. Ihm werden die jeweiligen Zeiten und Indikatorwerte
+		übergeben.
+	\item \textbf{Festlegen eines Layouts (Zeile 27-41):} \\
+		Bevor die erstellten Objekte in eine \textit{Figure} überführt werden
+		können, welche die Objekte zu einem Diagramm vereint, kann ein Layout
+		festegelegt werden. Mithilfe des Layouts können beispielsweise Titel und
+		Achsenbeschriftungen angepasst werden.
+\end{enumerate}
+
+Die Erstellung des Diagramms zur Visualisierung des Kapitals lehnt sich stark an die oben gezeigte Erstellung des Candlestick Charts an. Die Substitution der Statistik Daten in den vordefinierten HTML Code läuft jedoch anders ab.
+
+Zunächst wird eine HTML Datei definiert, welche die Darstellung der Daten vorgibt.
+Mit dem nachfolgenden HTML Code kann eine Darstellung wie in Abbildung \ref{fig:19} erreicht werden:
+
+\lstset{language=HTML}
+\lstset{frame=lines}
+\lstset{caption={HTML Vorlage}}
+\lstset{label={lst:}}
+\lstset{basicstyle=\footnotesize}
+\textbf{binance.py}
+\begin{lstlisting}
+</p>
+<hr />
+<p>Symbol: {symbol_var}</span></p>
+<p>API: {api_var}</span></p>
+<p>Strategy: {strategy_var}</span></p>
+<p>Trading fee: {trading_fee_var}%</span></p>
+<p>Buy quantity: {buy_quantity_var} coins</span></p>
+<p>Starting capital: {starting_capital_var}&euro;</span></p>
+<p><br /></p>
+<p>
+\end{lstlisting}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[height=0.2\textheight]{img/html_example.png}
+  \caption{Ergebnis eines Ausschnitts von HTML Code}
+  \label{fig:19}
+\end{figure}
+
+Wie sich leicht erkennen lässt, sind alle in Mengenklammern enthaltenen Variablen wie \textit{symbol\_var} Platzhalter für echte Werte. Diese müssen nun vom Backtest substituiert werden, was erreicht werden kann, indem innerhalb der Methode \textit{stats\_to\_html()} gleichnamige Variablen mit den zugehörigen Werten initialisiert werden, welche dann die Plätze der HTML Variablen einnehmen.
+
+\lstset{language=Python}
+\lstset{frame=lines}
+\lstset{caption={Substitution von HTML Variablen}}
+\lstset{label={lst:}}
+\lstset{basicstyle=\footnotesize}
+\textbf{backtest.py}
+\begin{lstlisting}
+def __stats_to_html(self):
+        symbol_var = self.symbol
+        api_var = self.api.base
+        strategy_var = self.strategy.name
+        trading_fee_var = self.api.trading_fee * 100
+        buy_quantity_var = self.buy_quantity
+        starting_capital_var = self.starting_capital
+        # ...
+
+        # Get html code from file
+        path = os.path.join(get_project_root(), "src/backtest/backtest_stats.html")
+        f = open(path, "r")
+        html_code = f.read()
+
+        # Substitute variables in html code with local variables from here
+        html_code = html_code.format(**locals())
+        return html_code
+\end{lstlisting}
+
+Die Deklaration der gleichnamigen Variablen findet sich in Zeile 2-7 wieder. Anschließend muss der vordefinierte HTML Code, der sich noch in einer HTML Datei befindet, eingelesen werden (Zeile 11-13). Am Ende alle Platzhalter durch die richtigen Werte substituiert und der HTML Code an den Aufrufer zurückgegeben (Zeile 16-17).
+
+Nach Verarbeitung aller zu visualisierenden Daten muss der HTML Code in eine Datei gespeichert werden, welche dann von herkömmlichen Browsern aufgerufen werden können. Dazu wird für jeden Backtest automatisch eine Ordnerstruktur erstellt, falls sie nicht bereits besteht:
+
+\lstset{language=Python}
+\lstset{frame=lines}
+\lstset{caption={Substitution von HTML Variablen}}
+\lstset{label={lst:}}
+\lstset{basicstyle=\footnotesize}
+\textbf{backtest.py}
+\begin{lstlisting}
+project_root = Path(__file__).parent.parent.parent
+dashboard_dir = project_root + "dashboards/" + strategy.name.replace(" ", "_") + "/" + symbol
+Path(dashboard_dir).mkdir(parents=True, exists_ok=True)
+\end{lstlisting}
+
+Zunächst wird die Projektwurzel ermittelt (Zeile 1), dann wird der Pfad zur Ordnerstruktur festgelegt indem die zu erstellenden Ordnernamen zur Projektwurzel  hinzugefügt werden (Zeile 2). Abschließend erzeugt der Aufruf einer Methode der Klasse \textit{Path} die gegebene Ordnerstruktur, falls sie nicht bereits besteht.
+
+Wurde die Ordnerstruktur angelegt, wird der jeweilige HTML Code als HTML Datei abgespeichert. Der Name der Datei wird automatisch generiert und besteht aus dem verwendeten Trading Symbol sowie dem Datum des Backtests. Im Zusammenspiel kann somit eine automatisch generierte Ordnerstruktur inklusive Dashboards, wie in Abbildung \ref{fig:20}, erzeugt werden. 
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[height=0.3\textheight]{img/dashboard_dir_structure.png}
+  \caption{Dashboard Ordnerstruktur}
+  \label{fig:20}
+\end{figure}
+
 %----
 
 \section{Trading Bot}
 \label{sec:trading_bot}
+
+Da der Trading Bot innerhalb dieser Arbeit keine echten Funktionalitäten bieten soll, fällt dessen Implementierung schmächtiger aus als bei manch anderen Komponenten. Ein grober Überblick über die enthaltenen Funktionalitäten und Abhängigkeiten lässt sich jedoch schon mit einem Blick auf die Klassendefinition erahnen:
+
+\lstset{language=Python}
+\lstset{frame=lines}
+\lstset{caption={Substitution von HTML Variablen}}
+\lstset{label={lst:}}
+\lstset{basicstyle=\footnotesize}
+\textbf{bot.py}
+\begin{lstlisting}
+class Bot:
+    STATUS_RUNNING = "running"
+    STATUS_INIT = "init"
+    STATUS_ABORTED = "aborted"
+    STATUS_PAUSED = "paused"
+
+    def __init__(self, name, symbol, api, strategy, starting_capital, buy_quantity, description=""):
+        self.id = -1 
+        self.name = name
+        self.symbol = symbol
+        self.api = api
+        self.strategy = strategy
+        self.starting_capital = starting_capital  
+        self.capital = starting_capital
+        self.buy_quantity = buy_quantity
+        self.description = description
+        self.market_data = self.__get_init_data()  
+        self.buy_signals = list()
+        self.buy_transactions = list()
+        self.sell_transactions = list()
+        self.not_sold_yet = dict()
+        self.status = self.STATUS_INIT
+\end{lstlisting}
+
+Erklärung der Klassenvariablen:
+\begin{itemize}
+	\item \textbf{STATUS\_RUNNING}: Bot ist aktiv
+	\item \textbf{STATUS\_INIT}: Der Bot wurde erst erstellt bzw. initialisiert
+		und noch nie verwendet.
+	\item \textbf{STATUS\_ABORTED}: Der Bot wurde durch einen Laufzeitfehler
+		gestoppt und wartet auf eine Fehlerbehebung bzw. den Neustart.
+	\item \textbf{STATUS\_PAUSED}: Der Bot wurde durch den Nutzer pausiert.
+\end{itemize}
+
+Soll ein neuer Bot instanziiert werden, muss diesem Name, Trading Symbol, API, Strategie, Startkapital und Kaufmenge übergeben werden. Außerdem kann eine optionale Beschreibung hinzugefügt werden, welche beispielsweise Informationen über dessen Verwendung enthalten könnte.
+
+\subsection{Repraesentation der Marktdaten}
+\label{sub:repräsentation_der_marktdaten}
+
+Wurde ein neuer Bot instanziiert, muss er mit einem Datensatz von Marktdaten initialisiert werden, damit er mit dem Trading beginnen kann. Jeder Datensatz eines Trading Bots wird durch die Klasse \textit{MarketData} repräsentiert:
+
+\lstset{language=Python}
+\lstset{frame=lines}
+\lstset{caption={Marktdaten}}
+\lstset{label={lst:}}
+\lstset{basicstyle=\footnotesize}
+\textbf{market\_data.py}
+\begin{lstlisting}
+class MarketData:
+
+	def __init__(self, symbol, init_times, init_prices):
+		logger.info("Creating new market data...")
+		self.symbol = symbol
+		self.times = init_times
+		self.prices = init_prices
+        
+	def add_entry(self, time, price):
+		# Append entry to the end
+		self.times.append(time)
+		self.prices.append(price)
+		# Remove oldest entry to keep the same amount of entries
+		self.times.pop(0)
+		self.prices.pop(0)
+\end{lstlisting}
+
+\textbf{Zeile 3-7}: Jedes Marktdatenobjekt besitzt eine Instanzvariable \textit{symbol}, welche das Trading Symbol enthält, über welche es die Preisdaten verfügt. In den beiden Listen \textit{times} und \textit{prices} werden immer eine feste Menge von Preis und zugehörigen Zeitdaten gehalten.
+
+\textbf{Zeile 9-15}: Ein solcher Datensatz muss ständig aktualisiert werden, darf sich dabei jedoch nicht vergrößern. Daher werden beim Hinzufügen neuer Werte am Ende, die ältesten Werte am Anfang der Listen entfernt.
+
+Weitere, hier nicht dargestellte Funktionalitäten sind das Erzeugen eines DataFrames aus seinen Markdaten und die Möglichkeit den neuesten Preis inklusive zugehöriger Zeit abzufragen.
+
+\subsection{Beschaffen und Aktualisieren der Marktdaten}
+\label{sub:beschaffen_und_aktualisieren_der_marktdaten}
+
+Die Initialisierung der Marktdaten geschieht in Verbindung mit der Schnittstelle \textit{Binance} welche das Beschaffen der Daten übernimmt:
+
+\lstset{language=Python}
+\lstset{frame=lines}
+\lstset{caption={Substitution von HTML Variablen}}
+\lstset{label={lst:}}
+\lstset{basicstyle=\footnotesize}
+\textbf{bot.py}
+\begin{lstlisting}
+def __get_init_data(self):
+	limit = 2 * 30 * 24 * 60
+	candlestick_df = self.api.get_candlestick_data(symbol=self.symbol, interval="1M", limit=limit)
+
+	# Extract only the time and price columns
+	times = candlestick_df["time"].tolist()
+	prices = candlestick_df["close"].tolist()
+
+	# Create market data object
+	market_data = MarketData(self.symbol, times, prices)
+	return market_data
+\end{lstlisting}
+
+Anders als der Backtest, soll jeder Bot einen viel genaueren Datensatz von Preisdaten verwalten. Während beim Backtest ein Kerzenintervall von einer Stunde festgelegt wurde, ist es hier ein Zeitintervall von einer Minute. Im obigen Code Ausschnitt in Zeile 4 wird ein Limit für einen Datensatz berechnet, welcher zwei Monate an minütigen Preisdaten enthalten soll.
 
 %----
 
