@@ -2029,14 +2029,14 @@ Erklärung der Klassenvariablen:
 
 Soll ein neuer Bot instanziiert werden, muss diesem Name, Trading Symbol, API, Strategie, Startkapital und Kaufmenge übergeben werden. Außerdem kann eine optionale Beschreibung hinzugefügt werden, welche beispielsweise Informationen über dessen Verwendung enthalten könnte.
 
-\subsection{Repraesentation der Marktdaten}
+\subsection{Repräsentation der Marktdaten}
 \label{sub:repräsentation_der_marktdaten}
 
 Wurde ein neuer Bot instanziiert, muss er mit einem Datensatz von Marktdaten initialisiert werden, damit er mit dem Trading beginnen kann. Jeder Datensatz eines Trading Bots wird durch die Klasse \textit{MarketData} repräsentiert:
 
 \lstset{language=Python}
 \lstset{frame=lines}
-\lstset{caption={Marktdaten}}
+\lstset{caption={Repräsentation der Marktdaten}}
 \lstset{label={lst:}}
 \lstset{basicstyle=\footnotesize}
 \textbf{market\_data.py}
@@ -2048,21 +2048,11 @@ class MarketData:
 		self.symbol = symbol
 		self.times = init_times
 		self.prices = init_prices
-        
-	def add_entry(self, time, price):
-		# Append entry to the end
-		self.times.append(time)
-		self.prices.append(price)
-		# Remove oldest entry to keep the same amount of entries
-		self.times.pop(0)
-		self.prices.pop(0)
 \end{lstlisting}
 
 \textbf{Zeile 3-7}: Jedes Marktdatenobjekt besitzt eine Instanzvariable \textit{symbol}, welche das Trading Symbol enthält, über welche es die Preisdaten verfügt. In den beiden Listen \textit{times} und \textit{prices} werden immer eine feste Menge von Preis und zugehörigen Zeitdaten gehalten.
 
-\textbf{Zeile 9-15}: Ein solcher Datensatz muss ständig aktualisiert werden, darf sich dabei jedoch nicht vergrößern. Daher werden beim Hinzufügen neuer Werte am Ende, die ältesten Werte am Anfang der Listen entfernt.
-
-Weitere, hier nicht dargestellte Funktionalitäten sind das Erzeugen eines DataFrames aus seinen Markdaten und die Möglichkeit den neuesten Preis inklusive zugehöriger Zeit abzufragen.
+Weitere, hier nicht dargestellte Funktionalitäten sind das Erzeugen eines DataFrames aus seinen Markdaten und die Möglichkeit den neuesten Preis inklusive zugehöriger Zeit abzufragen. Außerdem muss ein solcher Datensatz ständig aktualisiert werden, darf sich dabei jedoch nicht vergrößern. Daher werden beim Hinzufügen neuer Werte am Ende, die ältesten Werte am Anfang der Listen entfernt.
 
 \subsection{Beschaffen und Aktualisieren der Marktdaten}
 \label{sub:beschaffen_und_aktualisieren_der_marktdaten}
@@ -2071,7 +2061,7 @@ Die Initialisierung der Marktdaten geschieht in Verbindung mit der Schnittstelle
 
 \lstset{language=Python}
 \lstset{frame=lines}
-\lstset{caption={Substitution von HTML Variablen}}
+\lstset{caption={Baschaffung der Marktdaten}}
 \lstset{label={lst:}}
 \lstset{basicstyle=\footnotesize}
 \textbf{bot.py}
@@ -2091,15 +2081,102 @@ def __get_init_data(self):
 
 Anders als der Backtest, soll jeder Bot einen viel genaueren Datensatz von Preisdaten verwalten. Während beim Backtest ein Kerzenintervall von einer Stunde festgelegt wurde, ist es hier ein Zeitintervall von einer Minute. Im obigen Code Ausschnitt in Zeile 4 wird ein Limit für einen Datensatz berechnet, welcher zwei Monate an minütigen Preisdaten enthalten soll.
 
+Beim Aktualisieren der Daten fordert der Trading Bot per \textit{Binance} Schnittstelle die Serverzeit der Plattform und den aktuellen Preis an, welcher dann zum \textit{MarketData} Objekt hinzugefügt wird.
+
 %----
 
 \section{Bot Runner}
 \label{sec:bot_runner}
 
+Auch der Bot Runner erhält eine nur spärliche Implementierung, da dessen echte Funktionalität nicht gegeben sein soll. Stattdessen soll das Grundgerüst dessen definiert und in die Konsolenanwendung eingebaut werden. Ein Hinzufügen von Bots zum Bot Runner soll jedoch gegeben sein, um erstellte Trading Bots später in der Konsolenanwendung anzeigen lassen zu können:
+
+\lstset{language=Python}
+\lstset{frame=lines}
+\lstset{caption={Substitution von HTML Variablen}}
+\lstset{label={lst:}}
+\lstset{basicstyle=\footnotesize}
+\textbf{bot\_runner.py}
+\begin{lstlisting}
+class BotRunner:
+
+	def __init__(self):
+		self.bot_id = 0
+		self.bots = dict()
+
+	def add_bot(self, bot):
+		new_id = self.bot_id + 1
+		bot.id = new_id
+		self.bots[bot.id] = bot
+		self.bot_id = new_id
+		return new_id
+\end{lstlisting}
+
+Bei Instanziierung des \textit{BotRunner} erhält er zwei Instanzvariablen. \textit{bot\_id} ist eine Zählervariable, welche den Bots ihre ID vergibt, während die andere Instanzvariable die Key/Value Datenstruktur der zu verwaltenden Bots darstellt. Dort wird jeder Bot mit seiner ID als Key und seiner Instanz als Wert gespeichert. Jedes Mal wenn ein neuer Bot hinzugefügt wird, inkrementiert sich der Wert der \textit{bot\_id}.
+
 %----
 
 \section{Konsolenanwendung}
 \label{sec:konsolenanwendung}
+
+Mit der Implementierung der Konsolenanwendung vervollständigt sich das Trading System. Die Klasse \textit{CommandLineInterface} bündelt alle anderen Komponenten und stellt den Einstiegspunkt der Anwendung dar. Sie initalisiert bei ihrer Instanziierung nur eine einzelne Instanzvariable - den \textit{BotRunner}.
+
+Jede nutzbare Funktion der Konsolenanwendung erhält seinen eigenen Header, welcher bei nahezu jeder Aktion oben ausgegeben wird. Für die mehrmalige Verwendung dieser Header, wird eine Datei \textit{headers.py} erzeugt, welche sie beinhaltet. Ein Beispiel eines solchen Banners ist der folgende, welcher im Hauptmenü der Anwendung gezeigt wird:
+
+\lstset{language=Python}
+\lstset{frame=lines}
+\lstset{caption={Definition der Header}}
+\lstset{label={lst:}}
+\lstset{basicstyle=\footnotesize}
+\textbf{headers.py}
+\begin{lstlisting}
+tab_str = "    "  # 4 blanks
+
+HEADER_WELCOME = (
+        "##########################\n"
+        "#" + tab_str * 2 + "Welcome!" + tab_str * 2 + "#\n"
+        "##########################"
+)
+\end{lstlisting}
+
+\subsection{Implementierung der Optionsauswahl}
+\label{sub:implementierung_der_optionsauswahl}
+
+Wie bereits im Lösungskapitel (\ref{sec:entwurf_einer_konsolenanwendung}) beschrieben, soll die Konsolenanwendung dem Interaktionsprinzip der Optionsauswahl folgen. Dabei wird dem Nutzer eine Frage gestellt, die er mit der Eingabe einer Zahl beantwortet. Da diese und viele andere nützliche Hilfsfunktionen wiederverwendet werden, wurde sie innerhalb einer Utility Datei namens \textit{cli\_util.py} platziert.
+
+\lstset{language=Python}
+\lstset{frame=lines}
+\lstset{caption={Implementierung der Optionsauswahl}}
+\lstset{label={lst:}}
+\lstset{basicstyle=\footnotesize}
+\textbf{cli\_util.py}
+\begin{lstlisting}
+def choose_option(title, options, header, note=None):
+	user_input = ""
+	while user_input == "":
+		display_header(header)
+		text = FormattedText([("class:bold", title)])
+		print_formatted_text(text, style=style)
+
+		# Display all options
+		for option in options:
+			print(option)
+		print("")
+		if note:
+			text = FormattedText([("class:yellow", "Note: " + note)])
+			print_formatted_text(text, style=style)
+			print("")
+
+		# Get user input
+		user_input = prompt("Enter number: ", validator=NumberValidator())
+	return int(user_input)
+\end{lstlisting}
+
+Beim Aufruf der Methode müssen mehrere Übergabeparameter gegeben sein.\textit{title} legt die Frage der Option fest. Also beispielsweise "What would you like to do?". Der Parameter \textit{options} besteht aus einer Liste, welche die verschiedenen, für den Nutzer auswählbaren, Optionen beinhaltet. Der \textit{header} ist der jeweilige Header, welcher angezeigt werden soll, während der letzte Parameter eine optionale Notiz behinhalten kann, welche dann auf dem Terminal ausgegeben wird.
+
+Zunächst werden Header und Optionstitel ausgegeben (\textbf{Zeile 4-6}). Beim Header geschieht dies über eine kleine Hilfsfunktion, welche gleichzeitig noch die Funktion hat, vorangegangene Ausgaben vom Konsolenfenster zu entfernen. Die formatierte Ausgabe des Optionstitel geschieht über eine Library für Konsolenanwendungen namens \textit{prompt\_toolkit}.
+
+Anschließend werden alle übergebenen Funktionen auf der Konsole ausgegeben. Wurde eine Notiz übergeben, wird auch diese noch angezeigt (\textbf{Zeile 12-15}). 
+
 
 
 In diesem Kapitel wird die konkrete Implementierung des im Kapitel
