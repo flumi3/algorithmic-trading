@@ -1,6 +1,5 @@
 import requests
 import logging
-import pandas as pd
 
 from datetime import datetime
 from typing import List, Dict, Union
@@ -13,13 +12,12 @@ logger: Logger = logging.getLogger("__main__")
 
 
 class Binance:
-    TRADING_FEE: float = 0.001  # 0.1% on every trade
-
     # Symbols
     SYMBOL_BITCOIN_EURO: str = "BTCEUR"
     SYMBOL_ETHEREUM_EURO: str = "ETHEUR"
     SYMBOL_LITECOIN_EURO: str = "LTCEUR"
 
+    # TODO: REMOVE
     # Order sides
     SIDE_BUY: str = "BUY"
     SIDE_SELL: str = "SELL"
@@ -47,7 +45,7 @@ class Binance:
 
     def __init__(self):
         self.base: str = "https://api.binance.com"
-        self.trading_fee = Binance.TRADING_FEE
+        self.trading_fee: float = 0.001  # 0.1% on every trade
 
     def get_candlestick_data(self, symbol: str, interval: str = "1h", end_time: int = None,
                              limit: int = 1000) -> Union[DataFrame, bool]:
@@ -108,9 +106,6 @@ class Binance:
         # Transform values from strings to floats
         for col in col_names:
             df[col] = df[col].astype(float)
-        # Convert timestamps to datetime format and add them to the data frame
-        df["date"] = pd.to_datetime(df["time"] / 1000, infer_datetime_format=True)
-
         return df
 
     def __get_coherent_candlestick_data(self, symbol: str, interval: str, limit: int = 1000, end_time: int = None

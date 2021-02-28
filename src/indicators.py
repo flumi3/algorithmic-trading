@@ -20,7 +20,7 @@ class Indicator(ABC):
 
 
 # Subclass
-class SmoothedMovingAverage(Indicator):
+class SimpleMovingAverage(Indicator):
 
     def __init__(self, name: str, period: int) -> None:
         logger.info(f"Creating new indicator {name}...")

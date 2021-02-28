@@ -5,7 +5,7 @@ from typing import List, Union
 from pandas import DataFrame, Series
 from logging import Logger
 from buy_signal import BuySignal
-from indicators import SmoothedMovingAverage, Indicator
+from indicators import SimpleMovingAverage, Indicator
 from strategies.strategy import Strategy
 
 logger: Logger = logging.getLogger("__main__")
@@ -66,7 +66,7 @@ class MovingAverageStrategy(Strategy):
             - column_name: The name of the column on which on which we want to calculate the data on
             - period: time period the sma will follow
         """
-        sma: SmoothedMovingAverage = SmoothedMovingAverage(indicator_name, period)  # Create new indicator
+        sma: SimpleMovingAverage = SimpleMovingAverage(indicator_name, period)  # Create new indicator
         df: DataFrame = sma.add_data(price_data, column_name)  # Add indicator data to the candlestick data
         self.indicators.append(sma)
         return df

@@ -5,9 +5,7 @@ from logging import Logger
 from typing import Union, List, Dict
 from uuid import UUID
 from pandas import DataFrame
-from prompt_toolkit import prompt
 from api.binance import Binance
-from cli.validators import YesNoValidator
 from buy_signal import BuySignal
 from market_data import MarketData
 from strategies.moving_average_strategy import MovingAverageStrategy
@@ -25,8 +23,8 @@ class Bot:
     def __init__(self, name: str, symbol: str, api: Union[Binance], strategy: Union[MovingAverageStrategy],
                  starting_capital: float, buy_quantity: float, description: str = "") -> None:
         self.id: int = -1  # Until the bot is not managed by the bot runner, its id will be -1
-        self.name = name
-        self.symbol = symbol
+        self.name: str = name
+        self.symbol: str = symbol
         self.api: Union[Binance] = api
         self.strategy: Union[MovingAverageStrategy] = strategy
         self.starting_capital: float = starting_capital  # Decides how much capital the bot is allowed to use
@@ -38,7 +36,7 @@ class Bot:
         self.buy_transactions: List[BuyTransaction] = list()
         self.sell_transactions: List[SellTransaction] = list()
         self.not_sold_yet: Dict[UUID, BuySignal] = dict()
-        self.status = self.STATUS_INIT
+        self.status: str = self.STATUS_INIT
 
     def __get_init_data(self) -> MarketData:
         logger.info(f"Collecting initial market data for bot '{self.name}'...")
@@ -64,22 +62,7 @@ class Bot:
         self.market_data.add_entry(current_time, current_price)
 
     def __evaluate_buy(self) -> None:
-        # Create data frame from market data
-        market_data_df: DataFrame = self.market_data.create_dataframe()
-
-        # Add indicators of the strategy
-        market_data_df = self.strategy.add_indicators(market_data_df, "price")
-
-        # Check if we meet the buy conditions of the strategy
-        buy_signal: Union[BuySignal, bool] = self.strategy.check_buy_condition(market_data_df)
-        if buy_signal:
-            if self.capital >= buy_signal.price:
-                print("Buy Signal!")
-                print(f"Quantity: {self.buy_quantity}")
-                print(f"Price: {self.buy_quantity * buy_signal.price}\n")
-                user_input: str = prompt("Accept buy signal? [y/n] ", validator=YesNoValidator())
-                if user_input == "y":
-                    self.__buy(buy_signal)
+        logger.debug(f"Checking buy condition...")
 
     def __buy(self, buy_signal: BuySignal):
         logger.info(f"Buying coin for {buy_signal.price}€...")

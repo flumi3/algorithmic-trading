@@ -8,7 +8,7 @@ from plotly.graph_objs import Candlestick, Layout, Figure, Scatter
 from typing import List, Tuple, Union, Dict
 from collections import OrderedDict
 from api.binance import Binance
-from indicators import SmoothedMovingAverage
+from indicators import SimpleMovingAverage
 from buy_signal import BuySignal
 from uuid import UUID
 from pandas import DataFrame
@@ -72,7 +72,7 @@ class Backtest:
                         stop_loss_price = close_price * self.strategy.stop_loss_target
 
             # Check whether we can sell
-            for coin_id in self.kept_coins.copy():  # Copy because we modify the dict while iterating
+            if self.kept_coins:
                 low_price: float = getattr(row, "low")  # For selling, we inspect the lowest price within the candle
                 if low_price <= stop_loss_price:
                     # If price hits the stop loss -> sell
@@ -221,7 +221,7 @@ class Backtest:
         # Loop through all indicators of the market data and plot them
         for indicator in self.strategy.indicators:
             # Smoothed moving average
-            if type(indicator) == SmoothedMovingAverage:
+            if type(indicator) == SimpleMovingAverage:
                 sma: Scatter = Scatter(
                     x=df["time"],
                     y=df[indicator.name],
