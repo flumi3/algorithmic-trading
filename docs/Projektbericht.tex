@@ -277,26 +277,6 @@ Käufe und Verkäufe zu tätigten. Die zuvor genannten Funktionen
 sollen dem Nutzer letztendlich durch eine Konsolenanwendung
 bereitgestellt werden.
 
-\section{Vorgehen}
-\label{sec:vorgehen}
-
-Nachdem mit Problemstellung und Ziel gewissermaßen Anfangs- und Endpunkt 
-des Praktikums beschrieben sind, wird hier der zur Erreichung des Ziels 
-eingeschlagene Weg vorgestellt. Dazu werden typischerweise die folgenden 
-Kapitel und ihr Beitrag zur Erreichung des Ziels der Arbeit kurz 
-beschrieben. Die folgenden Kapitel sind ein – möglicher – Aufbau, 
-Abweichungen können durchaus notwendig sein. Zur Darstellung des 
-Vorgehens ist eine grafische Darstellung sinnvoll, bei der die einzelnen 
-Lösungsschritte und ihr Zusammenhang dargestellt werden. Ein Beispiel 
-hierfür findet sich in Abbildung \ref{fig:1}.
-
-\begin{figure}[htbp]
-  \centering
-  \includegraphics[height=0.9\textheight]{img/ausarbeitung.jpg}
-  \caption{vorgehen nach \autocite{Schmidt:Geschaeftsprozesse}}
-  \label{fig:1}
-\end{figure}
-
 %---------------------------------------------------
 \chapter{Grundlagen}
 \label{cha:grundlagen}
@@ -742,26 +722,35 @@ Eine der wichtigsten, von pandas bereitgestellten, Datenstrukturen ist der \text
   \caption{Beispiel eines DataFrame\cite{dataframe_example}}
   \label{fig:8}
 \end{figure}
- 
-
-\subsection{Typing}
-\label{sub:typing}
 
 %----
 
 \section{HTML}
 \label{sec:html}
 
+Die \ac{html} ist eine textbasierte Auszeichnungssprache zur Strukturierung elektronischer Dokumente wie Texte mit Hyperlinks, Bildern und anderen Inhalten. Verwendet werden sie vor allem mithilfe von Web-Browsern, da sie die Grundlage der Inhalte des World Wide Web bilden. (vgl. \cite{html})
+
+Der Text wird durch sogenannte \textbf{Markups} strukturiert und die darin enthaltenen HTML-Elemente durch Tags markiert, d.h. durch einen Starttag und Endttag. Ein Starttag beginnt immer mit dem Zeichen < während er analog dazu mit dem Zeichen > geschlossen wird. Ein Endtag enthält zusätzlich einen Backslash. Damit lassen sich beispielsweise folgende Dokumentstrukturen erzeugen. \\
+
+\lstset{language=HTML}
+\lstset{frame=lines}
+\lstset{caption={Beispiel eines HTML Dokuments}}
+\lstset{label={lst:}}
+\lstset{basicstyle=\footnotesize}
+\begin{lstlisting}
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Website Title</title>
+    <!-- more header information -->
+  </head>
+  <body>
+    <p>content of the website</p>
+  </body>
+</html>
+\end{lstlisting}
+
 %----
-
-\section{Versionierung}
-\label{sec:versionierung}
-
-\subsection{Git}
-\label{sub:git}
-
-\subsection{Gitflow}
-\label{sub:gitflow}
 
 %---------------------------------------------------
 \chapter{Problemanalyse}
@@ -2270,27 +2259,15 @@ Soll ein neuer Trading Bot erstellt werden, wird dieses Prinzip in fast der glei
 Der Erstellungsvorgang eines neuen Backtests, sowie Abbildungen zur Nutzung aller weiterer Funktionen befinden sich in Anhang \ref{cha:anhang_zur_konsolenanwendung}.
 
 %---------------------------------------------------
-\chapter{Inbetriebnahme}
-\label{cha:inbetriebnahme}
-
-Aufgabe des Kapitels Inbetriebnahme ist es, die Überführung der in 
-Kapitel \ref{cha:implementierung} entwickelte Lösung in das betriebliche 
-Umfeld aufzuzeigen. Dabei wird beispielsweise die Inbetriebnahme eines 
-Programms beschrieben oder die Integration eines erstellten 
-Programmodules dargestellt.
-
-Bei der Software-Erstellung entspricht dieses Kapitel der 
-Auslieferungsphase (Deployment) im \ac{rup}.
-
-%---------------------------------------------------
 \chapter{Evaluierung}
 
-Aufgabe des Kapitels Evaluierung ist es, in wie weit die Ziele der 
-Arbeit erreicht wurden. Es sollen also die erreichten Arbeitsergebnisse 
-mit den Zielen verglichen werden. Ergebnis der Evaluierung kann auch 
-sein, das bestimmte Ziele nicht erreicht werden konnten, wobei die 
-Ursachen hierfür auch außerhalb des Verantwortungsbereichs des 
-Praktikanten liegen können.
+Ziel dieser Arbeit war es, ein algorithmisches Handelssystem für Kryptowährungen zu entwerfen und implementieren. Um den funktionellen und persönlichen Erfolg dieses Projektes messen zu können, muss zuvor definiert werden, auf welcher Grundlage diese Entscheidung getroffen werden soll. Eine gute Entscheidungsgrundlage stellt der Rückblick auf die im Projekt definierten Ziele dar.
+
+Hauptziel der Arbeit war es, ein algorithmisches Handelssystem für Kryptowährungen zu entwerfen und zu implementieren. Dabei sollte es dem System möglich sein, Marktdaten zu sammeln und mithilfe von entwickelten Strategien und Indikatoren durch einen Backtest zu analysieren. Des weiteren sollte das Fundament zur Erstellung und Nutzung von Trading Bots konzipiert und implementiert werden. Außerdem sollte eine Konsolenanwendung entwickelt werden, welche die zuvor genanten Funktionalitäten vereint und dem Nutzer zur Verfügung stellt. Diese Ziele sollten im Rahmen eines Semesters erarbeitet und Dokumentiert werden.
+
+Ausgehend von einer funktionellen Betrachtung wurden diese Ziele und ihre Anforderungen in der gegebenen Zeit, mit einem sehr zufriedenstellendem Ergebnis erreicht. Im Hinblick auf den Arbeitsaufwand, welcher zu Erreichung dieser Ziele betrieben wurde, müssen jedoch negative Rückschlüsse gezogen werden. Da es zu Beginn des Projektes sehr schwer war, den vollen Umfang der einzelnen Features zu ermitteln, gestaltete sich das Erreichen dieser Ziele, vor allem zum Ende hin, zunehmend schwierig. So wurde der Dokumentationsaufwand, alle Komponenten ausreichend und lückenlos zu dokumentieren, deutlich unterschätzt. Leider wurde keine Funktion zur Messung der aufgebrachten Zeit verwendet, jedoch wird davon ausgegangen, dass der zeitliche Umfang dieser Arbeit den geforderten zeitlichen Umfang deutlich überschreitet. Ebenso wurde der geforderte Dokumentationsaufwand überschritten, was ebenso auf die schwer zu treffende Einschätzung des Arbeitsaufwandes zurückzuführen ist - was jedoch aus Gründen der Vollständigkeit dann nicht mehr vermieden werden konnte.
+
+Ein sehr positiver Aspekt dieser Arbeit, war die Anwendung vieler verschiedener Technologien und Konzepte, welche das Projekt sehr interessant und vielfältig gemacht haben. So konnten viele, im Studium erlernte, Themen und Verfahren angewandt und geübt werden. Zusätzlich wurde mit diesem System eine Grundlage für das Weiterarbeiten mit der Thematik \textit{Algorithmic Trading} geschaffen, was vor allem ein persönliches Ziel darstellte.
 
 %---------------------------------------------------
 \chapter{Zusammenfassung und Ausblick}
@@ -2299,30 +2276,46 @@ Praktikanten liegen können.
 \section{Erreichte Ergebnisse}
 \label{sec:ergebnisse}
 
-Die Zusammenfassung dient dazu, die wesentlichen Ergebnisse des 
-Praktikums und vor allem die entwickelte Problemlösung und den 
-erreichten Fortschritt darzustellen. (Sie haben Ihr Ziel erreicht und 
-dies nachgewiesen).
+Zusammenfassend lässt sich sagen, dass so gut wie alle, für das Projekt gesteckte Ziele erreicht wurden. So konnte innerhalb eines Semesters folgender Fortschritt erzielt werden:
+
+\begin{itemize}
+	\item Entwurf eines Architekturkonzepts für das Trading System
+	\item Entwurf und Implementierung einer Schnittstelle zur Kommunikation einer
+		REST API
+	\item Eine geeignete Verarbeitung der von der API gelieferten Daten
+	\item Entwurf eines Konzepts zur modularen Einbindung von Trading Strategien
+		und deren Indikatoren
+	\item Testen der Strategien durch einen geeigneten Backtest
+	\item Visualisierung und Speicherung der Backtest-Ergebnisse
+	\item Konzeption und Entwurf eines Trading Bots für die zukünftige Verwendung
+		des Trading Systems
+	\item Konzeption und Entwurf einer geeigneten Verwaltung dieser Trading Bots
+	\item Vereinen aller Features in einer konsistenten und intuitiven
+		Konsolenanwendung
+\end{itemize}
 
 \section{Ausblick}
 \label{sec:ausblick}
 
-Im Ausblick werden Ideen für die Weiterentwicklung der erstellten Lösung 
-aufgezeigt. Der Ausblick sollte daher zeigen, dass die Ergebnisse der 
-Arbeit nicht nur für die in der Arbeit identifizierten Problemstellungen 
-verwendbar sind, sondern darüber hinaus erweitert sowie auf andere 
-Probleme übertragen werden können.
+Wie bereits erwähnt, soll das in dieser Arbeit entwickelte Projekt den Grundstein einer Weiterentwicklung bilden. Daher gibt es beispielsweise eine Vielzahl an Ideen für Features und weitere Komponenten, welche im Rahmen dieser Arbeit nicht umgesetzt werden konnten.
 
-\subsection{Erweiterbarkeit der Ergebnisse}
-\label{sub:erweiterbarkeit}
+\textbf{Erweiterung des Systems um eine Datenbank} \\
+Ohne das Persistieren von Trading Bot Konfigurationen und getätigten Transaktionen, ist ein Betrieb im echten Umfeld nicht sinnvoll. Vom System getätigte Informationen sollen automatisch gespeichert und abgerufen werden können. Dazu muss ein geeignetes Datenbankkonzept entworfen und Implementiert werden.
 
-Hier kann man was über die Erweiterbarkeit der Ergebnisse sagen.
+\textbf{Implementierung echter Funktionalitäten für reales Handeln} \\
+Um eine Verwendung im echten Umfeld möglich zu machen, müssen die noch benötigten Funktionalitäten zum Trading Bot hinzugefügt werden. Dabei müssen verschiedene Order Types und Trading Konzepte umgesetzt werden.
 
-\subsection{Übertragbarkeit der Ergebnisse}
-\label{sub:uebertragbarkeit}
+\textbf{Automatisches Testen aller Systemkomponenten} \\
+Läuft das System einmal im realen Umfeld, muss natürlich gewährleistet werden, dass alle Systemkomponenten fehlerfrei funktionieren. Hier bietet sich beispielsweise die Verwendung eines Testing Frameworks an, welches in Verbindung mit Unit- oder Integrationstests eine automatische Überprüfung der Komponenten durchführen kann.
 
-Und hier etwas über deren Übertragbarkeit.
+\textbf{Aufsetzen eines Webservers für das Handelssystem} \\
+Damit das System in der Lage ist, Tag und und Nacht handeln zu können, ist das Aufsetzen eines Webservers dafür durchaus sinnvoll. Dafür bietet sich beispielsweise ein RaspberryPi mit einem Apache Webserver an.
 
+\textbf{Erstellung einer Webapplikation zur Überwachung und Verwaltung des Handelssystems} \\
+In weiter Zukunft, wenn das System alle wichtigen Funktionalitäten abdeckt, bietet es sich an eine Webapplikation für das Handelssystem zu entwerfen. So könnte beispielsweise ein Dashboard aufgerufen werden, welches Echtzeitergebnisse des Systems darstellt und visualisiert. Zusätzlich könnte so eine Verwaltung und Steuerung der Trading Bots bzw. des gesamten Systems geschaffen werden.
+
+\textbf{Erweiterung des Backtests} \\
+Auch der Backtest ist noch nicht perfekt. Hier muss vor allem die Verwendung von Gleitkommazahlen durch die Verwendung der Python Klasse \textit{Decimal} ersetzt werden, um eine perfekte Berechnungsgenauigkeit zu erzielen. Außerdem könnte der Backtest so erweitert werden, dass alle Strategien auf alle Coins getestet werden können, wodurch sich die erfolgreichsten Strategien automatisch ermitteln lassen würde.
 %-----------------------------------------------------------------------
 \appendix
 
