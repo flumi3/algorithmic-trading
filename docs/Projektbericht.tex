@@ -1118,15 +1118,16 @@ Die Aufgabe der Schnittstelle ist es dabei, den oben genannten Prozess innerhalb
 \end{figure}
 
 \textbf{Beispiel 1:} \\
-Der Backtest benötigt eine Menge an Candlestick Daten, an welche er theoretisch über die von Binance bereitgestellte \ac{rest} \ac{api} kommt. Dennoch tätigt der Backtest den \ac{api}-Call nicht selbst, sondern lässt dies das Binance Interface für sich erledigen. Das bedeutet, der Backtest benötigt keinerlei Informationen darüber, wie er die \ac{api} für die benötigten Daten kontaktieren muss, sondern erhält sie einfach über die Binance Schnittstelle.
+Der Backtest benötigt eine Menge an Candlestick-Daten, an welche er theoretisch über die von Binance bereitgestellte \ac{rest} \ac{api} kommt. Dennoch tätigt der Backtest den \ac{api}-Call nicht selbst, sondern lässt dies das Binance Interface für sich erledigen. Das bedeutet, der Backtest benötigt keinerlei Informationen darüber, wie er die \ac{api} für die benötigten Daten kontaktieren muss, sondern erhält sie einfach über die Binance Schnittstelle.
 
 \textbf{Beispiel 2:} \\
-Nun benötigt auch ein Trading Bot eine Menge an Candlestick Daten um seinen Echtzeit-Datensatz an Marktdaten zu initialisieren. Auch er muss nicht wissen, wie er an die Daten kommt, sondern lässt sie sich, ebenso wie der Backtest, von der Schnittstelle geben. Somit werden Arbeitsschritte voneinander getrennt und ebenso Code-Redundanz vermieden.
+Nun benötigt auch ein Trading Bot eine Menge an Candlestick-Daten um seinen Echtzeit-Datensatz an Marktdaten zu initialisieren. Auch er muss nicht wissen, wie er an die Daten kommt, sondern lässt sie sich, ebenso wie der Backtest, von der Schnittstelle geben. Somit werden Arbeitsschritte voneinander getrennt und ebenso Code-Redundanz vermieden.
 
-Um eine einfache Weiterverarbeitung der Candlestick Daten zu gewährleisten, sollen die Daten in die, im Kapitel \ref{sub:dataframe} beschriebene, Datenstruktur \textbf{DataFrame} eingepflegt werden und an die anderen Komponenten zurückgegeben werden.
+Um eine einfache Weiterverarbeitung der Candlestick-Daten zu gewährleisten, sollen die Daten in die, im Kapitel \ref{sub:dataframe} beschriebene, Datenstruktur \textbf{DataFrame} eingepflegt werden und an die anderen Komponenten zurückgegeben werden.
 
 %----
 
+\newpage
 \section{Technische Indikatoren}
 \label{sec:technische_Indikatoren}
 
@@ -1203,7 +1204,7 @@ Veranschaulicht wurde dieser Ablauf in Abbildung \ref{fig:13}.
 \end{figure}
 
 \textbf{get\_candlestick\_data()} \\
-Zu Beginn des eigentlichen Backtest wird die Schnittstelle \textit{Binance} dazu beauftragt Candlestick Daten von der \ac{rest} \ac{api} zu sammeln und in einem DataFrame zurück zu liefern. Dieser soll nun Candle für Candle analysiert werden.
+Zu Beginn des eigentlichen Backtest wird die Schnittstelle \textit{Binance} dazu beauftragt Candlestick-Daten von der \ac{rest} \ac{api} zu sammeln und in einem DataFrame zurück zu liefern. Dieser soll nun Candle für Candle analysiert werden.
 
 \textbf{check\_buy\_condition()} \\
 Für jede Candle lassen wir die gewählte Strategie ihre Buy Condition überprüfen. Erhält der Backtest ein \textit{BuySignal} für die aktuelle Candle, wird überprüft, ob überhaupt genügend Kapital vorhanden ist, um einen Kauf zu platzieren.
@@ -1315,8 +1316,6 @@ Die Interaktion mit dem User soll hauptsächlich durch die Auswahl von Optionen 
 \chapter{Implementierung}
 \label{cha:implementierung}
 
-bla bla bla was über python implementierung sagen als einleitung
-
 %----
 
 \section{Binance Schnittstelle}
@@ -1382,7 +1381,7 @@ Bevor die Klasse durch den Konstruktor instanziiert werden kann, werden mehrere 
 		der Trading-Gebühren) festgelegt. 	
 
 \end{itemize}
-\subsection{API Anfragen}
+\subsection{API-Anfragen}
 \label{sub:api_anfragen}
 
 Bevor die Beschaffung der Marktdaten o.ä. betrachtet werden kann, muss verstanden werden, wie eine Anfrage an die \ac{api} der Trading-Plattform Binance gehandhabt wird.
@@ -1407,7 +1406,7 @@ def http_request(self, endpoint, params=None):
 				url = url + "&" + params[i]
 \end{lstlisting}
 
-Eine \ac{url} wird erzeugt, indem man die \textit{base} mit dem jeweiligen \textit{endpoint} verbindet. Jede \ac{url} kann das Verhalten der \ac{api} durch eine Mitgabe an Parametern modifizieren. Parameter werden, wie der Endpoint, beim Aufruf der Methode an Übergeben. Bei den Parametern geschieht dies über den optionalen Übergabewert \textit{params}. 
+Eine \ac{url} wird erzeugt, indem man die \textit{base} mit dem jeweiligen \textit{endpoint} verbindet. Jede \ac{url} kann das Verhalten der \ac{api} durch eine Mitgabe an Parametern modifizieren. Parameter werden, wie der Endpoint, beim Aufruf der Methode übergeben. Bei den Parametern geschieht dies über den optionalen Übergabewert \textit{params}. 
 
 Ob Parameter übergeben werden oder nicht, wird in Zeile 4 abgefragt. Wenn ja, muss der erste Parameter mit einem \textbf{?} an die \ac{url} gehängt werden, während alle weiteren Parameter mit einem \textbf{\&} hinzugefügt werden. So entsteht beispielsweise folgedende \ac{url}: https://api.binance.com/api/v3/ticker/price?symbol=LTCEUR
 
@@ -1444,13 +1443,13 @@ else:
 
 Nachdem die \ac{url} des gewollten Endpoints erzeugt wurde, werden die Daten nun abgefragt, überprüft und verarbeitet:
 \begin{itemize}
-	\item \textbf{API Aufruf (Zeile 2-6):}
+	\item \textbf{API-Aufruf (Zeile 2-6):}
 		Um das Arbeiten mit \ac{http} Anfragen möglichst einfach zu gestalten
-		wird das Package \textit{requests} verwendet. Es wird eine GET Anfrage mit
-		der erzeugten URL gestartet, durch welche die API eine HTTP-Response
+		wird das Package \textit{requests} verwendet. Es wird eine GET Request mit
+		der erzeugten URL gestartet, durch welche die API eine HTTP Response
 		erzeugt, welche im besten Fall die gefragten Daten beinhalten.
 		Sollte während der Anfrage ein Verbindungsfehler auftreten, wird dieser
-		Abgefangen und auf dem Terminal ausgegeben. Anschließend gibt die Methode
+		abgefangen und auf dem Terminal ausgegeben. Anschließend gibt die Methode
 		\textit{False} zurück, um dem Aufrufer zu signalisieren, dass etwas falsch
 		gelaufen ist.
 	\item \textbf{Verarbeiten der HTTP Response (Zeile 9-13):} \\
@@ -1469,16 +1468,16 @@ Nachdem die \ac{url} des gewollten Endpoints erzeugt wurde, werden die Daten nun
 		in einer geeigneten Datenstruktur zurückgegeben.
 \end{itemize}
 
-\subsection{Sammeln von Candlestick Daten}
+\subsection{Sammeln von Candlestick-Daten}
 \label{sub:sammeln_von_candlestick_daten}
 
-Eine der wichtigsten Funktionen der Binance Schnittstelle ist das Sammeln von Candlestick Daten, welche sowohl im Backtest als auch beim Initialisieren des Trading Bots benötigt werden.
+Eine der wichtigsten Funktionen der Binance Schnittstelle ist das Sammeln von Candlestick-Daten, welche sowohl im Backtest als auch beim Initialisieren des Trading Bots benötigt werden.
 
 Um dieser Anforderung Genüge zu tun, wurde eine Klassenmethode \textit{get\_candlestick\_data()} implementiert, welche eine festgelegte Menge an Candles für ein bestimmtes Trading Symbol von der \ac{api} anfordert und verarbeitet.
 
 \lstset{language=Python}
 \lstset{frame=lines}
-\lstset{caption={Sammeln von Candlestick Daten}}
+\lstset{caption={Sammeln von Candlestick-Daten}}
 \lstset{label={lst:candlestick_data}}
 \lstset{basicstyle=\footnotesize}
 \textbf{binance.py}
@@ -1501,7 +1500,7 @@ def get_candlestick_data(self, symbol, interval="1h", end_time=None, limit=1000)
 Erklärung der Übergabeparameter:
 \begin{itemize}
 	\item \textbf{symbol:} \\
-		Das Symbol bzw. die Währungen, für welche die Candlestick Daten angefragt
+		Das Symbol bzw. die Währungen, für welche die Candlestick-Daten angefragt
 		werden.
 	\item \textbf{intverval="1h":} \\
 		Dieser optionale Parameter legt das Zeitintervall fest, welches die 
@@ -1517,11 +1516,11 @@ Erklärung der Übergabeparameter:
 		von Binance festgelegt und beträgt standardmäßig 500, maximal jedoch 1000.
 \end{itemize}
 
-In Zeile 2-10 werden die für die Candlestick Daten benötigten Parameter festgelegt, woraufhin anschließend die Daten geholt werden. Gab es während des Datenbeschaffungsprozess ein Problem, erhalten wir den boolschen Wert \textit{false}. Daher überprüfen wir in Zeile 11, ob beim Beschaffen der Daten alles geklappt hat. Sollte dies nicht der Fall sein, wird der Fehler auch in dieser Methode geloggt und \textit{False} zurückgegeben. Erhalten wir jedoch die gewollten Daten, liegen diese nun in folgendem Format vor: \\
+In Zeile 2-10 werden die für die Candlestick-Daten benötigten Parameter festgelegt, woraufhin anschließend die Daten geholt werden. Gab es während des Datenbeschaffungsprozess ein Problem, erhalten wir den boolschen Wert \textit{false}. Daher überprüfen wir in Zeile 11, ob beim Beschaffen der Daten alles geklappt hat. Sollte dies nicht der Fall sein, wird der Fehler auch in dieser Methode geloggt und \textit{False} zurückgegeben. Erhalten wir jedoch die gewollten Daten, liegen diese nun in folgendem Format vor: \\
 
 \lstset{language=Python}
 \lstset{frame=lines}
-\lstset{caption={Candlestick Daten in Rohform}}
+\lstset{caption={Candlestick-Daten in Rohform}}
 \lstset{label={lst:rohe_candlestick_daten}}
 \lstset{basicstyle=\footnotesize}
 \begin{lstlisting}
@@ -1549,11 +1548,11 @@ In Zeile 2-10 werden die für die Candlestick Daten benötigten Parameter festge
 ]
 \end{lstlisting}
 
-Die hier abgebildete Datenstruktur \textit{list} enthält alle Candles in Form von weiteren Lists. Sozusagen ein zweidimensionales Array. Innerhalb jeder Candle befinden sich die oben erkennbaren Daten wie \textit{Open time} und \textit{Open}. Diese sollen nun für eine bessere Weiterverarbeitung in die Datenstruktur DataFrame eingepflegt werden: \\
+Die hier abgebildete Datenstruktur \textit{list} enthält alle Candles in Form von weiteren Lists - sozusagen ein zweidimensionales Array. Innerhalb jeder Candle befinden sich die oben erkennbaren Daten wie \textit{Open time} und \textit{Open}. Diese sollen nun für eine bessere Weiterverarbeitung in die Datenstruktur DataFrame eingepflegt werden: \\
 
 \lstset{language=Python}
 \lstset{frame=lines}
-\lstset{caption={Sammeln von Candlestick Daten Fortsetzung}}
+\lstset{caption={Sammeln von Candlestick-Daten Fortsetzung}}
 \lstset{label={lst:Daten der Kerzen in "Rohform"}}
 \lstset{basicstyle=\footnotesize}
 \textbf{binance.py}
@@ -1572,10 +1571,10 @@ return df
 Erklärung des restlichen Code:
 \begin{itemize}
 	\item \textbf{Erstellen eines DataFrame (Zeile 1-4:)} \\
-		Das DataFrame Objekt wird erzeugt, indem man ihm die Candlestick Daten in
+		Das DataFrame Objekt wird erzeugt, indem man ihm die Candlestick-Daten in
 		der bereits vorliegenden Form einer Liste/Array übergibt. Anschließend
-		werden die letzten sechs Spalten (beginnend bei "Close time")entfernt, da
-		diese für die hier vorliegenden Zwecke nicht benötigt werden.
+		werden die letzten sechs Spalten (beginnend bei "Close time") \ entfernt, 
+		da diese für die hier vorliegenden Zwecke nicht benötigt werden.
 	\item \textbf{Transformieren der Textwerte in Gleitkommawerte (Zeile 7-8):} \\
 		Um die in den Kerzen enthaltenen Werte Zahlenwerte für arithmetische
 		Dinge nutzen zu können, müssen sie vorerst in Gleitkommawerte umgewandelt
@@ -1583,12 +1582,12 @@ Erklärung des restlichen Code:
 		zurückgegeben.	
 \end{itemize}
 
-Jede Zeile des DataFrame stellt nun eine Kerze, inklusive ihren korrespondierenden Daten dar. Abbildung \ref{fig:16} zeigt einen solchen DataFrame und mehrere dieser Kerzen.
+Jede Zeile des DataFrame stellt nun eine Kerze inklusive ihren korrespondierenden Daten dar. Abbildung \ref{fig:16} zeigt einen solchen DataFrame und mehrere dieser Kerzen.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[height=0.5\textheight]{img/candlestick_df.png}
-  \caption{Candlestick Daten innerhalb eines DataFrame}
+  \includegraphics[height=0.46\textheight]{img/candlestick_df.png}
+  \caption{Candlestick-Daten innerhalb eines DataFrame}
   \label{fig:16}
 \end{figure}
 
@@ -1648,7 +1647,7 @@ class SimpleMovingAverage(Indicator):
         self.period: int = period
 \end{lstlisting}
 
-Durch das Erben von der Klasse \textit{Indicator} in Zeile 3, wird die Verwendung der zuvor definierten abstrakten Basisklasse deklariert. Im Konstruktor in Zeile 5-7 wird die Instanzvariable der Basisklasse (name) sowie die Instanzvariable period initialisiert.
+Durch das Erben von der Klasse \textit{Indicator} in Zeile 3, wird die Verwendung der zuvor definierten abstrakten Basisklasse deklariert. Im Konstruktor in Zeile 5-7 wird die Instanzvariable der Basisklasse \textit{Indicator} sowie die Instanzvariable \textit{period} initialisiert.
 
 Der wichtige Teil passiert jedoch in der Implementierung der nun überschriebenen Methode \textit{add\_data}:
 
@@ -1668,15 +1667,15 @@ def add_data(self, data, column_name):
 
 Beim Aufruf der Methode werden zwei Übergabeparameter erwartet:
 \begin{itemize}
-	\item \textbf{data}: Der (Candlestick) DataFrame an welchen die Indikatordaten
-		angehängt werden sollen.
-	\item \textbf{colum\_name}: Der Name der Spalte, auf wessen Datengrundlage der
+	\item \textbf{data}: Der (Candlestick) DataFrame, an welchen die
+		Indikatordaten angehängt werden sollen.
+	\item \textbf{colum\_name}: Der Name der Spalte, auf deren Datengrundlage der
 		Indikator berechnet werden soll.
 \end{itemize}
 
-Zunächst werden die Daten der Spalte, auf wessen Grundlage der Indikator berechnet werden soll, aus dem DataFrame extrahiert und zu einer Liste, bestehend aus diesen Werten, transformiert (Zeile 2). Anschließend wird unter der Verwendung dieser Daten sowie der festgelegten Periode ein SimpleMovingAverage erzeugt (Zeile 3). Am Ende werden die erzeugten Daten an den DataFrame in Form einer neuen Spalte angehängt und zurückgegeben.
+Zunächst werden die Daten der Spalte, auf deren Grundlage der Indikator berechnet werden soll, aus dem DataFrame extrahiert und zu einer Liste, bestehend aus diesen Werten, transformiert (Zeile 2). Anschließend wird unter der Verwendung dieser Daten sowie der festgelegten Periode ein SimpleMovingAverage erzeugt (Zeile 3). Am Ende werden die erzeugten Daten an den DataFrame in Form einer neuen Spalte angehängt und zurückgegeben.
 
-Da man sich dieses Prinzip ohne ein wenig Übung im Umgang mit den genannten Datenstrukturen vielleicht schwer vorstellen kann, folgt ein visuelles Beispiel in Abbildung \ref{fig:17}). In diesem Beispiel wird der Simple Moving Average Indikator für gegebene Candlestick Daten berechnet und an diese angehängt.
+Da man sich dieses Prinzip ohne ein wenig Übung im Umgang mit den genannten Datenstrukturen vielleicht schwer vorstellen kann, folgt ein visuelles Beispiel in Abbildung \ref{fig:17}. In diesem Beispiel wird der Simple Moving Average Indikator für gegebene Candlestick-Daten berechnet und an diese angehängt.
 
 \begin{figure}[H]
   \centering
@@ -1690,7 +1689,8 @@ Da man sich dieses Prinzip ohne ein wenig Übung im Umgang mit den genannten Dat
 \section{Moving Average Strategie}
 \label{sec:moving_average_strategie}
 
-Die eigentliche Implementierung der Moving Average Strategie ist recht simpel. Da die Verwendung einer abstrakten Basisklasse schon im vorangegangenen Kapitel aufgezeigt wurde, wird diese Information hier weggelassen. Zunächst wird die Klasse definiert und ein paar wichtige Instanzvariablen initialisiert:
+Die eigentliche Implementierung der Moving Average Strategie ist recht simpel. Da die Verwendung einer abstrakten Basisklasse schon im vorangegangenen Kapitel aufgezeigt wurde, wird diese Information hier weggelassen. \\
+Zunächst wird die Klasse definiert und ein paar wichtige Instanzvariablen initialisiert:
 
 \lstset{language=Python}
 \lstset{frame=lines}
@@ -1748,7 +1748,7 @@ Das automatische Hinzufügen von Indikatoren läuft ebenfalls sehr simpel ab. Da
 \section{Backtest}
 \label{sec:backtest}
 
-Dass der Backtest die bisher komplexeste Komponente des Systems ist, spiegelt sich in seiner Implementierung wieder. Implementiert wurde der Backtest innerhalb der Datei \textit{backtest.py} welche mit über 400 Zeilen Code die größte Sourcefile darstellt.
+Dass der Backtest die bisher komplexeste Komponente des Systems ist, spiegelt sich in seiner Implementierung wieder. Implementiert wurde der Backtest innerhalb der Datei \textit{backtest.py}, welche mit über 400 Zeilen Code die größte Sourcefile darstellt.
 
 \subsection{Ablauf des Backtests}
 \label{sub:ablauf_des_backtests}
@@ -1807,7 +1807,7 @@ Beim Ablauf des Backtests muss jede einzelne Kerze auf einen Kauf oder Verkauf �
 
 Befinden sich nun Instanzen einer Kryptowährung im Besitz, muss auch für jede Kerze überprüft werden, ob der niedrigste Preis innerhalb ihres Zeitintervalls den definierten Stop-Loss Preis erreicht hat (\textbf{Zeile 19-23}). Ist dies der Fall, werden alle besessenen Coins verkauft und \textit{profit\_target\_price} sowie \textit{stop\_loss\_price} zurückgesetzt (\textbf{Zeile 24-26}).
 
-Am Ende der Schleife wird überprüft, ob der Close Preis der aktuellen Kerze das definierte Profit-Ziel überschritten hat. Ist dies der Fall, werden \textit{profit\_target\_price} sowie \textit{stop\_loss\_price} neu gesetzt, um den möglichen Gewinn eines Kaufes zu maximieren (\textbf{Zeile 30-32}).
+Am Ende der Schleife wird überprüft, ob der Schlusspreis der aktuellen Kerze das definierte Profit-Ziel überschritten hat. Ist dies der Fall, werden \textit{profit\_target\_price} sowie \textit{stop\_loss\_price} neu gesetzt, um den möglichen Gewinn eines Kaufes zu maximieren (\textbf{Zeile 30-32}).
 
 Als letztes werden innerhalb des Backtests implementierte Methoden zur Erzeugung eines HTML Dashboards aufgerufen und die im Backtest gesammelten Statistiken auf der Konsole ausgegeben (\textbf{Zeile 35-40}). 
 
@@ -1816,6 +1816,7 @@ Als letztes werden innerhalb des Backtests implementierte Methoden zur Erzeugung
 
 Unter der Verwendung der Bibliothek \textit{plotly} ergibt sich die Erstellung eines Finanzdiagramms als kein großes Hindernis. Für die Erstellung eines Candlestick Charts gibt es speziell dafür vorgefertigte Klassen, denen die Daten überreicht werden müssen:
 
+\newpage
 \lstset{language=Python}
 \lstset{frame=lines}
 \lstset{caption={Erzeugung eines Candlestick Chart}}
@@ -1869,12 +1870,12 @@ def create_candlestick_figure(self):
 Erklärungen zum Code:
 
 \begin{enumerate}
-	\item \textbf{Erzeugen des Candles (Zeile 5-13:} \\
-		Mithilfe der \textit{plotly} Library wird ein Candlestick Objekt erzeugt,
-		dem die jeweiligen Daten, übergeben werden. Anschließend wird das Candle
+	\item \textbf{Erzeugen des Candles (Zeile 5-13):} \\
+		Mithilfe der \textit{plotly} Library wird ein Candlestick-Objekt erzeugt,
+		dem die jeweiligen Daten übergeben werden. Anschließend wird das
 		Objekt in eine Liste eingefügt, welche alle Daten des Diagramms enthält.
 	\item \textbf{Erzeugen der Indikatoren (Zeile 16-24):} \\
-		Für jeden Indikator den die gewählte Strategie besitzt, wird ein 
+		Für jeden Indikator, den die gewählte Strategie besitzt, wird ein 
 		sogenannter Scatter-Plot erzeugt, mit welchem sich Linien und Punkte
 		darstellen lassen. Ihm werden die jeweiligen Zeiten und Indikatorwerte
 		übergeben.
@@ -1885,7 +1886,7 @@ Erklärungen zum Code:
 		Achsenbeschriftungen angepasst werden.
 \end{enumerate}
 
-Die Erstellung des Diagramms zur Visualisierung des Kapitals lehnt sich stark an die oben gezeigte Erstellung des Candlestick Charts an. Die Substitution der Statistik Daten in den vordefinierten HTML Code läuft jedoch anders ab.
+Die Erstellung des Diagramms zur Visualisierung des Kapitals lehnt sich stark an die oben gezeigte Erstellung des Candlestick Charts an. Die Substitution der Statistikdaten in den vordefinierten HTML Code läuft jedoch anders ab.
 
 Zunächst wird eine HTML Datei definiert, welche die Darstellung der Daten vorgibt.
 Mit dem nachfolgenden HTML Code kann eine Darstellung wie in Abbildung \ref{fig:19} erreicht werden:
@@ -1916,6 +1917,7 @@ Mit dem nachfolgenden HTML Code kann eine Darstellung wie in Abbildung \ref{fig:
   \label{fig:19}
 \end{figure}
 
+\newpage
 Wie sich leicht erkennen lässt, sind alle in Mengenklammern enthaltenen Variablen wie \textit{symbol\_var} Platzhalter für echte Werte. Diese müssen nun vom Backtest substituiert werden, was erreicht werden kann, indem innerhalb der Methode \textit{stats\_to\_html()} gleichnamige Variablen mit den zugehörigen Werten initialisiert werden, welche dann die Plätze der HTML Variablen einnehmen.
 
 \lstset{language=Python}
@@ -1944,9 +1946,10 @@ def __stats_to_html(self):
         return html_code
 \end{lstlisting}
 
-Die Deklaration der gleichnamigen Variablen findet sich in Zeile 2-7 wieder. Anschließend muss der vordefinierte HTML Code, der sich noch in einer HTML Datei befindet, eingelesen werden (Zeile 11-13). Am Ende alle Platzhalter durch die richtigen Werte substituiert und der HTML Code an den Aufrufer zurückgegeben (Zeile 16-17).
+Die Deklaration der gleichnamigen Variablen findet sich in Zeile 2-7 wieder. Anschließend muss der vordefinierte HTML Code, der sich noch in einer HTML Datei befindet, eingelesen werden (Zeile 11-13). Am Ende werden alle Platzhalter durch
+die richtigen Werte substituiert und der HTML Code an den Aufrufer zurückgegeben (Zeile 16-17).
 
-Nach Verarbeitung aller zu visualisierenden Daten muss der HTML Code in eine Datei gespeichert werden, welche dann von herkömmlichen Browsern aufgerufen werden können. Dazu wird für jeden Backtest automatisch eine Ordnerstruktur erstellt, falls sie nicht bereits besteht:
+Nach Verarbeitung aller zu visualisierenden Daten muss der HTML Code in eine Datei gespeichert werden, welche dann von herkömmlichen Browsern aufgerufen werden kann. Dazu wird für jeden Backtest automatisch eine Ordnerstruktur erstellt, falls sie nicht bereits besteht:
 
 \lstset{language=Python}
 \lstset{frame=lines}
@@ -2044,7 +2047,7 @@ class MarketData:
 
 \textbf{Zeile 3-7}: Jedes Marktdatenobjekt besitzt eine Instanzvariable \textit{symbol}, welche das Trading Symbol enthält, über welche es die Preisdaten verfügt. In den beiden Listen \textit{times} und \textit{prices} werden immer eine feste Menge von Preis und zugehörigen Zeitdaten gehalten.
 
-Weitere, hier nicht dargestellte Funktionalitäten sind das Erzeugen eines DataFrames aus seinen Markdaten und die Möglichkeit den neuesten Preis inklusive zugehöriger Zeit abzufragen. Außerdem muss ein solcher Datensatz ständig aktualisiert werden, darf sich dabei jedoch nicht vergrößern. Daher werden beim Hinzufügen neuer Werte am Ende, die ältesten Werte am Anfang der Listen entfernt.
+Weitere, hier nicht dargestellte Funktionalitäten, sind das Erzeugen eines DataFrames aus seinen Markdaten und die Möglichkeit den neuesten Preis inklusive zugehöriger Zeit abzufragen. Außerdem muss ein solcher Datensatz ständig aktualisiert werden, darf sich dabei jedoch nicht vergrößern. Daher werden beim Hinzufügen neuer Werte am Ende, die ältesten Werte am Anfang der Listen entfernt.
 
 \subsection{Beschaffen und Aktualisieren der Marktdaten}
 \label{sub:beschaffen_und_aktualisieren_der_marktdaten}
@@ -2071,7 +2074,9 @@ def __get_init_data(self):
 	return market_data
 \end{lstlisting}
 
-Anders als der Backtest, soll jeder Bot einen viel genaueren Datensatz von Preisdaten verwalten. Während beim Backtest ein Kerzenintervall von einer Stunde festgelegt wurde, ist es hier ein Zeitintervall von einer Minute. Im obigen Code Ausschnitt in Zeile 4 wird ein Limit für einen Datensatz berechnet, welcher zwei Monate an minütigen Preisdaten enthalten soll.
+Anders als der Backtest, soll jeder Bot einen viel genaueren Datensatz von Preisdaten verwalten. Während beim Backtest ein Kerzenintervall von einer Stunde festgelegt wurde, ist es hier ein Zeitintervall von einer Minute. Im obigen 
+Code-Ausschnitt in Zeile 4 wird ein Limit für einen Datensatz berechnet, 
+welcher zwei Monate an minütigen Preisdaten enthalten soll.
 
 Beim Aktualisieren der Daten fordert der Trading Bot per \textit{Binance} Schnittstelle die Serverzeit der Plattform und den aktuellen Preis an, welcher dann zum \textit{MarketData} Objekt hinzugefügt wird.
 
@@ -2103,7 +2108,7 @@ class BotRunner:
 		return new_id
 \end{lstlisting}
 
-Bei Instanziierung des \textit{BotRunner} erhält er zwei Instanzvariablen. \textit{bot\_id} ist eine Zählervariable, welche den Bots ihre ID vergibt, während die andere Instanzvariable die Key/Value Datenstruktur der zu verwaltenden Bots darstellt. Dort wird jeder Bot mit seiner ID als Key und seiner Instanz als Wert gespeichert. Jedes Mal wenn ein neuer Bot hinzugefügt wird, inkrementiert sich der Wert der \textit{bot\_id}.
+Bei Instanziierung des \textit{BotRunner} erhält er zwei Instanzvariablen. \textit{bot\_id} ist eine Zählervariable, welche den Bots ihre ID vergibt, während die andere Instanzvariable die Key/Value Datenstruktur der zu verwaltenden Bots darstellt. Dort wird jeder Bot mit seiner ID als Key und seiner Instanz als Wert gespeichert. Jedes Mal, wenn ein neuer Bot hinzugefügt wird, inkrementiert sich der Wert der \textit{bot\_id}.
 
 %----
 
@@ -2112,8 +2117,9 @@ Bei Instanziierung des \textit{BotRunner} erhält er zwei Instanzvariablen. \tex
 
 Mit der Implementierung der Konsolenanwendung vervollständigt sich das Trading System. Die Klasse \textit{CommandLineInterface} bündelt alle anderen Komponenten und stellt den Einstiegspunkt der Anwendung dar. Sie initalisiert bei ihrer Instanziierung nur eine einzelne Instanzvariable - den \textit{BotRunner}.
 
-Jede nutzbare Funktion der Konsolenanwendung erhält seinen eigenen Header, welcher bei nahezu jeder Aktion oben ausgegeben wird. Für die mehrmalige Verwendung dieser Header, wird eine Datei \textit{headers.py} erzeugt, welche sie beinhaltet. Ein Beispiel eines solchen Banners ist der folgende, welcher im Hauptmenü der Anwendung gezeigt wird:
+Jede nutzbare Funktion der Konsolenanwendung erhält seinen eigenen Header, welcher bei nahezu jeder Aktion oben ausgegeben wird. Für die mehrmalige Verwendung dieser Header, wird eine Datei \textit{headers.py} erzeugt, welche sie beinhaltet. Ein Beispiel eines solchen Banners ist der Folgende, welcher im Hauptmenü der Anwendung gezeigt wird:
 
+\newpage
 \lstset{language=Python}
 \lstset{frame=lines}
 \lstset{caption={Definition der Header}}
@@ -2163,7 +2169,7 @@ def choose_option(title, options, header, note=None):
 	return int(user_input)
 \end{lstlisting}
 
-Beim Aufruf der Methode müssen mehrere Übergabeparameter gegeben sein.\textit{title} legt die Frage der Option fest. Also beispielsweise "What would you like to do?". Der Parameter \textit{options} besteht aus einer Liste, welche die verschiedenen, für den Nutzer auswählbaren, Optionen beinhaltet. Der \textit{header} ist der jeweilige Header, welcher angezeigt werden soll, während der letzte Parameter eine optionale Notiz behinhalten kann, welche dann auf dem Terminal ausgegeben wird.
+Beim Aufruf der Methode müssen mehrere Übergabeparameter gegeben sein. Der \textit{title} legt die Frage der Option fest - also beispielsweise "What would you like to do?". Der Parameter \textit{options} besteht aus einer Liste, welche die verschiedenen, für den Nutzer auswählbaren, Optionen beinhaltet. Der \textit{header} ist der jeweilige Header, welcher angezeigt werden soll, während der letzte Parameter eine optionale Notiz behinhalten kann, der dann auf dem Terminal ausgegeben wird.
 
 Zunächst werden Header und Optionstitel ausgegeben (\textbf{Zeile 4-6}). Beim Header geschieht dies über eine kleine Hilfsfunktion, welche gleichzeitig noch die Funktion hat, vorangegangene Ausgaben vom Konsolenfenster zu entfernen. Die formatierte Ausgabe des Optionstitel geschieht über eine Library für Konsolenanwendungen namens \textit{prompt\_toolkit}. Anschließend werden alle übergebenen Optionen auf der Konsole ausgegeben. Wurde eine Notiz übergeben, wird auch diese noch angezeigt (\textbf{Zeile 12-15}).
 
@@ -2201,13 +2207,13 @@ class NumberValidator(Validator):
 			raise ValidationError(message="This input contains non-numeric characters", cursor_position=index)
 \end{lstlisting}
 
-Mithilfe des \textit{prompt\_toolkit} kann eine Klasse \textit{NumberValidator} erstellt werden, die von der Klasse \textit{Validator} erbt. Jedes Mal, wenn der Nutzer eine Eingabe tätigt, springt die Eingabefunktion in den Zahlenvalidierer, um dessen Eingabe zu prüfen. Hat der Nutzer eine Eingabe getätigt, die nicht komplett aus Zahlen besteht (\textbf{Zeile 5}) wird die Eingabe mithilfe einer Schleife Zeichen für Zeichen überprüft, um die fehlerhafte Stelle zu finden (\textbf{Zeile 8-10}). Hat er die Stelle gefunden, wird ein \textit{ValidationError} erzeugt, welcher den Cursor an die Stelle der fehlerhaften Eingabe platziert und eine Fehlernachricht ausgibt - dargestellt in Abbildung \ref{fig:22}
+Mithilfe des \textit{prompt\_toolkit} kann eine Klasse \textit{NumberValidator} erstellt werden, die von der Klasse \textit{Validator} erbt. Jedes Mal, wenn der Nutzer eine Eingabe tätigt, springt die Eingabefunktion in den Zahlenvalidierer, um dessen Eingabe zu prüfen. Hat der Nutzer eine Eingabe getätigt, die nicht komplett aus Zahlen besteht (\textbf{Zeile 5}) wird die Eingabe mithilfe einer Schleife Zeichen für Zeichen überprüft, um die fehlerhafte Stelle zu finden (\textbf{Zeile 8-10}). Hat er die Stelle gefunden, wird ein \textit{ValidationError} erzeugt, welcher den Cursor an die Stelle der fehlerhaften Eingabe platziert und eine Fehlernachricht ausgibt - dargestellt in Abbildung \ref{fig:22}.
 
 \begin{figure}[H]
   \centering
   \includegraphics[height=0.4\textheight]{img/cli/validation_error.png}
   \caption{Beispiel eines Validierungsfehlers bei fehlerhafter Eingabe}
-  \label{fig:21}
+  \label{fig:22}
 \end{figure}
 
 \subsection{Erstellung von Backtests und Bots}
@@ -2255,20 +2261,20 @@ Alle in Abbildung \ref{fig:21} dargestellten Funktionalitäten werden in der Hau
 			return
 \end{lstlisting}
 
-Zunächst läuft der Nutzer durch eine Auswahl an Möglichkeiten in denen er Dinge wie die zu verwendende \ac{api}, Trading Symbol, Strategie, etc. auswählen muss (\textbf{Zeile 3-8}). Hat er die Konfigurationsauswahl durchlaufen, wird die verwendete Konfiguration nochmal angezeigt und gefragt, ob der Nutzer den Backtest starten möchte (\textbf{Zeile 12-23}). Bestätigt der User die Frage mit einem \textit{y}, wird eine neue Instanz des Backtests erzeugt und gestartet.
+Zunächst durchläuft der Nutzer durch eine Auswahl an Möglichkeiten, in denen er Dinge wie die zu verwendende \ac{api}, Trading Symbol, Strategie, etc. auswählen muss (\textbf{Zeile 3-8}). Hat er die Konfigurationsauswahl durchlaufen, wird die verwendete Konfiguration nochmal angezeigt und gefragt, ob der Nutzer den Backtest starten möchte (\textbf{Zeile 12-23}). Bestätigt der User die Frage mit einem \textit{y}, wird eine neue Instanz des Backtests erzeugt und gestartet.
 
-Soll ein neuer Trading Bot erstellt werden, wird dieses Prinzip in fast der gleichen Manier angewandt, weshalb sich die Erstellung des Backtest kaum von der Erstellung eines Trading Bots unterscheidet. 
+Soll ein neuer Trading Bot erstellt werden, wird dieses Prinzip in fast der gleichen Manier angewendet, weshalb sich die Erstellung des Backtest kaum von der Erstellung eines Trading Bots unterscheidet. 
 
-Der Erstellungsvorgang eines neuen Backtests, sowie Abbildungen zur Nutzung aller weiterer Funktionen befinden sich in Anhang \ref{cha:anhang_zur_konsolenanwendung}.
+Der Erstellungsvorgang eines neuen Backtests, sowie Abbildungen zur Nutzung aller weiterer Funktionen befinden sich in Anhang \ref{anhang_zur_konsolenanwendung}.
 
 %---------------------------------------------------
 \chapter{Evaluierung}
 
-Ziel dieser Arbeit war es, ein algorithmisches Handelssystem für Kryptowährungen zu entwerfen und implementieren. Um den funktionellen und persönlichen Erfolg dieses Projektes messen zu können, muss zuvor definiert werden, auf welcher Grundlage diese Entscheidung getroffen werden soll. Eine gute Entscheidungsgrundlage stellt der Rückblick auf die im Projekt definierten Ziele dar.
+Um den funktionellen und persönlichen Erfolg dieses Projektes messen zu können, muss zuvor definiert werden, auf welcher Grundlage diese Entscheidung getroffen werden soll. Eine gute Entscheidungsgrundlage stellt der Rückblick auf die im Projekt definierten Ziele dar.
 
-Hauptziel der Arbeit war es, ein algorithmisches Handelssystem für Kryptowährungen zu entwerfen und zu implementieren. Dabei sollte es dem System möglich sein, Marktdaten zu sammeln und mithilfe von entwickelten Strategien und Indikatoren durch einen Backtest zu analysieren. Des weiteren sollte das Fundament zur Erstellung und Nutzung von Trading Bots konzipiert und implementiert werden. Außerdem sollte eine Konsolenanwendung entwickelt werden, welche die zuvor genanten Funktionalitäten vereint und dem Nutzer zur Verfügung stellt. Diese Ziele sollten im Rahmen eines Semesters erarbeitet und Dokumentiert werden.
+Hauptziel der Arbeit war es, ein algorithmisches Handelssystem für Kryptowährungen zu entwerfen und zu implementieren. Dabei sollte es dem System möglich sein, Marktdaten zu sammeln und, mithilfe von entwickelten Strategien und Indikatoren durch einen Backtest, zu analysieren. Des weiteren sollte das Fundament zur Erstellung und Nutzung von Trading Bots konzipiert und implementiert werden. Eine weitere Aufgabe war das Erstellen einer Konsolenanwendung, welche die zuvor genanten Funktionalitäten vereint und dem Nutzer zur Verfügung stellt. Diese Ziele sollten im Rahmen eines Semesters erarbeitet und dokumentiert werden.
 
-Ausgehend von einer funktionellen Betrachtung wurden diese Ziele und ihre Anforderungen in der gegebenen Zeit, mit einem sehr zufriedenstellendem Ergebnis erreicht. Im Hinblick auf den Arbeitsaufwand, welcher zu Erreichung dieser Ziele betrieben wurde, müssen jedoch negative Rückschlüsse gezogen werden. Da es zu Beginn des Projektes sehr schwer war, den vollen Umfang der einzelnen Features zu ermitteln, gestaltete sich das Erreichen dieser Ziele, vor allem zum Ende hin, zunehmend schwierig. So wurde der Dokumentationsaufwand, alle Komponenten ausreichend und lückenlos zu dokumentieren, deutlich unterschätzt. Leider wurde keine Funktion zur Messung der aufgebrachten Zeit verwendet, jedoch wird davon ausgegangen, dass der zeitliche Umfang dieser Arbeit den geforderten zeitlichen Umfang deutlich überschreitet. Ebenso wurde der geforderte Dokumentationsaufwand überschritten, was ebenso auf die schwer zu treffende Einschätzung des Arbeitsaufwandes zurückzuführen ist - was jedoch aus Gründen der Vollständigkeit dann nicht mehr vermieden werden konnte.
+Ausgehend von einer funktionellen Betrachtung wurden diese Ziele und ihre Anforderungen in der gegebenen Zeit mit einem sehr zufriedenstellendem Ergebnis erreicht. Im Hinblick auf den Arbeitsaufwand, welcher zur Erreichung dieser Ziele betrieben wurde, müssen jedoch negative Rückschlüsse gezogen werden. Da es zu Beginn des Projektes sehr schwer war, den vollen Umfang der einzelnen Features zu ermitteln, gestaltete sich das Erreichen dieser Ziele, vor allem zum Ende hin, zunehmend schwieriger. So wurde der Dokumentationsaufwand, alle Komponenten ausreichend und lückenlos zu dokumentieren, deutlich unterschätzt. Leider wurde keine Funktion zur Messung der aufgebrachten Zeit verwendet, jedoch wird davon ausgegangen, dass der zeitliche Umfang dieser Arbeit den geforderten zeitlichen Umfang deutlich überschreitet. Ebenso wurde der geforderte Dokumentationsaufwand überschritten, was ebenso auf die schwer zu treffende Einschätzung des Arbeitsaufwandes zurückzuführen ist - was jedoch aus Gründen der Vollständigkeit dann nicht mehr vermieden werden konnte.
 
 Ein sehr positiver Aspekt dieser Arbeit, war die Anwendung vieler verschiedener Technologien und Konzepte, welche das Projekt sehr interessant und vielfältig gemacht haben. So konnten viele, im Studium erlernte, Themen und Verfahren angewandt und geübt werden. Zusätzlich wurde mit diesem System eine Grundlage für das Weiterarbeiten mit der Thematik \textit{Algorithmic Trading} geschaffen, was vor allem ein persönliches Ziel darstellte.
 
@@ -2303,19 +2309,19 @@ Zusammenfassend lässt sich sagen, dass so gut wie alle, für das Projekt gestec
 Wie bereits erwähnt, soll das in dieser Arbeit entwickelte Projekt den Grundstein einer Weiterentwicklung bilden. Daher gibt es beispielsweise eine Vielzahl an Ideen für Features und weitere Komponenten, welche im Rahmen dieser Arbeit nicht umgesetzt werden konnten.
 
 \textbf{Erweiterung des Systems um eine Datenbank} \\
-Ohne das Persistieren von Trading Bot Konfigurationen und getätigten Transaktionen, ist ein Betrieb im echten Umfeld nicht sinnvoll. Vom System getätigte Informationen sollen automatisch gespeichert und abgerufen werden können. Dazu muss ein geeignetes Datenbankkonzept entworfen und Implementiert werden.
+Ohne das Persistieren von Trading Bot Konfigurationen und getätigten Transaktionen, ist ein Betrieb im echten Umfeld nicht sinnvoll. Vom System getätigte Informationen müssen automatisch gespeichert und abgerufen werden können. Dazu kann ein geeignetes Datenbankkonzept entworfen und Implementiert werden.
 
 \textbf{Implementierung echter Funktionalitäten für reales Handeln} \\
-Um eine Verwendung im echten Umfeld möglich zu machen, müssen die noch benötigten Funktionalitäten zum Trading Bot hinzugefügt werden. Dabei müssen verschiedene Order Types und Trading Konzepte umgesetzt werden.
+Um eine Verwendung im echten Umfeld möglich zu machen, müssen die noch benötigten Funktionalitäten zum Trading Bot hinzugefügt werden. Hierfür müssen verschiedene Order Types und Trading Konzepte umgesetzt werden.
 
 \textbf{Automatisches Testen aller Systemkomponenten} \\
 Läuft das System einmal im realen Umfeld, muss natürlich gewährleistet werden, dass alle Systemkomponenten fehlerfrei funktionieren. Hier bietet sich beispielsweise die Verwendung eines Testing Frameworks an, welches in Verbindung mit Unit- oder Integrationstests eine automatische Überprüfung der Komponenten durchführen kann.
 
 \textbf{Aufsetzen eines Webservers für das Handelssystem} \\
-Damit das System in der Lage ist, Tag und und Nacht handeln zu können, ist das Aufsetzen eines Webservers dafür durchaus sinnvoll. Dafür bietet sich beispielsweise ein RaspberryPi mit einem Apache Webserver an.
+Damit das System in der Lage ist, Tag und und Nacht handeln zu können, ist das Aufsetzen eines Webservers dafür durchaus sinnvoll. Erreicht werden kann dies z.B. mit einem RaspberryPi und einem Apache Webserver.
 
 \textbf{Erstellung einer Webapplikation zur Überwachung und Verwaltung des Handelssystems} \\
-In weiter Zukunft, wenn das System alle wichtigen Funktionalitäten abdeckt, bietet es sich an eine Webapplikation für das Handelssystem zu entwerfen. So könnte beispielsweise ein Dashboard aufgerufen werden, welches Echtzeitergebnisse des Systems darstellt und visualisiert. Zusätzlich könnte so eine Verwaltung und Steuerung der Trading Bots bzw. des gesamten Systems geschaffen werden.
+In weiter Zukunft, wenn das System alle wichtigen Funktionalitäten abdeckt, bietet es sich an, eine Webapplikation für das Handelssystem zu entwerfen. So könnte beispielsweise ein Dashboard aufgerufen werden, welches Echtzeitergebnisse des Systems darstellt und visualisiert. Zusätzlich könnte so eine Verwaltung und Steuerung der Trading Bots bzw. des gesamten Systems geschaffen werden.
 
 \textbf{Erweiterung des Backtests} \\
 Auch der Backtest ist noch nicht perfekt. Hier muss vor allem die Verwendung von Gleitkommazahlen durch die Verwendung der Python Klasse \textit{Decimal} ersetzt werden, um eine perfekte Berechnungsgenauigkeit zu erzielen. Außerdem könnte der Backtest so erweitert werden, dass alle Strategien auf alle Coins getestet werden können, wodurch sich die erfolgreichsten Strategien automatisch ermitteln lassen würde.
@@ -2468,7 +2474,5 @@ Auch der Backtest ist noch nicht perfekt. Hier muss vor allem die Verwendung von
 \end{figure}
 
 %---
-\chapter{Anhang B}
-
 
 \end{document}
