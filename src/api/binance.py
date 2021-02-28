@@ -17,31 +17,12 @@ class Binance:
     SYMBOL_ETHEREUM_EURO: str = "ETHEUR"
     SYMBOL_LITECOIN_EURO: str = "LTCEUR"
 
-    # TODO: REMOVE
-    # Order sides
-    SIDE_BUY: str = "BUY"
-    SIDE_SELL: str = "SELL"
-
-    # TODO: Decide if we need it or not
-    # Order types
-    ORDER_TYPE_LIMIT = "LIMIT"
-    ORDER_TYPE_MARKET = "MARKET"
-    ORDER_TYPE_STOP_LOSS = "STOP_LOSS"
-    ORDER_TYPE_STOP_LOSS_LIMIT = "STOP_LOSS_LIMIT"
-    ORDER_TYPE_TAKE_PROFIT = "TAKE_PROFIT"
-    ORDER_TYPE_TAKE_PROFIT_LIMIT = "TAKE_PROFIT_LIMIT"
-    ORDER_TYPE_LIMIT_MAKER = "LIMIT_MAKER"
-
     # Endpoints
     ENDPOINT_KLINES = "/api/v3/klines"
     ENDPOINT_PRICE = "/api/v3/ticker/price"
     ENDPOINT_TIME = "/api/v3/time"
     ENDPOINT_TEST_ORDER = "/api/v3/order/test"
     ENDPOINT_EXCHANGE_INFO = "/api/v3/exchangeInfo"
-
-    # Filter types
-    FILTER_TYPE_PRICE_FILTER = "PRICE_FILTER"
-    FILTER_TYPE_LOT_SIZE = "LOT_SIZE"
 
     def __init__(self):
         self.base: str = "https://api.binance.com"

@@ -98,7 +98,7 @@ class CommandLineInterface:
             return
         api: Union[Binance] = choose_api(HEADER_NEW_BOT)
         if api == 99:
-            return  # TODO: check whether we have access to the binance account
+            return
         strategy: Union[MovingAverageStrategy] = choose_strat(HEADER_NEW_BOT)
         if strategy == 99:
             return
@@ -159,13 +159,11 @@ class CommandLineInterface:
             display_header(header)
             user_input = prompt("Enter starting capital: ", validator=FloatValidator())
         if header == HEADER_NEW_BOT:
-            # TODO: check whether our account has enough capital
             pass
         return float(user_input)
 
     @staticmethod
     def __get_buy_quantity(header) -> float:
-        # TODO: how to handle quantity filters? Because you have to specify a quantity that is allowed by the platform
         user_input: str = ""
         while user_input == "":
             display_header(header)
