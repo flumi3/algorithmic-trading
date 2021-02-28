@@ -81,7 +81,7 @@ entwerfen. So soll herausgefunden werden, ob der automatisierte Handel
 von Kryptowährungen, durch ein selbst entwickeltes System,
 erfolgreich sein kann.
 
-Dabei beschäftigt sich diese Arbeit im grundlegenden mit folgenden Konzepten:
+Diese Arbeit beschäftigt sich im grundlegenden mit den folgenden Konzepten:
 
 \begin{enumerate}
 	\item Algorithmische Handelsstrategien und technische Indikatoren
@@ -106,9 +106,6 @@ Verbindung mit einigen wenigen HTML Elementen.
 \listoffigures
 
 %---
-\listoftables
-
-%---
 \listoflistings
 
 %---
@@ -128,6 +125,7 @@ Verbindung mit einigen wenigen HTML Elementen.
 \acro{url}[URL]{Uniform Resource Locator} 
 \acro{json}[JSON]{JavaScript Object Notation}
 \acro{abc}[ABC]{Abstract Base Class}
+\acro{html}[HTML]{Hypertext Markup Language}
 \end{acronym}
 %---
 
@@ -147,7 +145,9 @@ schon lange keine Seltenheit mehr. Kryptowährungen, allen voran der
 Bitcoin, entwickelten sich in den letzten Jahren zum Sinnbild
 schnellen Reichtums. Doch das war nicht immer so. Im Jahre 2011, als
 sich der Bitcoin noch in seinen Kinderschuhen befand, kostete ein Coin
-gerade einmal 1 Dollar\cite{bitcoin_kurs_2011}. Vielleicht erwischt
+gerade einmal 1 Dollar\cite{bitcoin_kurs_2011}. 
+
+Vielleicht erwischt
 man sich nun selbst bei dem Gedanken daran, was wohl wäre, wenn man
 zu dieser Zeit schon das Potential dieser, damals unscheinbaren,
 Internetwährung erkannt hätte. Einige vorausdenkende Köpfe
@@ -165,17 +165,15 @@ haben kann. Und wenn ja - kann das auch ein Computerprogramm?
 \label{sec:motivation}
 
 Natürlich stellt die Aussicht auf realisierbaren Gewinn, erzeugt
-durch ein selbst entwickeltes Handelssystem, ein großer
+durch ein selbst entwickeltes Handelssystem, einen großen
 Motivationsfaktor dar - doch es ist mehr als das. Kryptowährungen
-liegen einem faszinierendem Stück Technologie zugrunde. Der
-sogenannten \textbf{Blockchain} (dazu später mehr). Dennoch können
-die digitalen Währungen wie jede herkömmliche Währung getauscht und
+liegen einem faszinierendem Stück Technologie zugrunde - der
+sogenannten \textbf{Blockchain} (dazu später mehr). Digitale Währungen 
+können, wie jede herkömmliche Währung, getauscht und
 gehandelt werden, befinden sich gleichzeitig aber außerhalb der
-Kontrolle finanzieller Institutionen. Somit verbinden Kryptowährungen
-die Welt des Finanzhandels mit der Welt der Informatik. Für jemanden,
-den der herkömmliche Handel mit Wertpapieren oder Ähnlichem nur
-wenig anspricht, bieten Kryptowährungen die Möglichkeit eines
-interessanten Einblicks in beide Welten. 
+Kontrolle finanzieller Institutionen. Sie verbinden also
+die Welt des Finanzhandels mit der Welt der Informatik. Sie bietet die
+Möglichkeit eines interessanten Einblicks in beide Welten. 
 
 Abgesehen davon finde ich großen Gefallen daran, Lösungen für
 gegebene Problemstellungen zu entwerfen und in Programmcode
@@ -197,7 +195,7 @@ Als Ganzes betrachtet ist die Problemstellung, ein algorithmisches
 Handelssystem zu entwerfen, relativ unüberschaubar. Zur Bewältigung
 muss es daher in mehrere Teilprobleme heruntergebrochen werden. Daraus
 ergeben sich folgende, im nachfolgenden grob beschriebene,
-Problemstellungen:
+Aufgabenstellungen:
 
 \textbf{1. Algorithmische Handelsstrategien und technische Indikatoren} \\
 Ohne eine geeignete Trading Strategie, die entscheidet, wann Einkäufe
@@ -235,8 +233,8 @@ entgegen und stellt somit eine der wichtigsten Komponenten des Systems
 dar.
 
 \textbf{4. Entwurf und Verwaltung eines Trading Bots} \\
-Echzeitdaten auswerten und automatisiert Einkäufe und Verkäufe
-tätigen zu lassen. Da dies den Umfang dieser Arbeit jedoch
+Auswerten von Echtzeitdaten und automatisiertes Tätigen von
+Einkäufen und Verkäufen. Da dies den Umfang dieser Arbeit jedoch
 übersteigt, soll innerhalb dieses Projekts nur der Grundstein dieses
 Features gelegt werden.
 
@@ -249,8 +247,8 @@ verschiedenen Parametern wie Auswahl der Kryptowährung, Strategie,
 Kapital, usw. zu Grunde liegen.
 
 \textbf{6. Verknüpfung der Komponenten innerhalb eines modularen Systems} \\
-Im laufe der Arbeit werden Lösungskonzepte für die, hier
-aufgeführten, Problemstellungen entworfen und implementiert. Wichtig
+Im Laufe der Arbeit werden Lösungskonzepte für die hier
+aufgeführten Problemstellungen entworfen und implementiert. Wichtig
 ist es dabei, die Komponenten mit Hinblick auf das Gesamtsystem und
 dessen Erweiterbarkeit/Modularität zu entwerfen, sowie ein sauberes
 und klar definiertes Zusammenspiel zu ermöglichen. 
@@ -258,21 +256,20 @@ und klar definiertes Zusammenspiel zu ermöglichen.
 \section{Ziel der Arbeit}
 \label{sec:ziel}
 
-Wie sich aus den vorherigen Abschnitten bereits erkennen lässt,
-stellt das Ziel dieser Arbeit den Entwurf und die Implementierung
+Das Ziel dieser Arbeit den Entwurf und die Implementierung
 eines algorithmischen Handelssystems für Kryptowährungen dar. Dabei
 soll es dem System möglich sein, Marktdaten über Kryptowährungen zu
 sammeln und automatisiert auszuwerten. Des weiteren soll das System
 über eine Teststrategie sowie den dazugehörigen technischen
 Indikatoren enthalten, welche durch einen, ebenfalls im System
-implementierten, Backtest ausgewertet werden kann. Dabei soll es dem
-System möglich sein, ausgewählte Markdaten und Backtest-Ergebnisse
+implementierten, Backtest ausgewertet werden kann. Das System soll die
+Möglichkeit haben, ausgewählte Markdaten und Backtest-Ergebnisse
 zu visualisieren und anschaulich darzustellen. Unter anderem soll das
 System einen Prototyp eines Trading-Bots enthalten, welcher mit
 zukünftigen Erweiterungen in der Lage sein soll, echte
 Handelsaktionen durchzuführen. Diese Handelsaktionen werden innerhalb
 dieser Arbeit jedoch \underline{nicht} implementiert, d.h. das System
-ist innerhalb diesen Projekts nicht in der Lage, eigenständig reale
+ist innerhalb dieses Projekts nicht in der Lage, eigenständig reale
 Käufe und Verkäufe zu tätigten. Die zuvor genannten Funktionen
 sollen dem Nutzer letztendlich durch eine Konsolenanwendung
 bereitgestellt werden.
@@ -292,16 +289,16 @@ Trader bezeichnet. Ein durchgeführter Handel heißt dementsprechend
 also Trade. (vgl. \cite{trading_1})
 
 Trading bedeutet, die Schwankungen der Finanzmärkte mithilfe von
-Trades für die eigenen Zwecke zu nutzen. Das heißt kaufen, verkaufen
+Trades für die eigenen Zwecke zu nutzen. Das heißt Kaufen, Verkaufen
 und dabei Gewinne einstreichen - oder den Verlust verkraften. Durch
 das Internet und benutzerfreundliche Trading-Anbieter ist es auch für
-Hobby-Anleger möglich, Finanzinstrumente wie Wertpapiere, Währungen,
-Rohstoff-Zertifikate oder Ähnlichem zu handeln. Beim Trading handelt
+Hobby-Anleger möglich, mit Finanzinstrumente (z.B. Wertpapiere, Währungen,
+Rohstoff-Zertifikate o.ä.) zu handeln. Beim Trading handelt
 es sich grundsätzlich um Spekulation. Wo ein Trader sein Geld
 investiert, ist meist von untergeordneter Wichtigkeit. Beispielsweise
 geht es nicht darum, Anteile eines Unternehmens zu kaufen, um
 langfristig an dessen Entwicklung teilzuhaben. Das Ziel eines Traders
-ist es, durch einen Kursanstieg im Zeitraum des Besitzes eins
+ist es, durch einen Kursanstieg im Zeitraum des Besitzes eines
 Finanzinstruments Gewinn zu erzielen. Das bedeutet, ein Trader kauft
 beispielsweise eine Aktie, hofft auf einen Kursanstieg und verkauft
 sie dann wieder. Die anschließende Wertdifferenz abzüglich der
@@ -311,20 +308,20 @@ Transaktionskosten stellt den Gewinn des Traders dar. (vgl.
 \subsection{Order Types}
 \label{sub:Order Types}
 
-Mit der verbreitung der digitalen Technologie und des Internets entscheiden sich viele Anleger dafür, Aktien selbst online zu kaufen und zu verkaufen, anstatt Beratern hohe Provisionen für die Ausführung von Geschäften zu zahlen. Beim Platzieren eines Auftrags bzw. Order stehen dem Trader mehrere verschiedene Order-Types zur Verfügung.
+Mit der Verbreitung der digitalen Technologie und des Internets entscheiden sich viele Anleger dafür, Aktien selbst online zu kaufen und zu verkaufen, anstatt Beratern hohe Provisionen für die Ausführung von Geschäften zu zahlen. Beim Platzieren eines Auftrags bzw. Orders stehen dem Trader mehrere verschiedene Order-Types zur Verfügung.
 
-\textbf{Market Orders} \\
-Eine Market Order ist die grundlegendste Art des Handels. Es ist ein Auftrag zum sofortigem Kauf oder Verkauf zum aktuellen Kurs. Kauft man eine Aktie, zahlt man in der Regel einen Preis zum oder in der Nähe des veröffentlichten Briefkurses. Wenn eine Aktie verkauf werden soll, erhält man einen Preis zum oder in der Nähe des eingestellten Geldkurses.
+\textbf{Market Order} \\
+Eine Market Order ist die grundlegendste Art des Handels. Es ist ein Auftrag zum sofortigem Kauf oder Verkauf zum aktuellen Kurs. Kauft man eine Aktie, zahlt man in der Regel einen Preis zum (oder in der Nähe des veröffentlichten) Briefkurses. Wenn eine Aktie verkauft werden soll, erhält man einen Preis zum (oder in der Nähe des eingestellten) Geldkurses.
 
 \textbf{Stop-Loss Order} \\
-Eine Stop-Loss Order ist eine der nützlichsten davon. Diese Order unterscheidet sich von anderen Orders, denn im Gegensatz zu Markt Orders, die aktiv sind, sobald sie eingegeben werden, bleibt diese Order ruhend, bis ein bestimmter Preis überschritten wird. Erst dann wird sie als Market Order aktiviert.
+Eine Stop-Loss Order ist eine der nützlichsten Orders. Sie unterscheidet sich von anderen, denn im Gegensatz zur Market Order, die aktiv ist, sobald sie eingegeben werden, bleibt diese Order ruhend, bis ein bestimmter Preis überschritten wird. Erst dann wird sie als Market Order aktiviert.
 
 Wenn zum Beispiel eine Stop-Loss Order auf die XYZ-Aktien bei 45€ pro Aktie platziert würde, wäre die Order inaktiv, bis der Preis 45€ erreicht oder unterschritten hat. Die Order würde dann in eine Market Order umgewandelt und die Aktien würden zum besten verfügbaren Preis verkauft werden. Man sollte diese Art von Order in Betracht ziehen, wenn man keine Zeit hat, den Markt ständig zu beobachten, aber Schutz vor einer großen Abwärtsbewegung benötigt. (vgl. \cite{order_types})
 
 \subsection{Algorithmischer Handel}
 \label{sub:algorithmischer_handel}
 
-Algorithmischer beschreibt den automatischen Handel von
+Algorithmischer Handel beschreibt den automatischen Handel von
 Finanzinstrumenten durch Computerprogramme. Dabei folgt das
 Computerprogramm einem vordefiniertem Satz von Anweisungen
 (Algorithmus), um einen Trade zu platzieren. Die Trades können
@@ -333,7 +330,7 @@ generieren, die für einen menschlichen Trader unmöglich sind. (vgl.
 \cite{algorithmic_trading})
 
 Die definierten Sätze von Anweisungen basieren auf Timing, Preis,
-Menge oder einem beliebigen mathematischen Modell. Abgesehen von den
+Menge und/oder einem beliebigen mathematischen Modell. Abgesehen von den
 Gewinnmöglichkeiten für den Trader, macht der algorithmische Handel
 die Märkte liquider und den Handel systematischer, da der Einfluss
 menschlicher Emotionen auf die Handelsaktivität ausgeschlossen wird.
@@ -345,7 +342,7 @@ menschlicher Emotionen auf die Handelsaktivität ausgeschlossen wird.
 Ein Candlestick Chart ist ein Finanzdiagramm, mit dem sich die
 Kursbewegungen eines Wertpapiers oder Ähnlichem darstellen lassen. Es
 besteht aus einer Aneinanderreihung von sogenannten \textbf{Candles}
-(Kerzen), welche für die verschiedenste Zeiteinheiten verwendet
+(Kerzen), welche für die verschiedensten Zeiteinheiten verwendet
 werden können und vier zentrale Informationswerte enthalten:
 
 \begin{itemize}
@@ -370,12 +367,12 @@ Kerzen unterschieden, welche in der nachfolgenden Abbildung
   \label{fig:1}
 \end{figure}
 
-Jede Kerze kann dabei für jede beliebige Zeitspanne stehen. Für
+Jede Kerze kann dabei für jede beliebige Zeitspanne stehen - für
 einen Tag, eine Woche, einen Monat, oder auch für kurzfristigere
 Zeitebenen auf Minutenbasis. Die Aussagen der Kerzen sind dabei jedoch
 immer dieselben.
 
-Die Farbe der Candles lässt dabei sofort erkennen, ob es sich um eine
+Die Farbe der Candles lässt sofort erkennen, ob es sich um eine
 bullische, oder eine bärische Kerze handelt. Die \textbf{bullische
 Kerze} symbolisiert ein Zeitintervall, welches positiv verlief, weil
 der Schlusskurs über dem Eröffnungskurs des Intervalls lag. Analog
@@ -414,17 +411,17 @@ da sie ein guter Hinweis auf die aktuelle Marktdynamik sein können.
 
 \textbf{Wie wird ein Moving Average berechnet?} \\
 Eine der gängigsten Moving Averages ist der einfache gleitende
-Mittelwert bzw. \ac{sma}, welche einfach der Durschnitt aller
+Mittelwert bzw. \ac{sma}, welcher einfach den Durchschnitt aller
 Datenpunkte in der Serie geteilt durch die Anzahl der
-Punkte\cite{moving_average}.
+Punkte berechnet\cite{moving_average}.
 
 A = $ \{ $ {a$_{1}$, a$_{2}$, ..., a$_{n}$} $ \} $ \\
-n = Number of time periods / price elements
+n = number of time periods / price elements
 
 SMA = $\frac{a_1 \ + \ a_2 \ + \ ... \ + \ a_n}{n}$
 
 Betrachtet man zum Beispiel eine 5-Tage-SMA auf einem Tages-Chart von
-EUR/USD und die Schlusskurse über die letzten 5 Tage sind wie folgt.
+EUR/USD und die Schlusskurse über die letzten 5 Tage sind diese wie folgt.
 
 Tag 1: 1.321 \\
 Tag 2: 1.301 \\
@@ -448,11 +445,11 @@ Chart, wie in Abbildung \ref{fig:3} dargestellt.
 \label{sub:trading_strategien}
 
 Eine Trading Strategie ist eine Methode zum Kaufen und Verkaufen auf
-Märkten, die auf vordefinierten Regeln basiert, die zum Treffen von
+Märkten, welche auf vordefinierten Regeln basiert, die zum Treffen von
 Handelsentscheidungen verwendet werden\cite{trading_strategy}.
 
-Es gibt viele Arten von Handelsstrategien, aber sie basieren
-größtenteils entweder auf technischen Daten oder auf
+Es gibt viele Arten von Handelsstrategien. Größtenteils basieren sie
+entweder auf technischen Daten oder auf
 Fundamentaldaten. Letzteres beschreibt langfristige, grundlegende
 Informationen über die realen Produktionsmöglichkeiten, die
 Strukturen der Wirtschaft sowie den Vermögensstatus der
@@ -462,8 +459,8 @@ sich beide auf quantifizierbare Informationen stützen, die auf ihre
 Genauigkeit hin rückgetestet werden können.
 Technische Handelsstrategien verlassen sich auf technische
 Indikatoren, um Handelssignale zu generieren. Technische Trader
-glauben, dass alle Informationen über ein bestimmtes Wertpapier o.Ä.
-in seinem Preis enthalten sind und dass er sich in Trends bewegt.
+glauben, dass alle Informationen über ein bestimmtes Wertpapier o.ä.
+in seinem Preis enthalten sind und dieser sich in Trends bewegt.
 (vgl. \cite{trading_strategy}) 
 
 Eine einfache Trading Strategie kann zum Beispiel eine
@@ -490,7 +487,7 @@ zentralen Behörde ausgegeben werden, was sie theoretisch immun gegen
 staatliche Eingriffe oder Manipulationen macht.
 
 Die erste Blockchain-basierte Kryptowährung war Bitcoin, die
-immernoch die beliebteste und wertvollste ist. Heute gibt es tausende
+immer noch die beliebteste und wertvollste ist. Heute gibt es tausende
 von alternativen Kryptowährungen mit verschiedenen Funktionen und
 Spezifikationen. Einige davon sind Klone oder Abspaltungen von Bicoin,
 während andere neue Währungen sind, die von Grund auf neu entwickelt
@@ -500,7 +497,7 @@ wurden. (vgl. \cite{cryptocurrency_explained})
 \label{sub:blockchain}
 
 Einfach ausgedrückt ist eine Blockchain nichts anderes als eine
-verteilte, öffentliche Datenbank\cite{blockchain_definition}, wessen
+verteilte, öffentliche Datenbank\cite{blockchain_definition}, dessen
 Funktionsprinzip die meisten Kryptowährungen zugrunde
 liegen\cite{blockchain_1}.
 Um das Prinzip einer Blockchain verstehen zu können, hilft der
@@ -514,9 +511,9 @@ Sie kann auch nicht einfach die Uhrzeit im Chatverlauf nachträglich
 ändern. Mia muss also entweder gemeinsam mit den anderen von vorne
 planen, oder sie steht um 16 Uhr alleine im Park. Niemand kann
 nachträglich etwas verändern. Dieses Prinzip ist der Kern einer
-Blockchain, denn auch hier werden Informationen in einem "Verlauf"
+Blockchain, denn auch hier werden Informationen in einem "Verlauf" \
 gespeichert. Informationen sind hierbei hauptsächlich
-Transaktionsinformationen von Nutzern die diese getätigt haben.
+Transaktionsinformationen von Nutzern, die diese getätigt haben.
 
 Jede Information bildet einen Block, für welche ein Hash -
 vergleichbar mit einem digitalen Fingerabdruck - berechnet wird.
@@ -551,8 +548,8 @@ werden von der Blockchain technisch hergestellt. (vgl.
 \subsection{Mining}
 \label{sub:mining}
 
-Wie das Geld herkömmlicher Währungen wie beispielsweise Euro oder
-Dollar entsteht, ist kein Geheimnis. Das Bargeld entsteht unter
+Wie das Geld herkömmlicher Währungen, wie beispielsweise Euro oder
+Dollar, entsteht, ist kein Geheimnis. Das Bargeld entsteht unter
 staatlicher Regie. Das Recht zur Prägung von Münzen liegt direkt
 beim Staat, während die staatliche Bundesbank Scheine herstellt.
 Beides müssen die privaten Geschäftsbanken bei der Bundesbank
@@ -606,7 +603,7 @@ Sender und Empfänger Internetzugang haben und ein Wallet besitzen.
 Wer sich nun dazu entschlossen hat mit Kryptowährungen zu handeln,
 hat generell zwei Möglichkeiten:
 
-\textbf{1. Bitcoins kaufen} \\
+\textbf{1. Kryptowährungen kaufen} \\
 Der direkte Weg wäre Coins zu kaufen und diese solange zu halten, bis
 der erwünschte Kursanstieg erreicht wurde, um sie dann wieder zu
 verkaufen. Dazu wird jedoch, wie oben beschrieben, ein Wallet
@@ -617,10 +614,10 @@ geschickt.
 \textbf{2. Trading über CFDs} \\
 Alternativ besteht die Möglichkeit des Crypto Trading per \ac{cfd}.
 Hierbei spekulieren Anleger lediglich auf den Anstieg bzw. den Fall
-des Bitcoin Kurses. Dabei können Basiswerte festegelegt werden, zu
-denen die CFDs gekauft bzw. verkauft werden sollen. Steigt der Bitcoin
-im Wert um 10\%, dann steigt auch der Wert der erworbenen CFDs um
-10\%. (vgl. \cite{crypto_trading})
+des Kurses. Dabei können Basiswerte festgelegt werden, zu
+denen die CFDs gekauft bzw. verkauft werden sollen. Steigt die 
+Kryptowährung im Wert um 10\%, dann steigt auch der Wert der 
+erworbenen CFDs um 10\%. (vgl. \cite{crypto_trading})
 
 %----
 
@@ -633,6 +630,7 @@ zur Anbindung an das System zur Verfügung gestellt wird. Die
 Programmanbindung findet dabei auf Quelltext-Ebene statt. (vgl.
 \cite{api_definition})
 
+Beispiel: \\
 Ein Restaurant bildet ein System. Kunden wollen dieses System nutzen,
 indem sie mithilfe einer Essenskarte Bestellungen aufgeben. Dabei ist
 die Küche der Teil des Systems, der die Bestellungen der Gäste
@@ -647,14 +645,14 @@ zurück. In diesem Fall ist es das Essen. (vgl. \cite{api_example})
 \subsection{REST API}
 \label{sub:rest_api}
 REST steht für Representational State Transfer und beschreibt ein
-Paradigma (grunsätzliche Denkweise) für die Softwarearchitektur von
+Paradigma (grundsätzliche Denkweise) für die Softwarearchitektur von
 verteilten Systemen, insbesondere für Webservices. \ac{rest} ist eine
 Abstraktion der Struktur und des Verhaltens des World Wide Web und hat
 das Ziel, einen Architekturstil zu schaffen, der die Anforderungen des
 moderen Web besser darstellt. Der Zweck von \ac{rest} liegt
 schwerpunktmäßig auf der Kommunikation zwischen Client und Server in
 Netzwerken. Eine \ac{rest} \ac{api} ist demnach also eine
-Programmierschnittstelle die diesem Paradigma folgt. (vgl.
+Programmierschnittstelle, die diesem Paradigma folgt. (vgl.
 \cite{rest})
 
 Die Funktionsweise wird in Abbildung \ref{fig:5} ersichtlich.
@@ -803,8 +801,8 @@ werden? \\
 		somit durchaus sinnvoll.
 	\item \textbf{Handeln von Kryptowährungen gegen Fiatgeld} \\
 		Das Handeln von Kryptowährungen gegen Fiatgeld (Euro, Dollar, usw.)
-		ist von großem Vorteil. Denn so entfällt der oft mühsame Währungs-
-		wechsel. Fehlt die Möglichkeit dazu, dann können Trader aussschließlich
+		ist von großem Vorteil. Denn so entfällt der oft mühsame Währungswechsel. 
+		Fehlt die Möglichkeit dazu, dann können Trader aussschließlich
 		Kryptowährungen untereinander tauschen.
 	\item \textbf{Breite Auswahl an verschiedenen Kryptowährungen} \\
 		Eine breite Auswahl an handelbaren Kryptowährungen ist von großem
@@ -818,14 +816,14 @@ werden? \\
 	\item \textbf{Geeignete Dokumentation der \ac{api}} \\
 		Um später mit den von der \ac{api} bereitgestellten Funktionen arbeiten
 		zu können, bedarf es einer guten und nutzerfreundlichen Dokumentation.
-		Wird diese garnicht oder in nur sehr geringen Maße von der Plattform
+		Wird diese gar nicht oder in nur sehr geringem Maße von der Plattform
 		angeboten, gestaltet sich die Einbindung und Verwendung der 
 		Funktionalitäten sehr schwierig und mühsam.
 	\item \textbf{Bereitstellung von Marktdaten} \\
 		Einer der wohl wichtigsten Anforderungen an eine \ac{api} für
 		Crypto-Trading ist die Bereitstellung von Marktdaten. Dabei müssen nicht
 		nur aktuelle Preisdaten zur Verfügung gestellt werden, sondern auch
-		historische - also bereits verganene - Preisdaten bereitgestellt werden.
+		historische - also bereits vergangene - Preisdaten bereitgestellt werden.
 		Diese werden vor allem für den Backtest und die Verwendung von
 		Strategien und deren Indikatoren benötigt. 
 	\item \textbf{Bereitstellung von Symbolinformationen} \\
@@ -854,7 +852,7 @@ werden? \\
 \label{sub:schnittstelle_der_api}
 
 Eine von einer Plattform bereitgestellte \ac{api} reicht natürlich
-nicht aus, um loslegen zu können. Vorerst muss sie sorgfältig in das
+nicht aus, um loslegen zu können. Zunächst muss sie sorgfältig in das
 System eingebunden werden, das sie nutzen möchte. Dazu muss eine
 weitere Schnittstelle entwickelt werden - sozusagen eine Schnittstelle
 der Schnittstelle, um die Nutzung der \ac{api} einfacher zu gestalten.
@@ -885,7 +883,7 @@ herausfinden. Das ist jedoch nicht Teil dieser Arbeit.
 
 Teil dieser Arbeit ist es aber, das System auf die parallele Nutzung
 vieler Strategien und Indikatoren vorzubereiten, bzw. das System so zu
-entwerfen, dass diese nach belieben ein- und ausgehängt werden
+entwerfen, dass diese nach Belieben ein- und ausgehängt werden
 können. Das bedeutet, dass der Backtest beispielsweise in der Lage
 sein soll, jede beliebige implementierte Strategie für seinen Test zu
 Nutzen. Entscheidet man sich dazu, eine neue Strategie zu
@@ -910,7 +908,7 @@ des Systems zu verändern - also nahtlos. \\
 \begin{enumerate}
 	\item \textbf{Eigenständiges Hinzufügen der benötigten Indikatoren} \\
 		Jede Strategie benötigt eine mehr oder weniger große Anzahl an
-		Indikatoren, durch welche die Strategie in der Lage ist, Kaufs- und
+		Indikatoren, durch welche die Strategie in der Lage ist, Kauf- und
 		Verkaufsentscheidungen zu treffen. Jede Strategie sollte daher in der
 		Lage sein, die benötigten Indikator-Instanzen selbst zu erzeugen und
 		deren Daten anschließend an die Marktdaten anhängen zu lassen.
@@ -936,7 +934,7 @@ des Systems zu verändern - also nahtlos. \\
 Der Backtest ist die wohl wichtigste Komponente des zu entwickelnden
 Systems. Durch den Backtest soll der Nutzer in der Lage sein, eine
 beliebige, im System implementierte, Trading Strategie auszuwählen
-und auf Trading Symbole wie Bitcoin/Euro oder Ethereum/Euro laufen zu
+und auf Trading Symbole, wie bspw. Bitcoin/Euro oder Ethereum/Euro laufen zu
 lassen. Da der Backtest für seinen Rückvergleich sowohl die Trading
 Strategie als auch die vergangenen Marktdaten benötigt, erfordert er
 das Zusammenspiel der anderen Komponenten mit sich selbt. \\
@@ -944,7 +942,7 @@ das Zusammenspiel der anderen Komponenten mit sich selbt. \\
 \underline{Anforderungen an den Backtest:}
 \begin{enumerate}
 	\item \textbf{Durchführen des eigentlichen Backtest} \\
-		Zur Durchführung des eigentlichen Backtests gehört das auswerten der 
+		Zur Durchführung des eigentlichen Backtests gehört das Auswerten der 
 		historischen Marktdaten. Es soll möglich sein, ein Startkapital
 		festzulegen, mit welchem der Backtest startet. Anschließend soll ein
 		Echtzeitszenario nachgeahmt werden, bei dem der Backtest chronologisch
@@ -998,7 +996,7 @@ Verkäufe soll dann auf diesem Konzept aufbauen. \\
 		Um die Marktdaten aktuell zu halten, muss der Trading Bot die Möglichkeit
 		haben, seinen Datensatz selbständig zu aktualisieren.
 	\item \textbf{Evaluierung von Echtzeitdaten} \\
-		Der Bot soll zudem in der Lage sein, diesen Ständig aktualisierten
+		Der Bot soll zudem in der Lage sein, diesen ständig aktualisierten
 		Marktdatensatz auszuwerten, um die Empfehlung eines Kaufes oder Verkaufes
 		zu signalisieren. \\
 \end{enumerate}
@@ -1044,12 +1042,13 @@ Nutzer zur Interaktion bereitstellt. \\
 		alle vom System verwalteten Trading Bots aufzulisten und deren aktuellen
 		Status anzuzeigen.
 	\item \textbf{Beenden des Programms} \\
-		Ein beenden des Programms von der Konsolenanwendung aus soll ebenfalls
+		Ein Beenden des Programms von der Konsolenanwendung aus soll ebenfalls
 		bereitgestellt werden.
 	\item \textbf{Einfache und intuitive Bedienung} \\
 		Einer der wichtigsten Aspekte einer Benutzeroberfläche ist deren
 		Bedienbarkeit. Kein Nutzer möchte sich bei der Nutzung eines Programms
-		"verloren" fühlen und sich andauern fragen wie etwas funktioniert. Die
+		"verloren" \ fühlen und oder sich andauernd fragen, wie etwas 
+		funktioniert. Die
 		Konsolenanwendung muss daher so gestaltet werden, dass sich auch Nutzer
 		ohne Entwicklungshintergrund zurechtfinden.
 	\item \textbf{Übersichtliches und konsistentes Designkonzept} \\
@@ -1099,7 +1098,8 @@ Abhängigkeiten untereinander.
 \subsection{Auswahl einer Handelsplattform}
 \label{sub:auswahl_einer_handelsplattform}
 
-Bevor mit der Konzeption einer Schnittstelle für eine Handelsplattform begonnen werden kann, muss sich für eine der vielen Plattformen entschieden werden. Diese Entscheidung fiel auf die Verwendung der Crypto-Trading-Plattform \textbf{Binance}. Die Plattform bietet den Handel von hunderten, verschiedenen Kryptowährungen an, welche auch gegen Fiatgeld gehandelt werden können. Zum Zeitpunkt dieser Arbeit berechnet Binance eine durchschnittliche Gebühr von etwa 0,1\% auf jeden Trade, den ein Benutzer tätigt. Obwohl die Plattform keine genauen Angaben darüber bereitstellt, wie die Gelder gesichtert werden, wird Binance für eine sichere Plattform gehalten. Zwei-Faktor-Authentifizierung wird unterstützt. (vgl. \cite{binance})
+Bevor mit der Konzeption einer Schnittstelle für eine Handelsplattform begonnen werden kann, muss sich für eine der vielen Plattformen entschieden werden. Diese Entscheidung fiel hier auf die Verwendung der Crypto-Trading-Plattform \textbf{Binance}. Die Plattform bietet den Handel von hunderten, verschiedenen Kryptowährungen an, welche auch gegen Fiatgeld gehandelt werden können. Zum Zeitpunkt dieser Arbeit berechnet Binance eine durchschnittliche Gebühr von etwa 0,1\% auf jeden Trade, den ein Benutzer tätigt. Die Plattform gilt als sicher
+und unterstützt Zwei-Faktor-Authentifizierung. (vgl. \cite{binance})
 
 Die von Binance bereitgestellte \ac{rest} \ac{api} ist, der Menge der im Internet bereitgestellten Lernressourcen nach, eine der verbreitetsten \ac{api}s unter algorithmischen Tradern. Zu ihr gibt es eine Vielzahl an Tutorials und eine ausgesprochen gute Dokumentation, welche auf GitHub unter folgendem Link zur Verfügung steht: \url{https://github.com/binance/binance-spot-api-docs/blob/master/rest-api.md}
 
@@ -1130,7 +1130,8 @@ Um eine einfache Weiterverarbeitung der Candlestick Daten zu gewährleisten, sol
 \section{Technische Indikatoren}
 \label{sec:technische_Indikatoren}
 
-Der technische Indikator dient der Strategie zur Analyse der Marktdaten. Damit diese der Strategie jedoch zur Verfügung stehen, muss die Möglichkeit bestehen, die Indikatordaten eines jeden Indikators auf gegebene Marktdaten zu berechnen und sie anschließend an diese anzuhängen. Somit genügt ein einfacher Erweiterungsprozess der Marktdaten um die vom Indikator berechneten Daten, um die Datengrundlage einer jeden Trading Strategie zu bilden. Daraus ergibt sich folgender Entwurf (Abbildung \ref{fig:10})
+Der technische Indikator dient der Strategie zur Analyse der Marktdaten. Damit diese der Strategie jedoch zur Verfügung stehen, muss die Möglichkeit bestehen, die Indikatordaten eines jeden Indikators auf gegebene Marktdaten zu berechnen und sie anschließend an diese anzuhängen. Somit genügt ein einfacher Erweiterungsprozess um die vom Indikator berechneten Daten aus, um die
+Datengrundlage einer jeden Trading Strategie zu bilden. Daraus ergibt sich folgender Entwurf (Abbildung \ref{fig:10})
 
 \begin{figure}[H]
   \centering
@@ -1141,7 +1142,7 @@ Der technische Indikator dient der Strategie zur Analyse der Marktdaten. Damit d
 
 Durch die Definition eines Interface wird gewährleistet, dass jede neu hinzugefügte Klasse, die von der Klasse \textit{Indicator} erbt, dazu verpflichtet ist, alle innerhalb des Interface definierten Methoden zu überschreiben. Damit wird erreicht, dass jeder Indikator das gleiche Funktionsprinzip hat und ein einheitliches Konzept bei der Implementierung verwendet wird.
 
-Jeder Indikator-Instanz wird ein Name übergeben, welcher durch die Zuweisung an das Attribut \textit{name} der eindeutigen Identifikation eines Indikators dient. Zusätzlich sind alle Indikatoren dazu verpflichtet, eine Methode \textit{add\_data(market\_data)} zu implementieren, welche die indikatorspezifischen Daten an die übergebenen Marktdaten anhängt und zurückgegeben.
+Jeder Indikator-Instanz wird ein Name übergeben, welcher durch die Zuweisung an das Attribut \textit{name} der eindeutigen Identifikation eines Indikators dient. Zusätzlich sind alle Indikatoren dazu verpflichtet, eine Methode \textit{add\_data(market\_data)} zu implementieren, welche die indikatorspezifischen Daten an die übergebenen Marktdaten anhängt und zurückgibt.
 
 Im Rahmen dieser Arbeit wird soll nur ein Indikator implementiert und verwendet werden - der \textbf{Simple Moving Average}, welcher bereits im Grundlagenkapitel \ref{sub:technische_Indikatoren} beschrieben wurde.
 
@@ -1155,7 +1156,7 @@ Eine gute Trading Strategie ist beim algorithmischen Traden der Schlüssel zum E
 \subsection{Einbindung von Trading Strategien}
 \label{sub:einbindung_von_trading_strategien}
 
-Da jede Strategie eine gewisse Anzahl an bereitgestellten Funktionen bieten muss, macht die Nutzung eines Interfaces auch hier Sinn. Daraus folgt ein, zu den Indikatoren ähnlicher Entwurf, dargestellt in Abbildung \ref{fig:11}
+Da jede Strategie eine gewisse Anzahl an bereitgestellten Funktionen bieten muss, macht die Nutzung eines Interfaces auch hier Sinn. Daraus folgt ein zu den Indikatoren ähnlicher Entwurf - dargestellt in Abbildung \ref{fig:11}
 
 \begin{figure}[H]
   \centering
@@ -1185,12 +1186,14 @@ Der Entwurf eines geeigneten Backtest stellt die wohl wichtigste Aufgabe dieses 
   \label{fig:12}
 \end{figure}
 
-Jeder Backtest benötigt eine \ac{api} \textit{Binance}, von der er die benötigten Marktdaten abrufen kann. Diese Marktdaten müssen innerhalb des Backtests mit der Hilfe einer \textit{Strategy} verarbeitet werden. Um einen Kauf zu simulieren, benötigt der Backtest ein \textit{BuySignal} welches ihm signalisiert, dass die Buy Condition der gewählten Strategie getroffen wurde. Die Klassen \textit{BuyTransaction} und \textit{SellTransaction} werden benötigt, um einen Kauf bzw. Verkauf zu simulieren und werden trotz ihrer Ähnlichkeit als zwei getrennte Klassen definiert, da die Nutzung einer einzelnen Transaktionsklasse innerhalb des Backtests schnell zur Verwirrung führen kann.
+Jeder Backtest benötigt eine \ac{api} \textit{Binance}, von der er die benötigten Marktdaten abrufen kann. Diese Marktdaten müssen innerhalb des Backtests mithilfe
+einer \textit{Strategy} verarbeitet werden. Um einen Kauf zu simulieren, benötigt der Backtest ein \textit{BuySignal} welches ihm signalisiert, dass die Buy Condition der gewählten Strategie getroffen wurde. Die Klassen \textit{BuyTransaction} und \textit{SellTransaction} werden benötigt, um einen Kauf bzw. Verkauf zu simulieren und werden trotz ihrer Ähnlichkeit als zwei getrennte Klassen definiert, da die Nutzung einer einzelnen Transaktionsklasse innerhalb des Backtests schnell zur Verwirrung führen kann.
 
 \subsection{Funktionsweise des Backtest}
 \label{sub:funktionsweise_des_backtest}
 
-Interessant ist vor allem die Methode \textit{run}, da sie für den automatischen Ablauf des Backtests zuständig ist und alle anderen Komponenten des Backtests und der oben definierten Klassen verwendet. Veranschaulicht wurde dieser Ablauf in Abbildung \ref{fig:13}.
+Interessant ist vor allem die Methode \textit{run}, da sie für den automatischen Ablauf des Backtests zuständig ist und alle anderen Komponenten des Backtests und der oben definierten Klassen verwendet. 
+Veranschaulicht wurde dieser Ablauf in Abbildung \ref{fig:13}.
 
 \begin{figure}[H]
   \centering
@@ -1200,7 +1203,7 @@ Interessant ist vor allem die Methode \textit{run}, da sie für den automatische
 \end{figure}
 
 \textbf{get\_candlestick\_data()} \\
-Zu beginn des eigentlichen Backtest wird die Schnittstelle \textit{Binance} dazu beauftragt Candlestick Daten von der \ac{rest} \ac{api} zu sammeln und in einem DataFrame zurück zu liefern. Dieser soll nun Candle für Candle analysiert werden.
+Zu Beginn des eigentlichen Backtest wird die Schnittstelle \textit{Binance} dazu beauftragt Candlestick Daten von der \ac{rest} \ac{api} zu sammeln und in einem DataFrame zurück zu liefern. Dieser soll nun Candle für Candle analysiert werden.
 
 \textbf{check\_buy\_condition()} \\
 Für jede Candle lassen wir die gewählte Strategie ihre Buy Condition überprüfen. Erhält der Backtest ein \textit{BuySignal} für die aktuelle Candle, wird überprüft, ob überhaupt genügend Kapital vorhanden ist, um einen Kauf zu platzieren.
@@ -1209,7 +1212,7 @@ Für jede Candle lassen wir die gewählte Strategie ihre Buy Condition überprü
 Ist das für den Kauf benötigte Kapital vorhanden, platzieren wir einen Kauf. Innerhalb dessen soll die entsprechende \textit{BuyTransaction} generiert und dem Backtest hinzugefügt werden. Nun sollte überprüft werden, ob der Preis das festgelegte \textit{stop\_loss\_target} erreicht hat, welches ein Verkaufen von allen besessenen Coins bedeutet.
 
 \textbf{sell()} \\
-Analog für jede \textit{BuyTransaction} soll nun eine \textit{SellTransaction} generiert werden, welche einen symbolischen Kauf darstellt. Somit werden bei erreichen des Stop-Loss Target alle bisher gehaltenen Coins verkauft.
+Analog für jede \textit{BuyTransaction} soll nun eine \textit{SellTransaction} generiert werden, welche einen symbolischen Kauf darstellt. Damit werden bei Erreichen des Stop-Loss Target alle bisher gehaltenen Coins verkauft.
 
 \textbf{set higher profit target / set higher stop loss target} \\
 Da wir einen Coin möglichst so lange halten möchten wie er profitabel ist, überprüft der Backtest nun, ob der Preis der aktuellen Candle das festgelegte \textit{profit\_target} überschritten hat. Ist dies der Fall, legen wir höhere Werte für beide Variablen fest.
@@ -1223,7 +1226,7 @@ Während des gesamten Backtest werden verschiedene Daten zur Erhebung einer Stat
 \subsection{Visualisieren des Backtests}
 \label{sub:visualisieren_des_backtests}
 
-Für die Erstellung eines Candlestick Chart o.Ä. gibt es eine Vielzahl von Python Libraries, welche enorme Unterstützung bieten und einem den Großteil der eigentlichen Arbeit abnehmen. Die dabei verwendete Library nennt sich \textit{plotly} und stellt nützliche Methoden für die Visualisierung von Finanzdaten bereit. Die erzeugten Diagramme lassen sich als \ac{html} abspeichern und im Browser öffnen. Da jedoch noch andere Daten mit in das Dashboard einfließen sollen, sollen mehrere \ac{html} Objekte erzeugt und zu einer Datei zusammengefügt werden. Der Ablauf ist dabei wie in Abbildung \ref{fig:18} dargestellt.
+Für die Erstellung eines Candlestick Chart o.ä. gibt es eine Vielzahl von Python Libraries, welche enorme Unterstützung bieten und einem den Großteil der eigentlichen Arbeit abnehmen. Die dabei verwendete Library nennt sich \textit{plotly} und stellt nützliche Methoden für die Visualisierung von Finanzdaten bereit. Die erzeugten Diagramme lassen sich als \ac{html} abspeichern und im Browser öffnen. Da jedoch noch andere Daten mit in das Dashboard einfließen sollen, sollen mehrere \ac{html} Objekte erzeugt und zu einer Datei zusammengefügt werden. Der Ablauf ist dabei wie in Abbildung \ref{fig:18} dargestellt.
 
 \begin{figure}[H]
   \centering
@@ -1290,7 +1293,7 @@ Das User Interface ist das, was der User sieht, wenn er die Konsolenanwendung st
   \label{fig:15}
 \end{figure}
 
-Bei jeder Aktion die der Nutzer tätigen kann, soll ein dementsprechender Header angezeigt werden, der die gewählte Aktion beschreibt. So soll beim Starten der Anwendung beispielsweise ein Willkommens-Banner angezeigt werden, während beim Erstellen eines neuen Backtest der entsprechende Backtest-Header gezeigt werden soll.
+Bei jeder Aktion, die der Nutzer tätigen kann, soll ein dementsprechender Header angezeigt werden, der die gewählte Aktion beschreibt. So soll beim Starten der Anwendung beispielsweise ein Willkommens-Banner angezeigt werden, während beim Erstellen eines neuen Backtest der entsprechende Backtest-Header gezeigt werden soll.
 
 Die Interaktion mit dem User soll hauptsächlich durch die Auswahl von Optionen geschehen. Dadurch wird der User bei den verschiedenen Aktion an die Hand genommen und ihm immer alle möglichen Aktionen aufgezeigt. Startet er z.B. die Anwendung, soll der Nutzer gefragt werden, was er tun möchte. Zur Auswahl stehen die zur Verfügung stehenden Features, aus denen er wählen kann, indem er die korrespondierende Zahl eingibt.
 
@@ -1382,7 +1385,7 @@ Bevor die Klasse durch den Konstruktor instanziiert werden kann, werden mehrere 
 \subsection{API Anfragen}
 \label{sub:api_anfragen}
 
-Bevor die Beschaffung der Marktdaten o.Ä. betrachtet werden kann, muss verstanden werden, wie eine Anfrage an die \ac{api} der Trading-Plattform Binance gehandhabt wird.
+Bevor die Beschaffung der Marktdaten o.ä. betrachtet werden kann, muss verstanden werden, wie eine Anfrage an die \ac{api} der Trading-Plattform Binance gehandhabt wird.
 
 \lstset{language=Python}
 \lstset{frame=lines}
@@ -1721,7 +1724,7 @@ Die Methoden der Strategie sind sehr einfach gehalten. Die Überprüfung der Dat
 
 \lstset{language=Python}
 \lstset{frame=lines}
-\lstset{caption={Klassendefinition der Moving Average Strategy}}
+\lstset{caption={Überprüfen der Kaufbedingung}}
 \lstset{label={lst:}}
 \lstset{basicstyle=\footnotesize}
 \textbf{indicators.py}
@@ -1947,7 +1950,7 @@ Nach Verarbeitung aller zu visualisierenden Daten muss der HTML Code in eine Dat
 
 \lstset{language=Python}
 \lstset{frame=lines}
-\lstset{caption={Substitution von HTML Variablen}}
+\lstset{caption={Erzeugen einer Ordnerstruktur für Backtest Dashboards}}
 \lstset{label={lst:}}
 \lstset{basicstyle=\footnotesize}
 \textbf{backtest.py}
@@ -1977,7 +1980,7 @@ Da der Trading Bot innerhalb dieser Arbeit keine echten Funktionalitäten bieten
 
 \lstset{language=Python}
 \lstset{frame=lines}
-\lstset{caption={Substitution von HTML Variablen}}
+\lstset{caption={Klassendefinition des Trading Bots}}
 \lstset{label={lst:}}
 \lstset{basicstyle=\footnotesize}
 \textbf{bot.py}
@@ -2081,7 +2084,7 @@ Auch der Bot Runner erhält eine nur spärliche Implementierung, da dessen echte
 
 \lstset{language=Python}
 \lstset{frame=lines}
-\lstset{caption={Substitution von HTML Variablen}}
+\lstset{caption={Klassendefinition des Bot Runners}}
 \lstset{label={lst:}}
 \lstset{basicstyle=\footnotesize}
 \textbf{bot\_runner.py}
@@ -2180,7 +2183,7 @@ Damit der Nutzer dabei unterstützt wird, richtige Eingaben zu tätigen, wird ei
 
 \lstset{language=Python}
 \lstset{frame=lines}
-\lstset{caption={Implementierung der Optionsauswahl}}
+\lstset{caption={Implementierung zur Validierung von Nutzereingaben}}
 \lstset{label={lst:}}
 \lstset{basicstyle=\footnotesize}
 \textbf{validators.py}
@@ -2214,7 +2217,7 @@ Alle in Abbildung \ref{fig:21} dargestellten Funktionalitäten werden in der Hau
 
 \lstset{language=Python}
 \lstset{frame=lines}
-\lstset{caption={Implementierung der Optionsauswahl}}
+\lstset{caption={Erstellung eines neuen Backtest}}
 \lstset{label={lst:}}
 \lstset{basicstyle=\footnotesize}
 \textbf{validators.py}
