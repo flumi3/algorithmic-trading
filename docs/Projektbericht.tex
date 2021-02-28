@@ -1296,7 +1296,7 @@ Das User Interface ist das, was der User sieht, wenn er die Konsolenanwendung st
 
 \begin{figure}[H]
   \centering
-  \includegraphics[height=0.43\textheight]{img/cli_mockup.png}
+  \includegraphics[height=0.43\textheight]{img/cli/cli_mockup.png}
   \caption{User Interface der Konsolenanwendung}
   \label{fig:15}
 \end{figure}
@@ -2173,38 +2173,101 @@ def choose_option(title, options, header, note=None):
 
 Beim Aufruf der Methode müssen mehrere Übergabeparameter gegeben sein.\textit{title} legt die Frage der Option fest. Also beispielsweise "What would you like to do?". Der Parameter \textit{options} besteht aus einer Liste, welche die verschiedenen, für den Nutzer auswählbaren, Optionen beinhaltet. Der \textit{header} ist der jeweilige Header, welcher angezeigt werden soll, während der letzte Parameter eine optionale Notiz behinhalten kann, welche dann auf dem Terminal ausgegeben wird.
 
-Zunächst werden Header und Optionstitel ausgegeben (\textbf{Zeile 4-6}). Beim Header geschieht dies über eine kleine Hilfsfunktion, welche gleichzeitig noch die Funktion hat, vorangegangene Ausgaben vom Konsolenfenster zu entfernen. Die formatierte Ausgabe des Optionstitel geschieht über eine Library für Konsolenanwendungen namens \textit{prompt\_toolkit}.
+Zunächst werden Header und Optionstitel ausgegeben (\textbf{Zeile 4-6}). Beim Header geschieht dies über eine kleine Hilfsfunktion, welche gleichzeitig noch die Funktion hat, vorangegangene Ausgaben vom Konsolenfenster zu entfernen. Die formatierte Ausgabe des Optionstitel geschieht über eine Library für Konsolenanwendungen namens \textit{prompt\_toolkit}. Anschließend werden alle übergebenen Optionen auf der Konsole ausgegeben. Wurde eine Notiz übergeben, wird auch diese noch angezeigt (\textbf{Zeile 12-15}).
 
-Anschließend werden alle übergebenen Funktionen auf der Konsole ausgegeben. Wurde eine Notiz übergeben, wird auch diese noch angezeigt (\textbf{Zeile 12-15}). 
+Abschließend wird der User zur Eingabe einer Zahl gebeten, welche bestimmt, für welche Option er sich entschieden hat (\textbf{Zeile 18-19}). Dieser bisher beschriebene Vorgang wird solange wiederholt, bis der User eine richtige Eingabe tätigt (Schleife in \textbf{Zeile 3}). Durch einen Aufruf dieser Funktion mit den geeigneten Übergabeparametern wird eine Optionsauswahl, wie in Abbildung \ref{fig:21} dargestellt, erreicht. 
 
+\begin{figure}[H]
+  \centering
+  \includegraphics[height=0.4\textheight]{img/cli/main_menu.png}
+  \caption{Optionsauswahl des Main Menu}
+  \label{fig:21}
+\end{figure}
 
+\subsection{Validierung der Nutzereingaben}
+\label{sub:validierung_der_nutzereingaben}
 
-In diesem Kapitel wird die konkrete Implementierung des im Kapitel
-\ref{cha:loesungskonzept} entwickelten Lösungskonzepts beschrieben.
-Hierbei wird auf die konkret verwendeten Entwicklungswerkzeuge etc. 
-Bezug genommen.
+Damit der Nutzer dabei unterstützt wird, richtige Eingaben zu tätigen, wird eine Validierung der Nutzereingaben benötigt. Dies fördert sowohl die User Experience des Users und dient gleichzeitig dem Schutz vor Laufzeitfehlern durch falsche Eingabewerte. Mithilfe der bereits angesprochenen Library \textit{prompt\_toolkit} kann beim Aufruf der User-Input-Funktion \textit{prompt()} ein solcher Validierer übergeben werden, der die Nutzereingabe in Echtzeit überprüft. Im nachfolgenden Listing befindet sich ein Zahlenvalidierer wie er bei der Optionsauswahl benutzt wird.
 
-Bei Software-Projekten besteht dieses Kapitel typischerweise aus den 
-Phasen Implementierung \& Test im \ac{rup}.
+\lstset{language=Python}
+\lstset{frame=lines}
+\lstset{caption={Implementierung der Optionsauswahl}}
+\lstset{label={lst:}}
+\lstset{basicstyle=\footnotesize}
+\textbf{validators.py}
+\begin{lstlisting}
+class NumberValidator(Validator):
+	def validate(self, document):
+		text = document.text
 
-Zum Beispiel kann man hier auch ein kleines Listing einfügen.
+		if text and not text.isdigit():
+			index = 0
+			# Get index of first non numeric character
+			for index, char in enumerate(text):
+				if not char.isdigit():
+					break
+			raise ValidationError(message="This input contains non-numeric characters", cursor_position=index)
+\end{lstlisting}
 
-Manchmal hilft auch eine kleine Tabelle:
+Mithilfe des \textit{prompt\_toolkit} kann eine Klasse \textit{NumberValidator} erstellt werden, die von der Klasse \textit{Validator} erbt. Jedes Mal, wenn der Nutzer eine Eingabe tätigt, springt die Eingabefunktion in den Zahlenvalidierer, um dessen Eingabe zu prüfen. Hat der Nutzer eine Eingabe getätigt, die nicht komplett aus Zahlen besteht (\textbf{Zeile 5}) wird die Eingabe mithilfe einer Schleife Zeichen für Zeichen überprüft, um die fehlerhafte Stelle zu finden (\textbf{Zeile 8-10}). Hat er die Stelle gefunden, wird ein \textit{ValidationError} erzeugt, welcher den Cursor an die Stelle der fehlerhaften Eingabe platziert und eine Fehlernachricht ausgibt - dargestellt in Abbildung \ref{fig:22}
 
-\begin{table}[htbp]
-\centering
-\begin{tabular}{|l|r|}
-\hline
-\textbf{Messwert a} & \textbf{Messwert b} \\ \hline
-9 & 5 \\ \hline
-1 & 4 \\ \hline
-1 & 3 \\ \hline
-\end{tabular}
-\caption{Überschrift der Tabelle}
-\label{tab:my-table}
-\end{table}
+\begin{figure}[H]
+  \centering
+  \includegraphics[height=0.4\textheight]{img/cli/validation_error.png}
+  \caption{Beispiel eines Validierungsfehlers bei fehlerhafter Eingabe}
+  \label{fig:21}
+\end{figure}
 
-Details siehe Tabelle~\ref{tab:my-table}.
+\subsection{Erstellung von Backtests und Bots}
+\label{sub:erstellung_von_backtests_und_bots}
+
+Alle in Abbildung \ref{fig:21} dargestellten Funktionalitäten werden in der Hauptdatei \textit{cli.py} untergebracht. Entscheidet sich der Nutzer beispielsweise dazu, einen neuen Backtest zu erstellen, muss er Schritt für Schritt durch verschiedene Auswahlmöglichkeiten begleitet werden. In diesen Auswahlmöglichkeiten entscheidet der Nutzer über die zu verwendende Konfiguration des Backtests:
+
+\lstset{language=Python}
+\lstset{frame=lines}
+\lstset{caption={Implementierung der Optionsauswahl}}
+\lstset{label={lst:}}
+\lstset{basicstyle=\footnotesize}
+\textbf{validators.py}
+\begin{lstlisting}
+	def create_backtest(self):
+		# Backtest config
+		api = choose_api(HEADER_NEW_BACKTEST)
+		if api == 99:
+			return
+		symbol = choose_symbol(HEADER_NEW_BACKTEST)
+		if symbol == 99:
+			return
+		# ...
+		
+		# Check config and ask whether the user wants to start the backtest
+		display_header(HEADER_NEW_BACKTEST)
+		print_bold("Check configuration: ")
+		print("")
+		print(f"API: {api.base}")
+		print(f"Symbol: {symbol}")
+		print(f"Strategy: {strategy.name}")
+		print(f"Time frame: {time_frame_name}")
+		print(f"Starting capital: {starting_capital}")
+		print(f"Buy quantity: {buy_quantity}")
+		print("")
+		user_input: str = prompt("Do you want to start the backtest? [y/n] ", validator=YesNoValidator())
+		print("")
+        
+		if user_input == "y":
+			# Create backtest
+			backtest: Backtest = Backtest(symbol, api, strategy, starting_capital, buy_quantity, kline_limit)
+			backtest.run()
+			input("Press Enter to continue...")
+		elif user_input == "n":
+			return
+\end{lstlisting}
+
+Zunächst läuft der Nutzer durch eine Auswahl an Möglichkeiten in denen er Dinge wie die zu verwendende \ac{api}, Trading Symbol, Strategie, etc. auswählen muss (\textbf{Zeile 3-8}). Hat er die Konfigurationsauswahl durchlaufen, wird die verwendete Konfiguration nochmal angezeigt und gefragt, ob der Nutzer den Backtest starten möchte (\textbf{Zeile 12-23}). Bestätigt der User die Frage mit einem \textit{y}, wird eine neue Instanz des Backtests erzeugt und gestartet.
+
+Soll ein neuer Trading Bot erstellt werden, wird dieses Prinzip in fast der gleichen Manier angewandt, weshalb sich die Erstellung des Backtest kaum von der Erstellung eines Trading Bots unterscheidet. 
+
+Der Erstellungsvorgang eines neuen Backtests, sowie Abbildungen zur Nutzung aller weiterer Funktionen befinden sich in Anhang \ref{cha:anhang_zur_konsolenanwendung}.
 
 %---------------------------------------------------
 \chapter{Inbetriebnahme}
@@ -2267,7 +2330,146 @@ Und hier etwas über deren Übertragbarkeit.
 \printbibliography[heading=bibintoc]
 
 %---
-\chapter{Anhang A}
+\chapter{Anhang zur Konsolenanwendung}
+\label{anhang_zur_konsolenanwendung}
+
+\section{Main Menu}
+\label{sec:main_menu}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[height=0.4\textheight]{img/cli/main_menu.png}
+  \caption{Auswählen der API}
+  \label{fig:}
+\end{figure}
+
+\section{Erstellung eines Backtests}
+\label{sec:erstellung_eines_backtests}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[height=0.4\textheight]{img/cli/choose_api.png}
+  \caption{Auswählen der API}
+  \label{fig:}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[height=0.4\textheight]{img/cli/choose_symbol.png}
+  \caption{Auswählen des Trading Symbols}
+  \label{fig:}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[height=0.4\textheight]{img/cli/choose_strat.png}
+  \caption{Auswählen der Strategie}
+  \label{fig:}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[height=0.4\textheight]{img/cli/choose_time_frame.png}
+  \caption{Auswählen der Dauer des Backtests}
+  \label{fig:}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[height=0.4\textheight]{img/cli/starting_capital.png}
+  \caption{Eingabe des Startkapitals}
+  \label{fig:}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[height=0.4\textheight]{img/cli/buy_quantity.png}
+  \caption{Eingabe der Kaufmenge pro Kauf}
+  \label{fig:}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[height=0.4\textheight]{img/cli/check_config.png}
+  \caption{Ausgabe der Konfiguration}
+  \label{fig:}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[height=0.6\textheight]{img/cli/backtest_stats.png}
+  \caption{Ausgabe der Backtest-Statistik}
+  \label{fig:}
+\end{figure}
+
+\section{Erstellung eines Trading Bots}
+\label{sec:erstellung_eines_trading_bots}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[height=0.4\textheight]{img/cli/bot_name.png}
+  \caption{Auswählen der API}
+  \label{fig:}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[height=0.4\textheight]{img/cli/choose_api.png}
+  \caption{Auswählen der API}
+  \label{fig:}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[height=0.4\textheight]{img/cli/choose_symbol.png}
+  \caption{Auswählen des Trading Symbols}
+  \label{fig:}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[height=0.4\textheight]{img/cli/choose_strat.png}
+  \caption{Auswählen der Strategie}
+  \label{fig:}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[height=0.4\textheight]{img/cli/starting_capital.png}
+  \caption{Eingabe des Startkapitals}
+  \label{fig:}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[height=0.4\textheight]{img/cli/buy_quantity.png}
+  \caption{Eingabe der Kaufmenge pro Kauf}
+  \label{fig:}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[height=0.4\textheight]{img/cli/bot_description.png}
+  \caption{Optinale Eingabe einer Beschreibung}
+  \label{fig:}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[height=0.4\textheight]{img/cli/check_config_bot.png}
+  \caption{Überprüfen der Konfiguration}
+  \label{fig:}
+\end{figure}
+
+\section{Anzeigen der erstellten Trading Bots}
+\label{sec:anzeigen_der_erstellten_trading_bots}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[height=0.4\textheight]{img/cli/display_bots.png}
+  \caption{Übersicht der Erstellten Trading Bots}
+  \label{fig:}
+\end{figure}
 
 %---
 \chapter{Anhang B}
