@@ -12,15 +12,15 @@
 - Python3
 - Pip3
 
-## Hands on
+## Getting Started
 
 ### Create virtual environment (optional)
-$ python3 -m venv /path/to/new/virtual/environment  
-$ source /path/to/new/virtual/environment/bin/activate  
+    python3 -m venv /path/to/new/virtual/environment  
+    source /path/to/new/virtual/environment/bin/activate  
 
 ### Install necessary packages
-$ pip3 install -r requirements.txt
+    pip3 install -r requirements.txt
 
 ### Usage
-$ cd src  
-$ python3 main_cli.py
+    cd src  
+    python3 main_cli.py
